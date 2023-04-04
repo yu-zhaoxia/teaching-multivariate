@@ -1,29 +1,356 @@
 ---
-title: "Introduction to Multivariate Analysis"
-author: "Zhaoxia Yu"
+title: "Multivariate Analysis"
+author: | 
+  | Zhaoxia Yu
+  | Professor, Department of Statistics
 date: "`r Sys.Date()`"
-output: github_document
+output: 
+  beamer_presentation:
+    theme: "Ilmenau"
+    slide_level: 3
+    keep_tex: true
+header-includes:
+- \setbeamertemplate{navigation symbols}{}
+- \setbeamertemplate{footline}[page number]
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyr) #the pipe (%>%) tool is extremely useful
+library(MASS)
 ```
 
-## Course Information
+<!--
+matrix operations in R
+-->
+# Intro
+## Introduction
 
+### Course Information
+- Please use the Canvas website for course materials, important updates, and deadlines.
+- Announcements will be sent to the mailing list or posted in Canvas.
+- Assignment submission: GradeScope on Canvas.
 
-```{r cars}
-summary(cars)
+### Multivriate Data
+- "multi" means more than one 
+- Multivariate data: the data with \textcolor{red}{simultaneous
+measurements} on many variables
+```{r echo=FALSE, out.width="50%"}
+cover_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Wiki-grafik_peats-de_big_five_ENG.svg/1920px-Wiki-grafik_peats-de_big_five_ENG.svg.png'
+if (!file.exists(cover_file <- 'downloaded_img/personality.png'))
+  download.file(cover_url, cover_file, mode = 'wb')
+knitr::include_graphics(if (identical(knitr:::pandoc_to(), 'html')) cover_url else cover_file)
 ```
 
-## Including Plots
+### More Examples of Multivariate Data
+- A basketball player: points, rebounds, steals, assists, turnovers, free throws, fouls, etc
+- A person’s well-being: social, economic, psychological, medical, physical, etc
+- A person’s annual physical exam report
 
-You can also embed plots, for example:
+### What is Multivariate Analysis
+* The term "multivariate analysis" implies a broader scope than univariate analysis.
+* Certain approaches like simple linear regression and multiple regression are typically not considered as multivariate analysis as they tend to focus on the conditional distribution of one univariate variable rather than multiple variables.
+* Multivariate analysis focuses on the joint behavior of several variables simultaneously to identify patterns and relationships
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+### Learning Objectives
+- Matrix algebra, distributions
+- Visualization
+- Inference about a mean vector or multiple mean vectors
+- Multivariate analysis of variance (MANOVA) and multivariate regression
+- Linear discriminant analysis (LDA)
+- Principal component analysis (PCA)
+- Cluster analysis
+- Factor analysis
+
+
+### Milestones in the history of multivariate analysis
+- 1901: PCA was invented by Karl Pearson; independently developed by Harold Hotelling in the 1930s.
+- 1904: Charles Spearman introduced factor analysis to identify underlying factors that explain the correlation between multiple variables.
+- 1928: Wishart presented the distribution of the covariance matrix of a random sample from a multivariate normal distribution.
+- 1936: Ronald Fisher developed discriminant analysis.
+- ????: Cluster analysis.
+- 1936: Canonical analysis by Harold Hotelling.
+- 1960s: Multidimensional scaling.
+- 1970s: Multivariate regression.
+- 1980s: Structural equation modeling; the idea dated back to (1920-1921) by Sewall Wright.
+
+# Matrix Algebra
+## Vectors: We begin with a little bit matrix algebra
+### Vectors in R
+- There are many ways to create or define a vector
+```{r}
+x=rep(0.3, 4)
+x
+x=seq(1, 4, by=0.2)
+x
+c("a1", "a2", "a3")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### Vectors in R
+```{r}
+x=c(0.4, 0.2, 0.5)
+x
+length(x)
+dim(x) #note that there is no dimension information
+```
 
-The figure doesn't show in github
+### A row or column of a matrix is also a vector
+```{r}
+x=rbind(c(0.4,0.2,0.5), rep(1,3))
+dim(x)
+x[1,]
+x[,1]
+```
+
+## Special Matrices
+### Row or Column Vectors
+- A vector (column vector) is a special matrix consisting of a single column of elements. e.g.,
+$$a=\begin{pmatrix}a_1\\ a_2 \\ a_3\end{pmatrix}$$
+- A row vector is a special matrix consisting of a single row of elements
+$$b=(b_1, b_2, b_3, b_4)$$
+- In this class, a vector means a column vector
+- A row or column vector is also a matrix
+- The transpose of a row vector is a column vector; the transpose of a column vector is row vector. e.g.,
+$$a'=(a_1,a_2,a_3)$$
+
+### Row or Column Vectors
+- In vector/matrix operations, it is helpful to define row or column vectors
+- A row vector
+```{r}
+matrix(rep(0.5,3), 1, 3)
+dim(matrix(rep(0.5,3), 1, 3))
+#A neater way is to use the pipe "%>%"
+matrix(rep(0.5,3), 1, 3) %>% dim
+```
+
+### Row or Column Vectors
+- A column vector
+```{r}
+x= matrix(rep(0.5,3), 3, 1)
+dim(x)
+# use pipe
+x %>% dim
+```
+
+### Transposes
+- The transpose of a column vector is a row vector
+- The transpose of a row vector is a column vector
+```{r}
+x= matrix(rep(0.5,3), 3, 1)
+x
+t(x)
+```
+
+### Types of Special Matrices
+- Identity matrix
+- Diagonal matrix
+- All-ones matrix
+- Random matrix: a matrix whose entries are random variables. I will introduce matrix normal distributions. 
+
+### Indentity Matrix
+```{r}
+#diag(1, 2)
+diag(5, 3)
+diag(1, 2, 3)
+```
+### Diagonal Matrix
+```{r}
+diag(1:3)
+seq(1,2, by=0.5) %>% diag
+```
+
+### All-ones
+```{r}
+matrix(1, 3, 2)
+```
+## Common Vector Operations
+
+### Scalar Multiplication
+```{r echo=FALSE, out.width="60%"}
+knitr::include_graphics("downloaded_img/VecScalarMultiplication.png")
+```
+
+### Examples of Scalar Multiplication
+```{r}
+x=matrix(c(0.4,0.2,0.5), 3, 1)
+10*x
+```
+
+### Addition and Substraction
+```{r echo=FALSE, out.width="70%"}
+knitr::include_graphics("downloaded_img/VecAddition.png")
+```
+
+### Example of Addition and Substraction
+```{r}
+x1=matrix(c(0.4,0.2,0.5), 3, 1)
+x2=rep(1, 3)
+x1+x2
+x1-x2
+```
+
+
+### Outer Product
+- The outer product of two vectors $x=(x_1,\cdots, x_m)'$ and $y=(y_1,\cdots,y_n)'$ is
+$$x\otimes y= \begin{pmatrix}
+x_1y_1 & x_1y_2 & \cdots & x_1y_n\\
+\cdots& \cdots& \cdots& \cdots \\
+x_my_1 & x_my_2 & \cdots & x_my_n
+\end{pmatrix}$$
+- A similar operation for matrices is called Kronecker product.
+
+
+### Example: outer product
+```{r}
+x1=matrix(c(0.4,0.2,0.5), 3, 1)
+x2=rep(1, 3)
+x1%*%x2
+```
+
+### Inner product
+- Let 
+$x=\begin{pmatrix}x_1\\ \cdots\\  x_k\end{pmatrix}, y=\begin{pmatrix}y_1\\ \cdots\\ y_k\end{pmatrix}$
+The inner product of $x$ and $y$ is 
+$$<x,y>=x_1y_1 + \cdots x_ky_k$$
+- Note, the two vectors must have the same length
+- The norm / Euclidean norm / length of $x$ is $||x||=\sqrt{<x,x>}$
+- The Euclidean distance between $x$ and $y$ is
+$$D(x,y)=||x-y||=\sqrt{(x_1-y_1)^2 + \cdots (x_k-y_k)^2}$$
+
+### Inner Product and Norm
+```{r echo=FALSE, out.width="70%"}
+knitr::include_graphics("downloaded_img/InnerProdNorm.png")
+```
+
+### Distance: 1d and 2d
+```{r echo=FALSE, out.width="70%"}
+knitr::include_graphics("downloaded_img/Distance1d2d.png")
+```
+
+### Distance: 3d
+```{r echo=FALSE, out.width="80%"}
+knitr::include_graphics("downloaded_img/Distance3d.png")
+```
+
+### Example: Norm
+```{r}
+x1=matrix(c(0.4,0.2,0.5), 3, 1)
+#the norm/length of x1
+sqrt(sum(x1^2))
+#or use pipe
+x1^2 %>% sum %>% sqrt
+```
+
+### Example: (Euclidean) Distance
+```{r}
+x1=matrix(c(0.4,0.2,0.5), 3, 1)
+x2=rep(1, 3)
+sqrt(sum((x1-x2)^2))
+#or use pipe
+(x1-x2)^2 %>% sum %>% sqrt
+```
+
+
+### Example: (Euclidean) Distance
+- Motivating example. Consider bivariate random vectors. The standard deviations are 2 and 1, respectively. 
+- What is the distance between (-2,0) and (2,0)? \textcolor{red}{4}.
+- What is the distance between (0, -2) and (0,2)? \textcolor{green}{4}.
+```{r, out.width="60%", echo=FALSE}
+set.seed(20230404)
+par(pty="s")
+mvrnorm(n=1000, c(0,0), matrix(c(4,0,0,1),2,2)) %>% 
+  plot(xlab="x", ylab="y", xlim=c(-4,4), ylim=c(-4,4))
+points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, col=c(2,3,3,2))
+```
+
+### Example: (Euclidean) Distance
+```{r, eval=FALSE}
+#The R code
+set.seed(20230404)
+mvrnorm(n=1000, c(0,0), matrix(c(4,0,0,1),2,2)) %>% 
+  plot(xlab="x", ylab="y", xlim=c(-4,4), ylim=c(-4,4))
+points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, col=c(2,3,3,2))
+```
+* Both pairs have a distance of 4. 
+* The variation along $x$ is greater than along $y$. Let $X_1$ and $X_2$ be two random points along the $x$ direction, $Y_1$ and $Y_2$ be two random points along the $y$ direction.  
+
+### Euclidean Distance can be misleading
+* Suppose $X_1, X_2, Y_1, Y_2$ are mutually independent.
+    + $X_1$ and $X_2$ are iid from $N(\mu=0, \sigma_x^2=2^2)$
+    + $Y_1$ and $Y_2$ are iid from $N(\mu=0, \sigma_y^2=1^2)$
+* A \textcolor{red}{homework} problem. Calculate 
+$$P(|X_1-X_2|>2), P(|Y_1-Y_2|>2)$$ 
+    + First express each in terms of $\Phi(\cdot)$, the CDF of the standard normal distribution; 
+    + Then use the "pnorm" function in R to find the numerical values. 
+    + Last, estimate the two probabilities using simulations. The code in the previous page generates 1000 random samples. Change the sample size from n=1000 to n=10000 and then estimate the two probabilities. To do that, you need to examine all pairs of data points and then calculate the proportion of pairs satisfying a certain condition. 
+    
+### Statistical / Mahalanobis Distance
+* The two probabilities are quite different, suggesting that the Euclidean distance might be misleading given the joint distribution of the variable. 
+* We will introduce a type of statistical distance, which is known as Mahalanobis distance. 
+
+
+### Statistical Distance 
+```{r, out.width="40%", echo=FALSE}
+set.seed(20230404)
+par(pty="s")
+mvrnorm(n=1000, c(0,0), matrix(c(4,0,0,1),2,2)) %>% 
+  plot(xlab="x", ylab="y", xlim=c(-4,4), ylim=c(-4,4))
+points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, col=c(2,3,3,2))
+```
+
+* The scatter plot suggests that we should make the two variables equally spread out. We can first standardize each of them.
+* point (-2,0) becomes (-1,0), points (2, 0) becomes (1,0)
+* Using the standardized points, the distance between the red pair is 2, the distance between the green pair is 4. 
+
+### Statistical Distance
+- In The example above $X$ and $Y$ are independent, as a result, the covariance is zero. Statistical distance can also be defined when the covriance matrix $\Sigma$ is not diagonal;
+```{r echo=FALSE, out.width="60%"}
+knitr::include_graphics("downloaded_img/StatDistance.png")
+```
+
+
+<!--
+## Matrix Multiplication
+
+### Definition 
+- In matrix algebra, conformable refers to whether two matrices can be multiplied. If two matrices are not conformable for multiplication, then the operation is not defined. 
+- E.g., if $dim(A)=n\times m, dim(B)=m\times p$, them $A$ and $B$ are conformable because we can compute $AB$. 
+```{r echo=FALSE, out.width="40%"}
+knitr::include_graphics("downloaded_img/MatrixMultiplication.png")
+```
+### The Angle Between Two Vectors
+- Let $x$ and $y$ be two vectors of the same length. Say $x\in \mathbf R^k$ and $y\in \mathbf R^k$.
+- Let $\theta$ be the angle between the two vectors. Then
+$$cos(\theta)=\frac{}{}$$
+
+### Project One Vector on Another
+- Let $x$ and $y$ be two vectors of the same length. Say $x\in \mathbf R^k$ and $y\in \mathbf R^k$.
+- The direction of $proj_y(x)$ is the same as that of $y$. 
+- The length of the projection is $||x|| cos(\theta)$. 
+- The projection of $x$ is $y$ is 
+
+
+### Example: Projection
+```{r}
+# Define the vectors
+v1 <- c(3, 3)
+v2 <- c(4, 1)
+
+# Compute the projection of v1 onto v2
+proj <- sum(v1 * v2) / sum(v2 * v2) * v2
+
+# Create a plot
+par(pty="s")
+plot(0, 0, xlim = c(-1, 7), ylim = c(-1, 7), type = "n", xlab = "X", ylab = "Y")
+abline(h = 0, v = 0)
+text(v1[1], v1[2], "v1", pos = 3)
+text(v2[1], v2[2], "v2", pos = 3)
+text(proj[1], proj[2]+1, expression(proj[v2](v1)), pos = 3)
+segments(0, 0, v1[1], v1[2], lty = "dotted")
+segments(0, 0, v2[1], v2[2], lty = "dotted")
+segments(v1[1], v1[2], proj[1], proj[2], lty = "dotted", col = "red")
+segments(0, 0, proj[1], proj[2], lty = "dotted", col = "red")
+
+```
+-->
+
