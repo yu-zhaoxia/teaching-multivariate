@@ -147,7 +147,7 @@ t(x)
 - All-ones matrix
 - Random matrix: a matrix whose entries are random variables. I will introduce matrix normal distributions. 
 
-### Indentity Matrix
+### Identity Matrix
 ```{r}
 #diag(1, 2)
 diag(5, 3)
