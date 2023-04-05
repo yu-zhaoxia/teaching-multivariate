@@ -20,9 +20,7 @@ library(tidyr) #the pipe (%>%) tool is extremely useful
 library(MASS)
 ```
 
-<!--
-matrix operations in R
--->
+
 # Intro
 ## Introduction
 
@@ -209,9 +207,9 @@ x1%*%x2
 
 ### Inner product
 - Let 
-$x=\begin{pmatrix}x_1\\ \cdots\\  x_k\end{pmatrix}, y=\begin{pmatrix}y_1\\ \cdots\\ y_k\end{pmatrix}$
+$x=\begin{pmatrix}x_1\\ \cdots\\  x_n\end{pmatrix}, y=\begin{pmatrix}y_1\\ \cdots\\ y_n\end{pmatrix}$
 The inner product of $x$ and $y$ is 
-$$<x,y>=x_1y_1 + \cdots x_ky_k$$
+$$<x,y>=x_1y_1 + \cdots x_ky_n=\sum_{i=1}^n x_iy_i$$
 - Note, the two vectors must have the same length
 - The norm / Euclidean norm / length of $x$ is $||x||=\sqrt{<x,x>}$
 - The Euclidean distance between $x$ and $y$ is
@@ -260,37 +258,58 @@ set.seed(20230404)
 par(pty="s")
 mvrnorm(n=1000, c(0,0), matrix(c(4,0,0,1),2,2)) %>% 
   plot(xlab="x", ylab="y", xlim=c(-4,4), ylim=c(-4,4))
-points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, col=c(2,3,3,2))
+points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, col=c(2,3,3,2),cex=3)
 ```
 
 ### Example: (Euclidean) Distance
 ```{r, eval=FALSE}
-#The R code
+#R code
 set.seed(20230404)
+par(pty="s")#to make sure the shape of figure is a square
 mvrnorm(n=1000, c(0,0), matrix(c(4,0,0,1),2,2)) %>% 
   plot(xlab="x", ylab="y", xlim=c(-4,4), ylim=c(-4,4))
-points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, col=c(2,3,3,2))
+points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, 
+       col=c(2,3,3,2),cex=3)
 ```
 * Both pairs have a distance of 4. 
-* The variation along $x$ is greater than along $y$. Let $X_1$ and $X_2$ be two random points along the $x$ direction, $Y_1$ and $Y_2$ be two random points along the $y$ direction.  
+* But we notice that the pairs with a y-distance greater than 4 is very rare; as a comparison, there are much pairs with a x-distance greater than 4. 
 
-### Euclidean Distance can be misleading
+### A Homework Problem of Euclidean Distances
 * Suppose $X_1, X_2, Y_1, Y_2$ are mutually independent.
     + $X_1$ and $X_2$ are iid from $N(\mu=0, \sigma_x^2=2^2)$
     + $Y_1$ and $Y_2$ are iid from $N(\mu=0, \sigma_y^2=1^2)$
-* A \textcolor{red}{homework} problem. Calculate 
-$$P(|X_1-X_2|>2), P(|Y_1-Y_2|>2)$$ 
+1. Calculate $P(|X_1-X_2|>4)$ and  $P(|Y_1-Y_2|>4)$
     + First express each in terms of $\Phi(\cdot)$, the CDF of the standard normal distribution; 
     + Then use the "pnorm" function in R to find the numerical values. 
-    + Last, estimate the two probabilities using simulations. The code in the previous page generates 1000 random samples. Change the sample size from n=1000 to n=10000 and then estimate the two probabilities. To do that, you need to examine all pairs of data points and then calculate the proportion of pairs satisfying a certain condition. 
+    + Last, estimate the two probabilities using simulations. 
+2. Estimate the probabilities by simulations
+
+### Use simulations to estimate the probabilities    
+* The code in the previous page generates 1000 random samples
+    The code in the previous page generates 1000 random samples, which can be used to estimate the two probabilities. To do that, you need to examine all pairs of data points and then calculate the proportion of pairs satisfying a certain condition. 
     
 ### Statistical / Mahalanobis Distance
 * The two probabilities are quite different, suggesting that the Euclidean distance might be misleading given the joint distribution of the variable. 
-* We will introduce a type of statistical distance, which is known as Mahalanobis distance. 
+* In this example we have examined, the x-values and y-values are independent. * The variation along $x$ is greater than along $y$. Let $X_1$ and $X_2$ be two random points along the $x$ direction, $Y_1$ and $Y_2$ be two random points along the $y$ direction.  
+* One simple idea is to standardize both. Because the SD of Y is 1 we don't need to change the y-values. Because the SD of X is 2, we shrink the x-values by 50%.
+    + point (-2,0) becomes (-1,0)
+    + point (2, 0) becomes (1,0)
+* The distance between the red pair is 2, the distance between the green pair is 4. 
 
+### Standardized Observations
+```{r, out.width="60%", echo=FALSE}
+set.seed(20230404)
+par(pty="s")
+simdata=mvrnorm(n=1000, c(0,0), matrix(c(4,0,0,1),2,2)) 
+simdata[,1]=simdata[,1]/2
+plot(simdata,xlab="x", ylab="y", xlim=c(-4,4), 
+     ylim=c(-4,4))
+points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, 
+       col=c(2,3,3,2),cex=3)
+```
 
-### Statistical Distance 
-```{r, out.width="40%", echo=FALSE}
+### Standardized Observations 
+```{r, out.width="60%", echo=FALSE}
 set.seed(20230404)
 par(pty="s")
 mvrnorm(n=1000, c(0,0), matrix(c(4,0,0,1),2,2)) %>% 
@@ -298,59 +317,12 @@ mvrnorm(n=1000, c(0,0), matrix(c(4,0,0,1),2,2)) %>%
 points(x=c(-2, 0, 0, 2), y=c(0, -2, 2, 0), pch=15, col=c(2,3,3,2))
 ```
 
-* The scatter plot suggests that we should make the two variables equally spread out. We can first standardize each of them.
-* point (-2,0) becomes (-1,0), points (2, 0) becomes (1,0)
-* Using the standardized points, the distance between the red pair is 2, the distance between the green pair is 4. 
 
 ### Statistical Distance
 - In The example above $X$ and $Y$ are independent, as a result, the covariance is zero. Statistical distance can also be defined when the covriance matrix $\Sigma$ is not diagonal;
+- We will introduce a type of statistical distance, which is known as Mahalanobis distance. 
+
 ```{r echo=FALSE, out.width="60%"}
 knitr::include_graphics("downloaded_img/StatDistance.png")
 ```
-
-
-<!--
-## Matrix Multiplication
-
-### Definition 
-- In matrix algebra, conformable refers to whether two matrices can be multiplied. If two matrices are not conformable for multiplication, then the operation is not defined. 
-- E.g., if $dim(A)=n\times m, dim(B)=m\times p$, them $A$ and $B$ are conformable because we can compute $AB$. 
-```{r echo=FALSE, out.width="40%"}
-knitr::include_graphics("downloaded_img/MatrixMultiplication.png")
-```
-### The Angle Between Two Vectors
-- Let $x$ and $y$ be two vectors of the same length. Say $x\in \mathbf R^k$ and $y\in \mathbf R^k$.
-- Let $\theta$ be the angle between the two vectors. Then
-$$cos(\theta)=\frac{}{}$$
-
-### Project One Vector on Another
-- Let $x$ and $y$ be two vectors of the same length. Say $x\in \mathbf R^k$ and $y\in \mathbf R^k$.
-- The direction of $proj_y(x)$ is the same as that of $y$. 
-- The length of the projection is $||x|| cos(\theta)$. 
-- The projection of $x$ is $y$ is 
-
-
-### Example: Projection
-```{r}
-# Define the vectors
-v1 <- c(3, 3)
-v2 <- c(4, 1)
-
-# Compute the projection of v1 onto v2
-proj <- sum(v1 * v2) / sum(v2 * v2) * v2
-
-# Create a plot
-par(pty="s")
-plot(0, 0, xlim = c(-1, 7), ylim = c(-1, 7), type = "n", xlab = "X", ylab = "Y")
-abline(h = 0, v = 0)
-text(v1[1], v1[2], "v1", pos = 3)
-text(v2[1], v2[2], "v2", pos = 3)
-text(proj[1], proj[2]+1, expression(proj[v2](v1)), pos = 3)
-segments(0, 0, v1[1], v1[2], lty = "dotted")
-segments(0, 0, v2[1], v2[2], lty = "dotted")
-segments(v1[1], v1[2], proj[1], proj[2], lty = "dotted", col = "red")
-segments(0, 0, proj[1], proj[2], lty = "dotted", col = "red")
-
-```
--->
 
