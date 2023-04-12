@@ -1,5 +1,5 @@
 ---
-title: "Multivariate Analysis Lecture 2: MatrixOperations"
+title: "Multivariate Analysis Lecture 2: Matrix Operations"
 author: | 
   | Zhaoxia Yu
   | Professor, Department of Statistics
@@ -149,7 +149,7 @@ colMeans(Y)
 ### Left multiply a matrix to Y: Example 2
 * Let 
 $$B=\frac{1}{50}\begin{pmatrix}
-\mathbf 1_{1\times 50} & \mathbf 1_{1\times 50} & \mathbf 0_{1\times 50}\\
+\mathbf 1_{1\times 50} & -\mathbf 1_{1\times 50} & \mathbf 0_{1\times 50}\\
 \mathbf 1_{1\times 50} & \mathbf 0_{1\times 50} & -\mathbf 1_{1\times 50} \\
 \mathbf 0_{1\times 50} & \mathbf 1_{1\times 50} & -\mathbf 1_{1\times 50} \\
 \end{pmatrix}$$
@@ -240,7 +240,7 @@ where
   $$U^TU=V^TV=\mathbf I_{r}$$
   + $U$ is the left singular vectors matrix, contains the eigenvectors of $AA^T$ (n x n matrix)
   + V^T is right singular vectors matrix, contains the eigenvectors of $A^TA$ (p x p matrix)
-  + $D$ is diagonal matrix of singular values, contains the square root of the eigenvalues of $AA^T$ and $AA^T$
+  + $D$ is diagonal matrix of singular values, contains the square root of the eigenvalues of $AA^T$ and $A^TA$
 
 ### Intuition behind SVD
 * SVD helps us understand the linear transformation of a matrix in terms of its components: rotation, scaling, and reflection.
@@ -416,7 +416,7 @@ $$P(|X_1-X_2|>4), P(|Y_1-Y_2|>4)$$
 
 
 ### Problem 2
-* Find a matrix $A$ such that $AY$ gives the difference of means vectors between iris setosa and iris versicolor
+* Find a matrix $A$ such that $AY$ gives the difference of mean vectors between iris setosa and iris versicolor
 * Find a matrix $B$ such that $YB$ is column-standardized, i.e., the standard deviation of each column/feature is 1. 
 * Check the following
   + Let $C=\mathbf I_{150} - \frac{1}{150}J$, where $J_{150\times 150}$ is an all-ones matrices . Use R to verify that $CY$ centers each column/feature. The R code for $C$ is "
@@ -424,11 +424,11 @@ $$P(|X_1-X_2|>4), P(|Y_1-Y_2|>4)$$
 C=diag(1,150) - \frac{150}matrix(1, 150, 150)
 ```
 
-  + Let $S$ be the sample covariance matrix. Use R to verify that each column of $CYS^{-1/2}$ has been centered and standardized. Hints:
+  + Let $S$ be the sample covariance matrix. Use R to verify that each column of $CYS^{-1/2}$ has been centered and standardized (in fact, the columns have also been de-correlated). Hints:
   ```{}
   S=cov(Y)
   ```
-To compute $S^{-1/2}$, you may need a R package, such as "qtl2pleio".
+To compute $S^{-1/2}$, you may need an R package, such as "qtl2pleio".
 
 ### Problem 3
 * Choose a picture you like and conduct approximations using singular value decomposition (SVD). 

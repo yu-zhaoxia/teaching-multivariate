@@ -140,14 +140,14 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Multivariate Analysis Lecture 2: MatrixOperations},
+  pdftitle={Multivariate Analysis Lecture 2: Matrix Operations},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{Multivariate Analysis Lecture 2: MatrixOperations}
+\title{Multivariate Analysis Lecture 2: Matrix Operations}
 \author{Zhaoxia Yu\\
 Professor, Department of Statistics}
-\date{2023-04-06}
+\date{2023-04-10}
 
 \begin{document}
 \frame{\titlepage}
@@ -488,7 +488,7 @@ Professor, Department of Statistics}
 \begin{itemize}
 \item
   Let \[B=\frac{1}{50}\begin{pmatrix}
-  \mathbf 1_{1\times 50} & \mathbf 1_{1\times 50} & \mathbf 0_{1\times 50}\\
+  \mathbf 1_{1\times 50} & -\mathbf 1_{1\times 50} & \mathbf 0_{1\times 50}\\
   \mathbf 1_{1\times 50} & \mathbf 0_{1\times 50} & -\mathbf 1_{1\times 50} \\
   \mathbf 0_{1\times 50} & \mathbf 1_{1\times 50} & -\mathbf 1_{1\times 50} \\
   \end{pmatrix}\] i.e., \[B=\begin{pmatrix}
@@ -858,7 +858,7 @@ S=cov(Y)
     of \(A^TA\) (p x p matrix)
   \item
     \(D\) is diagonal matrix of singular values, contains the square
-    root of the eigenvalues of \(AA^T\) and \(AA^T\)
+    root of the eigenvalues of \(AA^T\) and \(A^TA\)
   \end{itemize}
 \end{itemize}
 \end{frame}
@@ -1124,7 +1124,7 @@ a_{m1} * B & a_{m2} * B & ... & a_{mn} * B
 \begin{itemize}
 \tightlist
 \item
-  Find a matrix \(A\) such that \(AY\) gives the difference of means
+  Find a matrix \(A\) such that \(AY\) gives the difference of mean
   vectors between iris setosa and iris versicolor
 \item
   Find a matrix \(B\) such that \(YB\) is column-standardized, i.e., the
@@ -1148,14 +1148,15 @@ C=diag(1,150) - \frac{150}matrix(1, 150, 150)
   \tightlist
   \item
     Let \(S\) be the sample covariance matrix. Use R to verify that each
-    column of \(CYS^{-1/2}\) has been centered and standardized. Hints:
+    column of \(CYS^{-1/2}\) has been centered and standardized (in
+    fact, the columns have also been de-correlated). Hints:
   \end{itemize}
 
 \begin{verbatim}
 S=cov(Y)
 \end{verbatim}
 
-  To compute \(S^{-1/2}\), you may need a R package, such as
+  To compute \(S^{-1/2}\), you may need an R package, such as
   ``qtl2pleio''.
 \end{itemize}
 \end{frame}
