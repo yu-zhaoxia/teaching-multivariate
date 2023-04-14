@@ -345,7 +345,7 @@ c(t(a)%*% xbar- 1.96*sqrt(t(a)%*%S%*%a/60),
   - One choice is the determinant: $|\boldsymbol \Sigma|$. 
   - A larger determinant indicates a greater degree of dispersion
 
-### Generalized Inverse: An Example
+### Generalized Variance: An Example
 $$
 \boldsymbol \Sigma_1=\begin{pmatrix}5 &4 \\ 4 &5\end{pmatrix},
 \boldsymbol \Sigma_2=\begin{pmatrix}3 &0 \\ 0 &3\end{pmatrix},
@@ -359,7 +359,7 @@ X2=mvrnorm(100, mu=c(0,0), Sigma=Sigma2)
 Sigma3=matrix(c(5,-4,-4,5), 2,2)
 X3=mvrnorm(100, mu=c(0,0), Sigma=Sigma3)
 ```
-### Generalized Inverse: An Example
+### Generalized Variance: An Example
 ```{r, out.width="100%", out.height="50%"}
 par(mfrow=c(1,3))
 plot(X1); plot(X2); plot(X3)
@@ -383,7 +383,7 @@ https://datascienceplus.com/understanding-the-covariance-matrix/
   - What are the distributions of $\bar X,  s^2$? What useful statistics can be constructed?
 
 - \textcolor{red}{New material}: A random sample, denoted by $\mathbf X_1, \cdots, \mathbf X_n$, from a multivariate normal distribution $N(\boldsymbol \mu, \boldsymbol \Sigma)$
-  - What are the distributions of $\bar{\mathbf X},  \mathbf S^2$? What useful statistics can be constructed?
+  - What are the distributions of $\bar{\mathbf X},  \mathbf S$? What useful statistics can be constructed?
   
 ### The Big Picture: Univariate
 - A random sample, denoted by $X_1, \cdots, X_n$, from a (univariate) normal distribution $N(\mu, \sigma^2)$
@@ -409,5 +409,5 @@ $\mathbf X$ follows a matrix normal distribution.
 2. Sample covariance matrix $(n-1)\mathbf S$ follows a Wishart distribution, i.e., 
 $(n-1)\mathbf S \sim Wishart_p (n-1, \Sigma)$
 
-3. Independence between $\bar {\mathbf X}$ and $S^2$.
+3. Independence between $\bar {\mathbf X}$ and $S$.
 4. Hoetelling's $T^2$: $T^2 = (\bar{\mathbf X} - \boldsymbol \mu)^T\left(\frac{\mathbf S}{n}\right)^{-1} (\bar{\mathbf X} - \boldsymbol \mu)$
