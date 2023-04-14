@@ -706,6 +706,20 @@ sample variance}
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Linear Functions/Combinations: Three Questions}
+\protect\hypertarget{linear-functionscombinations-three-questions}{}
+\begin{itemize}
+\item
+  Q1: Construct a large-sample (approximate) C.I. for protein from meat.
+  In other words, the parameter of interest is \(\mu_1\).
+\item
+  Q2: Construct a large-sample C.I. for the total protein intake
+\item
+  Q3: Construct a large-sample C.I. for the difference of protein intake
+  between from meat and from vegetable
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Linear Functions/Combinations: Question 1}
 \protect\hypertarget{linear-functionscombinations-question-1}{}
 \begin{itemize}
@@ -734,6 +748,41 @@ sample variance}
 \end{itemize}
 
 \[\hat{Var}(\bar X_1)=\mathbf a^T \frac{\mathbf S}{60} \mathbf a\]
+\end{frame}
+
+\begin{frame}{Linear Functions/Combinations: Question 2}
+\protect\hypertarget{linear-functionscombinations-question-2}{}
+\begin{itemize}
+\tightlist
+\item
+  Q2: Construct a large-sample C.I. for the total protein intake
+\item
+  The parameter of interest is
+  \(\mu_1+\mu_2+\mu_3+\mu_4=\mathbf a^T \boldsymbol \mu\), where
+  \(\mathbf a=(1,1,1,1)^T\).
+\item
+  Estimate: \(\mathbf a^T \bar{\mathbf X}\)
+\item
+  Standard error: \(\sqrt{\mathbf a^T\frac{\mathbf S}{n} \mathbf a}\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Linear Functions/Combinations: Question 3}
+\protect\hypertarget{linear-functionscombinations-question-3}{}
+\begin{itemize}
+\tightlist
+\item
+  Q3: Construct a large-sample C.I. for the difference of protein intake
+  between from meat and from vegetable
+\item
+  The parameter of interest is
+  \(\mu_1 - \mu_3=\mathbf a^T \boldsymbol \mu\), where
+  \(\mathbf a=(1, 0, -1, 0)^T\).
+\item
+  Estimate: \(\mathbf a^T \bar{\mathbf X}\)
+\item
+  Standard error: \(\sqrt{\mathbf a^T\frac{\mathbf S}{n} \mathbf a}\)
+\end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Linear Functions/Combinations: Question 1
@@ -778,23 +827,6 @@ sample variance}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Linear Functions/Combinations: Question 2}
-\protect\hypertarget{linear-functionscombinations-question-2}{}
-\begin{itemize}
-\tightlist
-\item
-  Construct a large-sample C.I. for the total protein intake
-\item
-  The parameter of interest is
-  \(\mu_1+\mu_2+\mu_3+\mu_4=\mathbf a^T \boldsymbol \mu\), where
-  \(\mathbf a=(1,1,1,1)^T\).
-\item
-  Estimate: \(\mathbf a^T \bar{\mathbf X}\)
-\item
-  Standard error: \(\sqrt{\mathbf a^T\frac{\mathbf S}{n} \mathbf a}\)
-\end{itemize}
-\end{frame}
-
 \begin{frame}[fragile]{Linear Functions/Combinations: Question 2
 (continued)}
 \protect\hypertarget{linear-functionscombinations-question-2-continued}{}
@@ -834,37 +866,19 @@ sample variance}
 \end{verbatim}
 \end{frame}
 
-\begin{frame}{Linear Functions/Combinations: Question 3}
-\protect\hypertarget{linear-functionscombinations-question-3}{}
-\begin{itemize}
-\tightlist
-\item
-  Q3: Construct a large-sample C.I. for the difference of protein intake
-  between from meat and from vegetable
-\item
-  The parameter of interest is
-  \(\mu_1 - \mu_3=\mathbf a^T \boldsymbol \mu\), where
-  \(\mathbf a=(1, -1, 0, 0)^T\).
-\item
-  Estimate: \(\mathbf a^T \bar{\mathbf X}\)
-\item
-  Standard error: \(\sqrt{\mathbf a^T\frac{\mathbf S}{n} \mathbf a}\)
-\end{itemize}
-\end{frame}
-
 \begin{frame}[fragile]{Linear Functions/Combinations: Question 3
 (continued)}
 \protect\hypertarget{linear-functionscombinations-question-3-continued}{}
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{a}\OtherTok{=}\FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{),}\DecValTok{4}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{a}\OtherTok{=}\FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{),}\DecValTok{4}\NormalTok{,}\DecValTok{1}\NormalTok{)}
 \FunctionTok{t}\NormalTok{(a)}\SpecialCharTok{\%*\%}\NormalTok{ xbar }\CommentTok{\#estimate }
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ##          [,1]
-## [1,] 8.105671
+## [1,] 16.37354
 \end{verbatim}
 
 \begin{Shaded}
@@ -875,7 +889,7 @@ sample variance}
 
 \begin{verbatim}
 ##           [,1]
-## [1,] 0.3432878
+## [1,] 0.3465864
 \end{verbatim}
 
 \begin{Shaded}
@@ -887,7 +901,7 @@ sample variance}
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 7.432827 8.778515
+## [1] 15.69423 17.05285
 \end{verbatim}
 \end{frame}
 
@@ -1047,6 +1061,8 @@ distributions}\label{normal-distributions-univariate-multivariate-matrix-normal-
 \item
   \(\frac{(n-1)s^2}{\sigma^2} \sim \chi_{n-1}^2\)
 \item
+  Independence between \(\bar X\) and \(s^2\).
+\item
   a t-statistic is
   \[\frac{\frac{\bar X-\mu}{\sqrt{\sigma^2/n}}}{\sqrt{\frac{(n-1)s^2/\sigma^2}{n-1}}}=\frac{\sqrt{n}(\bar X-\mu)}{s}\]
   It follows the t-distribution with n-1 degrees of freedom, denoted by
@@ -1076,8 +1092,10 @@ distributions}\label{normal-distributions-univariate-multivariate-matrix-normal-
   Sample covariance matrix \((n-1)\mathbf S\) follows a Wishart
   distribution, i.e., \((n-1)\mathbf S \sim Wishart_p (n-1, \Sigma)\)
 \item
-  Hoetelling's \(T^2\)
-  \[T^2 = (\bar{\mathbf X} - \boldsymbol \mu)^T\left(\frac{\mathbf S}{n}\right)^{-1} (\bar{\mathbf X} - \boldsymbol \mu)\]
+  Independence between \(\bar {\mathbf X}\) and \(S^2\).
+\item
+  Hoetelling's \(T^2\):
+  \(T^2 = (\bar{\mathbf X} - \boldsymbol \mu)^T\left(\frac{\mathbf S}{n}\right)^{-1} (\bar{\mathbf X} - \boldsymbol \mu)\)
 \end{enumerate}
 \end{frame}
 

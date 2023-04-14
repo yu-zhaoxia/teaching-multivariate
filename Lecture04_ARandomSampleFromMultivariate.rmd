@@ -261,6 +261,14 @@ S
 $$\hat{Var}(\bar{\mathbf X})=\frac{1}{60}\mathbf S$$
 
 
+### Linear Functions/Combinations: Three Questions
+- Q1: Construct a large-sample (approximate) C.I. for protein from meat. In other words, the parameter of interest is $\mu_1$.
+
+- Q2: Construct a large-sample C.I. for the total protein intake
+
+- Q3: Construct a large-sample C.I. for the difference of protein intake between from meat and from vegetable
+
+
 ### Linear Functions/Combinations: Question 1
 - Q1: Construct a large-sample (approximate) C.I. for protein from meat. In other words, the parameter of interest is $\mu_1$.
 - Estimate $\bar X_1=24.0$.
@@ -270,6 +278,21 @@ $$\hat{Var}(\bar{\mathbf X})=\frac{1}{60}\mathbf S$$
     2. The calculation can also be done by noticing that $\bar X_1$ is a linear combination of $\bar{\mathbf X}$: $\bar X_1 =\mathbf a^T  \bar{\mathbf X}$, where $\mathbf a^T=(1, 0, 0, 0)$. Thus,
 
 $$\hat{Var}(\bar X_1)=\mathbf a^T \frac{\mathbf S}{60} \mathbf a$$
+
+
+
+### Linear Functions/Combinations: Question 2
+- Q2: Construct a large-sample C.I. for the total protein intake
+- The parameter of interest is $\mu_1+\mu_2+\mu_3+\mu_4=\mathbf a^T \boldsymbol \mu$, where $\mathbf a=(1,1,1,1)^T$.
+- Estimate: $\mathbf a^T \bar{\mathbf X}$
+- Standard error: $\sqrt{\mathbf a^T\frac{\mathbf S}{n} \mathbf a}$
+
+
+### Linear Functions/Combinations: Question 3
+- Q3: Construct a large-sample C.I. for the difference of protein intake between from meat and from vegetable
+- The parameter of interest is $\mu_1 - \mu_3=\mathbf a^T \boldsymbol \mu$, where $\mathbf a=(1, 0, -1, 0)^T$.
+- Estimate: $\mathbf a^T \bar{\mathbf X}$
+- Standard error: $\sqrt{\mathbf a^T\frac{\mathbf S}{n} \mathbf a}$
 
 ### Linear Functions/Combinations: Question 1 (continued)
 - R code to compute using the above two ways
@@ -284,13 +307,6 @@ sqrt(t(a)%*%S%*%a/60)
 - Both methods give $s.e.(\bar X_1)=0.27$
 - An approximate 95% C.I. for $\mu_1$ is $24.0 \pm 1.96*0.27$
 
-
-### Linear Functions/Combinations: Question 2
-- Construct a large-sample C.I. for the total protein intake
-- The parameter of interest is $\mu_1+\mu_2+\mu_3+\mu_4=\mathbf a^T \boldsymbol \mu$, where $\mathbf a=(1,1,1,1)^T$.
-- Estimate: $\mathbf a^T \bar{\mathbf X}$
-- Standard error: $\sqrt{\mathbf a^T\frac{\mathbf S}{n} \mathbf a}$
-
 ### Linear Functions/Combinations: Question 2 (continued)
 ```{r}
 a=matrix(1,4,1)
@@ -301,15 +317,9 @@ c(t(a)%*% xbar- 1.96*sqrt(t(a)%*%S%*%a/60),
   t(a)%*% xbar+ 1.96*sqrt(t(a)%*%S%*%a/60))
 ```
 
-### Linear Functions/Combinations: Question 3
-- Q3: Construct a large-sample C.I. for the difference of protein intake between from meat and from vegetable
-- The parameter of interest is $\mu_1 - \mu_3=\mathbf a^T \boldsymbol \mu$, where $\mathbf a=(1, -1, 0, 0)^T$.
-- Estimate: $\mathbf a^T \bar{\mathbf X}$
-- Standard error: $\sqrt{\mathbf a^T\frac{\mathbf S}{n} \mathbf a}$
-
 ### Linear Functions/Combinations: Question 3 (continued)
 ```{r}
-a=matrix(c(1,-1,0,0),4,1)
+a=matrix(c(1,0,-1,0),4,1)
 t(a)%*% xbar #estimate 
 sqrt(t(a)%*%S%*%a/60) #standard error
 #a large-sample 95% C.I. 
@@ -381,7 +391,8 @@ https://datascienceplus.com/understanding-the-covariance-matrix/
   $$\mathbf X_{n\times 1}=(X_1, \cdots, X_n)^T \sim \mathbf N(\mu\mathbf 1, \sigma^2\mathbf I)$$
 1. $\bar X \sim N(\mu, \sigma^2/n)$
 2. $\frac{(n-1)s^2}{\sigma^2} \sim \chi_{n-1}^2$
-3. a t-statistic is 
+3. Independence between $\bar X$ and $s^2$.
+4. a t-statistic is 
 $$\frac{\frac{\bar X-\mu}{\sqrt{\sigma^2/n}}}{\sqrt{\frac{(n-1)s^2/\sigma^2}{n-1}}}=\frac{\sqrt{n}(\bar X-\mu)}{s}$$
 It follows the t-distribution with n-1 degrees of freedom, denoted by $t_{n-1}$.
 
@@ -398,5 +409,5 @@ $\mathbf X$ follows a matrix normal distribution.
 2. Sample covariance matrix $(n-1)\mathbf S$ follows a Wishart distribution, i.e., 
 $(n-1)\mathbf S \sim Wishart_p (n-1, \Sigma)$
 
-3. Hoetelling's $T^2$
-$$T^2 = (\bar{\mathbf X} - \boldsymbol \mu)^T\left(\frac{\mathbf S}{n}\right)^{-1} (\bar{\mathbf X} - \boldsymbol \mu)$$
+3. Independence between $\bar {\mathbf X}$ and $S^2$.
+4. Hoetelling's $T^2$: $T^2 = (\bar{\mathbf X} - \boldsymbol \mu)^T\left(\frac{\mathbf S}{n}\right)^{-1} (\bar{\mathbf X} - \boldsymbol \mu)$
