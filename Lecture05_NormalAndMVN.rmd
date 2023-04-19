@@ -100,9 +100,12 @@ $$M_X(t)=\mathbb{E}[e^{tX}]$$
 - Like a PDF/PMF or CDF, a MGF uniquely determines/identifies a distribution
 - The definition can be extended to random vectors and random matrices
   - Consider a random vector $\mathbf X_{p\times 1}$. Let $t$ be a $p\times 1$ vector. 
-  $$M_{\mathbf X}= \mathbb E [t^T\mathbf X]$$
+  
+  $$M_{\mathbf X}= \mathbb E [e{t^T\mathbf X}]$$
+  
   - Consider a random matrix $\mathbf X_{n\times p}$. Let $t$ be a $n\times p$ matrix. 
-  $$M_{\mathbf X}= \mathbb E [trace(t^T\mathbf X)]$$
+  
+  $$M_{\mathbf X}= \mathbb E [e^{trace(t^T\mathbf X)}]$$
 
 <!--- We will use MGF to derive the distribution of a statistic
 - Another useful property of MGF is $$M^{(k)}_X(0)=E[X^n]$$ where $M^{(k)}_X(t)$ denote the $k$th derivative of the MGF. -->
@@ -332,13 +335,14 @@ $$\begin{pmatrix}
 \mathbf Y\\ \mathbf Z
 \end{pmatrix}=\begin{pmatrix}A \\ B\end{pmatrix}\mathbf X
 $$
-- By the results in the two previous slides\textcolor{red}{???}
-$$
-\begin{aligned}
-\mathbf Y & \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
+- A linear combination of MVN random vector also follows a MVN
+$$\begin{aligned}
+\begin{pmatrix}\mathbf Y\\ \mathbf Z\end{pmatrix} 
+& \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
 &\sim N(\begin{pmatrix}A \boldsymbol \mu \\ B\boldsymbol \mu \end{pmatrix}, \begin{pmatrix}A \boldsymbol \Sigma A^T & A \boldsymbol \Sigma B^T\\ B \boldsymbol \Sigma A^T & B \boldsymbol \Sigma B^T \end{pmatrix}\boldsymbol)
 \end{aligned} 
 $$
+
 We have 
 $$\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0$$
 
@@ -346,9 +350,10 @@ $$\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0$$
 
 
 ### A Simulation Question
+
 - Suppose we have a random sample from a normal distribution. 
 - How to use a simulation to show that sample mean and sample variance are uncorrelated (in fact they are also independent)?
-```{r, eval=FALSE}
+```{r, eval=FALSE, echo=FALSE}
 # Proof of independence between sample mean and sample variance for univariate case
 #library(mvtnorm)
 
@@ -394,6 +399,7 @@ if (p_value > 0.05) {
   
 - We want to show that $\bar{X}$ and $s^2$ are independent.
 
+
 ### Proof
 - We first rewrite the sample mean: 
 $$\bar{X} = \frac{1}{n} \sum_{i=1}^{n} X_i =\frac{1}{n}\mathbf 1^T \mathbf X $$
@@ -404,7 +410,9 @@ $$s^2=\frac{1}{n-1} (\mathbb C\mathbf X)^T (\mathbb C\mathbf X),$$
 which indicates that the distribution $s^2$ is determined by the distribution of $\mathbb C X$. 
 
 
-- Clearly $\bar {\mathbf X}$ and $\mathbb C$ are linear combinations of $\mathbf X$, which follows a multivariate normal with covariance $\boldsymbol\Sigma= \mathbf I$. Thus, 
+### Proof (continued)
+
+- Clearly $\bar {\mathbf X}$ and $\mathbb C \mathbf X$ are linear combinations of $\mathbf X$, which follows a multivariate normal with covariance $\boldsymbol\Sigma= \mathbf I$. Thus, 
 $$cov(\bar {\mathbf X}, \mathbb C) = \frac{1}{n}\mathbf 1^T \Sigma \mathbb C= \frac{1}{n}\mathbf 1^T \mathbb C=0$$
 Please verify that last step. 
 
@@ -436,6 +444,22 @@ $$\tilde {\mathbf X}_{(np)\times 1}=
 \begin{pmatrix}
 \mathbf X_{(1)}\\ \vdots \\ \mathbf X_{(p)} \end{pmatrix}$$
 - What is the distribution of $\mathbf X_{(1)}$?
+
+### _
+- The distribution of $\mathbf X_{(1)}$?
+$$
+\mathbf X_{(1)} \sim N(
+\begin{pmatrix}
+\mu_1 \\ \vdots \\ \mu_1
+\end{pmatrix},
+\begin{pmatrix}
+\sigma_{11}^2 &  0 & \cdots& 0\\
+0 & \sigma_{11}^2 & \cdots & 0\\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \cdots & \sigma_{11}^2
+\end{pmatrix}
+)\sim N(\mu_1 \mathbf 1_n, \sigma_{11}^2 \mathbf I)
+$$
 
 ### Step 1b: The distribution of $\mathbf x_{n\times p}$
 $$

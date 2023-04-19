@@ -74,46 +74,6 @@
 \makeatother
 \usepackage{xcolor}
 \newif\ifbibliography
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
@@ -135,7 +95,7 @@
 \title{Multivariate Analysis Lecture 5: Normal and Multivariate Normal}
 \author{Zhaoxia Yu\\
 Professor, Department of Statistics}
-\date{2023-04-18}
+\date{2023-04-19}
 
 \begin{document}
 \frame{\titlepage}
@@ -296,7 +256,6 @@ Professor, Department of Statistics}
 \begin{frame}{Moment Generating Function (MGF)}
 \protect\hypertarget{moment-generating-function-mgf}{}
 \begin{itemize}
-\tightlist
 \item
   The moment generating function of random variable \(X\) is defined
   \[M_X(t)=\mathbb{E}[e^{tX}]\]
@@ -310,12 +269,19 @@ Professor, Department of Statistics}
   \tightlist
   \item
     Consider a random vector \(\mathbf X_{p\times 1}\). Let \(t\) be a
-    \(p\times 1\) vector. \[M_{\mathbf X}= \mathbb E [t^T\mathbf X]\]
+    \(p\times 1\) vector.
+  \end{itemize}
+
+  \[M_{\mathbf X}= \mathbb E [e{t^T\mathbf X}]\]
+
+  \begin{itemize}
+  \tightlist
   \item
     Consider a random matrix \(\mathbf X_{n\times p}\). Let \(t\) be a
     \(n\times p\) matrix.
-    \[M_{\mathbf X}= \mathbb E [trace(t^T\mathbf X)]\]
   \end{itemize}
+
+  \[M_{\mathbf X}= \mathbb E [e^{trace(t^T\mathbf X)}]\]
 \end{itemize}
 \end{frame}
 
@@ -658,16 +624,19 @@ M_{\mathbf{X}}(\mathbf{t}) = \exp\left( \boldsymbol{\mu}^T \mathbf{t} + \frac{1}
   \end{pmatrix}=\begin{pmatrix}A \\ B\end{pmatrix}\mathbf X
   \]
 \item
-  By the results in the two previous slides\textcolor{red}{???} \[
-  \begin{aligned}
-  \mathbf Y & \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
+  A linear combination of MVN random vector also follows a MVN
+  \[\begin{aligned}
+  \begin{pmatrix}\mathbf Y\\ \mathbf Z\end{pmatrix} 
+  & \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
   &\sim N(\begin{pmatrix}A \boldsymbol \mu \\ B\boldsymbol \mu \end{pmatrix}, \begin{pmatrix}A \boldsymbol \Sigma A^T & A \boldsymbol \Sigma B^T\\ B \boldsymbol \Sigma A^T & B \boldsymbol \Sigma B^T \end{pmatrix}\boldsymbol)
   \end{aligned} 
-  \] We have \[\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0\]
+  \]
 \end{itemize}
+
+We have \[\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0\]
 \end{frame}
 
-\begin{frame}[fragile]{A Simulation Question}
+\begin{frame}{A Simulation Question}
 \protect\hypertarget{a-simulation-question}{}
 \begin{itemize}
 \tightlist
@@ -677,39 +646,6 @@ M_{\mathbf{X}}(\mathbf{t}) = \exp\left( \boldsymbol{\mu}^T \mathbf{t} + \frac{1}
   How to use a simulation to show that sample mean and sample variance
   are uncorrelated (in fact they are also independent)?
 \end{itemize}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# Proof of independence between sample mean and sample variance for univariate case}
-\CommentTok{\#library(mvtnorm)}
-
-\CommentTok{\# Generate random sample from normal distribution}
-\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
-\NormalTok{n }\OtherTok{\textless{}{-}} \DecValTok{100}
-\NormalTok{mu }\OtherTok{\textless{}{-}} \DecValTok{0}
-\NormalTok{sigma2 }\OtherTok{\textless{}{-}} \DecValTok{1}
-\NormalTok{X }\OtherTok{\textless{}{-}} \FunctionTok{rnorm}\NormalTok{(n, mu, }\FunctionTok{sqrt}\NormalTok{(sigma2))}
-
-\CommentTok{\# Calculate sample mean and sample variance}
-\NormalTok{mean\_X }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(X)}
-\NormalTok{var\_X }\OtherTok{\textless{}{-}} \FunctionTok{var}\NormalTok{(X)}
-
-\CommentTok{\# Verify that sample mean and sample variance are unbiased estimators}
-\CommentTok{\#assertthat::assert\_that(mean\_X == mu)}
-\CommentTok{\#assertthat::assert\_that(var\_X == sigma2)}
-
-\CommentTok{\# Use Cochran\textquotesingle{}s theorem to show independence}
-\NormalTok{k }\OtherTok{\textless{}{-}} \DecValTok{1} \CommentTok{\# degrees of freedom for sample mean}
-\NormalTok{nu }\OtherTok{\textless{}{-}}\NormalTok{ n }\SpecialCharTok{{-}} \DecValTok{1} \CommentTok{\# degrees of freedom for sample variance}
-\NormalTok{F\_stat }\OtherTok{\textless{}{-}}\NormalTok{ k }\SpecialCharTok{*}\NormalTok{ (n }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{) }\SpecialCharTok{*}\NormalTok{ var\_X }\SpecialCharTok{/}\NormalTok{ (sigma2 }\SpecialCharTok{*}\NormalTok{ nu)}
-\NormalTok{p\_value }\OtherTok{\textless{}{-}} \FunctionTok{pf}\NormalTok{(F\_stat, }\AttributeTok{df1=}\NormalTok{k, }\AttributeTok{df2=}\NormalTok{nu, }\AttributeTok{lower.tail=}\ConstantTok{FALSE}\NormalTok{)}
-\ControlFlowTok{if}\NormalTok{ (p\_value }\SpecialCharTok{\textgreater{}} \FloatTok{0.05}\NormalTok{) \{}
-  \FunctionTok{cat}\NormalTok{(}\StringTok{"Reject null hypothesis at 5\% significance level}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
-\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
-  \FunctionTok{cat}\NormalTok{(}\StringTok{"Fail to reject null hypothesis at 5\% significance level}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
 \end{frame}
 
 \hypertarget{sample-mean-and-sample-variance}{%
@@ -756,10 +692,17 @@ Variance}\label{sample-mean-and-sample-variance}}
   \[s^2=\frac{1}{n-1} (\mathbb C\mathbf X)^T (\mathbb C\mathbf X),\]
   which indicates that the distribution \(s^2\) is determined by the
   distribution of \(\mathbb C X\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Proof (continued)}
+\protect\hypertarget{proof-continued}{}
+\begin{itemize}
+\tightlist
 \item
-  Clearly \(\bar {\mathbf X}\) and \(\mathbb C\) are linear combinations
-  of \(\mathbf X\), which follows a multivariate normal with covariance
-  \(\boldsymbol\Sigma= \mathbf I\). Thus,
+  Clearly \(\bar {\mathbf X}\) and \(\mathbb C \mathbf X\) are linear
+  combinations of \(\mathbf X\), which follows a multivariate normal
+  with covariance \(\boldsymbol\Sigma= \mathbf I\). Thus,
   \[cov(\bar {\mathbf X}, \mathbb C) = \frac{1}{n}\mathbf 1^T \Sigma \mathbb C= \frac{1}{n}\mathbf 1^T \mathbb C=0\]
   Please verify that last step.
 \end{itemize}
@@ -841,6 +784,27 @@ Covariance Matrix}
   \end{itemize}
 \item
   What is the distribution of \(\mathbf X_{(1)}\)?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\_}
+\protect\hypertarget{section}{}
+\begin{itemize}
+\tightlist
+\item
+  The distribution of \(\mathbf X_{(1)}\)? \[
+  \mathbf X_{(1)} \sim N(
+  \begin{pmatrix}
+  \mu_1 \\ \vdots \\ \mu_1
+  \end{pmatrix},
+  \begin{pmatrix}
+  \sigma_{11}^2 &  0 & \cdots& 0\\
+  0 & \sigma_{11}^2 & \cdots & 0\\
+  \vdots & \vdots & \ddots & \vdots\\
+  0 & 0 & \cdots & \sigma_{11}^2
+  \end{pmatrix}
+  )\sim N(\mu_1 \mathbf 1_n, \sigma_{11}^2 \mathbf I)
+  \]
 \end{itemize}
 \end{frame}
 
