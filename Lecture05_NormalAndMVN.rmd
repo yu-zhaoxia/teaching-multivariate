@@ -445,6 +445,7 @@ $$\tilde {\mathbf X}_{(np)\times 1}=
 \mathbf X_{(1)}\\ \vdots \\ \mathbf X_{(p)} \end{pmatrix}$$
 - What is the distribution of $\mathbf X_{(1)}$?
 
+
 ### _
 - The distribution of $\mathbf X_{(1)}$?
 $$
