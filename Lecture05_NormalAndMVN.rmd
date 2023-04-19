@@ -1,5 +1,5 @@
 ---
-title: "Multivariate Analysis Lecture 5: Multivariate Normal, MGF, and Independence"
+title: "Multivariate Analysis Lecture 5: Normal and Multivariate Normal"
 author: | 
   | Zhaoxia Yu
   | Professor, Department of Statistics
@@ -60,7 +60,7 @@ $(n-1)\mathbf S \sim Wishart_p (n-1, \Sigma)$
 - Multivariate normal distribution (MVN)
 - Moment generating function (MGF)
   - Apply MGF to univariate normal
-  - Apply MGF to multivariate normal (MVN)
+  - Apply MGF to multivariate normal
 - Zero-Cov vs Independence
 - MVN: $\bar{\mathbf X}$ and $\mathbf S$
 
@@ -139,7 +139,7 @@ $$
 
 
 ### MGF of Univariate Normal: Examples
-- Recall that $M_X(t)=exp\{\mu t + \frac{1}{2}{\sigma^2}t^2\}$ for $X\sim N(0, \sigma^2)$. 
+- Recall that $M_X(t)=exp\{\mu t + \frac{1}{2}{\sigma^2}t^2\}$ for $X\sim N(\mu, \sigma^2)$. 
 
 What is the distribution corresponding to each of the following MGFs?
 
@@ -213,7 +213,7 @@ Which indicates that $Z\sim N(\mu_X+\mu_Y, \sigma_X^2+\sigma_Y^2)$
 - If $X_1, \cdots, X_n \overset{iid}\sim  N(\mu, \sigma^2)$. 
 - We have showed that $E[\bar X]=\mu$ and $Var[\bar X]=\sigma^2/n$.
 - How to prove $\bar X$ follows a normal distribution?
-- A short proof:
+- A compact proof:
 $$
 M_{\bar{X}}(t) = \prod_{i=1}^{n} M_{X_i}(\frac{t}{n})= \left(\exp\{\mu\frac{t}{n} + \frac{1}{2}\sigma^2 \frac{t^2}{n^2}\}\right)^n
 =\exp\{\mu t + \frac{1}{2}\frac{\sigma^2}{n}t^2 \}
@@ -227,8 +227,8 @@ $$
 \begin{aligned}
 M_{\bar X}(t)&=E[e^{t\bar X}]= E[e^{\frac{t}{n} \sum_{i=1}^n X_i}]=E[e^{\frac{t}{n} X_1 + \frac{t}{n} X_2 + \cdots + \frac{t}{n} X_n}]\\
 &\overset{iid}=E[e^{\frac{t}{n} X_1}]\cdots E[e^{\frac{t}{n} X_n}]=M_{X_1}(\frac{t}{n}) \cdots M_{X_n}(\frac{t}{n})\\
-&= \exp\{\mu\frac{t}{n}+\frac{1}{2}\sigma^2 \frac{t}{n}\}\cdots \exp\{\mu\frac{t}{n}+\frac{1}{2}\sigma^2 \frac{t}{n}\}\\
-&= \exp\{\mu t + \frac{1}{2}\frac{\sigma^2}{n}t\}
+&= \exp\{\mu\frac{t}{n}+\frac{1}{2}\sigma^2 (\frac{t}{n})^2\}\cdots \exp\{\mu\frac{t}{n}+\frac{1}{2}\sigma^2 (\frac{t}{n})^2\}\\
+&= \exp\{\mu t + \frac{1}{2}\frac{\sigma^2}{n}t^2\}
 \end{aligned}
 $$
 Based on the $M_{\bar X}(t)$, $\bar X\sim N(\mu, \frac{\sigma^2}{n})$. 
@@ -263,13 +263,12 @@ $$
 
 ### MGF of MVN: A Linear Combination
 - Let $\mathbf{X}_{p\times 1}\sim N(\boldsymbol \mu, \boldsymbol \Sigma)$.
+- We want to show that the linear combinations $\mathbf{Y} = \mathbf{A}_{q\times p}\mathbf{X}$ also follows a multivariate normal distribution.
+
 - The MGF of $\mathbf X$ is
 $$
 M_{\mathbf{X}}(\mathbf{t}) = E[e^{t^T\mathbf X}]=\exp\left(\boldsymbol{\mu}^T \mathbf{t} + \frac{1}{2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)
 $$
-
-- We want to show that the linear combination $\mathbf{Y} = \mathbf{A}_{q\times p}\mathbf{X}$ also follows a MVN.
-
 
 ### MGF of MVN: A Linear Combination
 - To find the distribution of $Y$, we derive the MGF of $Y$. 
@@ -281,13 +280,13 @@ M_{\mathbf{Y}}(\mathbf{t}) &= E[e^{t^TAX}]=M_{\mathbf{X}}(\mathbf{A}^T \mathbf{t
 $$
 - $M_{\mathbf{Y}}(\mathbf{t})$ has the form of the MGF of a multivariate normal distribution with mean vector $\mathbf{A}\boldsymbol{\mu}$ and covariance matrix $\mathbf{A}\boldsymbol{\Sigma}\mathbf{A}^T$. 
 
-- As a result, the linear combination  $$\mathbf Y =\mathbf A \mathbf X \sim N(\mathbf A \boldsymbol \mu, \boldsymbol A \boldsymbol \Sigma \mathbf A^T)$$
+- As a result, the linear combination  $$\mathbf Y =A \mathbf X \sim N(A \boldsymbol \mu, \boldsymbol A \boldsymbol \Sigma A^T)$$
 
 
 
 ### MGF of MVN: The Sample Mean Vector
 - Let $\mathbf X_1, \cdots \mathbf X_n$ be a random sample from $N(\boldsymbol \mu, \boldsymbol \Sigma)$.
-- We have defined the sample mean vector $\bar{\mathbf{X}}$
+- We have defined then the sample mean vector $\bar{\mathbf{X}}$
 - We have shown that 
   - $\mathbb E[\bar{\mathbf{X}}]=\boldsymbol \mu$
   - $Cov[\bar{\mathbf{X}}]=\frac{\boldsymbol \Sigma}{n}$
@@ -298,7 +297,7 @@ $$
 $$
 \begin{aligned}
 M_{\bar{\mathbf{X}}}(\mathbf{t}) &\overset{iid}= \prod_{i=1}^n M_{\mathbf{X}_i}(\frac{1}{n}\mathbf{t}) = \left(\exp\left(\boldsymbol{\mu}^T \frac{1}{n}\mathbf{t} + \frac{1}{2} \left(\frac{1}{n}\mathbf{t}\right)^T \boldsymbol{\Sigma} \left(\frac{1}{n}\mathbf{t}\right)\right)\right)^n\\
-&= \exp\left(n\left(\boldsymbol{\mu}^T \frac{1}{n}\mathbf{t} + \frac{1}{2n} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)\right) \\
+&= \exp\left(n\left(\boldsymbol{\mu}^T \frac{1}{n}\mathbf{t} + \frac{1}{2n^2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)\right) \\
 &= \exp\left(\boldsymbol{\mu}^T \mathbf{t} + \frac{1}{2} \mathbf{t}^T \frac{1}{n}\boldsymbol{\Sigma} \mathbf{t}\right)
 \end{aligned}
 $$
@@ -311,14 +310,14 @@ $\bar{\mathbf{X}}\sim N(\boldsymbol \mu , \frac{\boldsymbol \Sigma}{n})$
 
 ### Independence of Normals Under Jointly Normal
 - In general, zero-correlation does not guarantee independence
-- \textbf{Theorem} If the \textcolor{red}{joint} distribution of $\mathbf X_1$ (a $p\times 1$ random vector) and $\mathbf X_2$ is \textcolor{red}{multivariate normal}, i.e.,
+- Independence of normals under jointly normal: If the joint distribution of $\mathbf X_1$ (a $p\times 1$ random vector) and $\mathbf X_2$ is jointly/multivariate normal, i.e.,
 $$
 \begin{pmatrix}\mathbf X_1 \\ \mathbf X_2
 \end{pmatrix} \sim N(
 \begin{pmatrix}\boldsymbol \mu_1\\\boldsymbol \mu_2\end{pmatrix},
 \begin{pmatrix}\boldsymbol \Sigma_{11} & \boldsymbol \Sigma_{12}\\ \boldsymbol \Sigma_{21} & \boldsymbol \Sigma_{22}\end{pmatrix}),
 $$
-then $\mathbf X_1 \perp \mathbf X_2 \Leftrightarrow  \boldsymbol \Sigma_{12}=2$
+then $\mathbf X_1 \perp \mathbf X_2 \Leftrightarrow  \boldsymbol \Sigma_{12}=0$
 
 - Proof: omitted. A result about MGF can be used to prove independence. 
 
@@ -326,35 +325,65 @@ then $\mathbf X_1 \perp \mathbf X_2 \Leftrightarrow  \boldsymbol \Sigma_{12}=2$
 
 ### The Joint Distribution of Two Linear Functions
 - Let $\mathbf{X}_{p\times 1}\sim N(\boldsymbol \mu, \boldsymbol \Sigma)$.
-- Let $\mathbf Y=\mathbf A \mathbf X$ and $\mathbf Z=\mathbf B \mathbf X$. 
+- Let $\mathbf Y=A \mathbf X$ and $\mathbf Z=B \mathbf X$. 
 - What is the joint distribution of $Y$ and $Z$?
 - Note that 
 $$\begin{pmatrix}
 \mathbf Y\\ \mathbf Z
-\end{pmatrix}=\begin{pmatrix}A \\ B\end{pmatrix}\mathbf X,
+\end{pmatrix}=\begin{pmatrix}A \\ B\end{pmatrix}\mathbf X
 $$
-
-i.e., the new random vector $\begin{pmatrix}\mathbf Y\\ \mathbf Z\end{pmatrix}$ is a linear combination of $\mathbf X$ that follows a MVN. 
-
-### The Joint Distribution of Two Linear Functions
-- As a result, the joint distribution of two linear functions, namely $\mathbf Y$ and $\mathbf Z$ are jointly normal (i.e, MVN). 
-
+- By the results in the two previous slides\textcolor{red}{???}
 $$
 \begin{aligned}
-\begin{pmatrix}\mathbf Y \\ \mathbf Z\end{pmatrix}
-& \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
+\mathbf Y & \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
 &\sim N(\begin{pmatrix}A \boldsymbol \mu \\ B\boldsymbol \mu \end{pmatrix}, \begin{pmatrix}A \boldsymbol \Sigma A^T & A \boldsymbol \Sigma B^T\\ B \boldsymbol \Sigma A^T & B \boldsymbol \Sigma B^T \end{pmatrix}\boldsymbol)
 \end{aligned} 
 $$
-By the Theorem on the slide titled "Independence of Normals Under Jointly Normal",
+We have 
 $$\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0$$
 
 
 
 
+### A Simulation Question
+- Suppose we have a random sample from a normal distribution. 
+- How to use a simulation to show that sample mean and sample variance are uncorrelated (in fact they are also independent)?
+```{r, eval=FALSE}
+# Proof of independence between sample mean and sample variance for univariate case
+#library(mvtnorm)
+
+# Generate random sample from normal distribution
+set.seed(123)
+n <- 100
+mu <- 0
+sigma2 <- 1
+X <- rnorm(n, mu, sqrt(sigma2))
+
+# Calculate sample mean and sample variance
+mean_X <- mean(X)
+var_X <- var(X)
+
+# Verify that sample mean and sample variance are unbiased estimators
+#assertthat::assert_that(mean_X == mu)
+#assertthat::assert_that(var_X == sigma2)
+
+# Use Cochran's theorem to show independence
+k <- 1 # degrees of freedom for sample mean
+nu <- n - 1 # degrees of freedom for sample variance
+F_stat <- k * (n - 1) * var_X / (sigma2 * nu)
+p_value <- pf(F_stat, df1=k, df2=nu, lower.tail=FALSE)
+if (p_value > 0.05) {
+  cat("Reject null hypothesis at 5% significance level\n")
+} else {
+  cat("Fail to reject null hypothesis at 5% significance level\n")
+}
+
+```
 
 ## Sample Mean and Sample Variance 
 ### The Independence Between Sample Mean and Sample Variance
+- For a random sample from a normal distribution, the sample mean and sample variance are independent. 
+
 - Let $\mathbf X =(X_1, X_2, ..., X_n)^T$ be a random sample from a normal distribution with mean $\mu$ and variance $\sigma^2$.
 
 - The sample mean and sample variance are defined as:
@@ -374,21 +403,17 @@ where $\mathbb C=\mathbf I - \frac{1}{n}\mathbf 1 \mathbf 1^T$. In addition, it 
 $$s^2=\frac{1}{n-1} (\mathbb C\mathbf X)^T (\mathbb C\mathbf X),$$
 which indicates that the distribution $s^2$ is determined by the distribution of $\mathbb C X$. 
 
-### Proof (continued)
 
-- Clearly $\bar X$ and $\mathbb C \mathbf X$ are linear combinations of $\mathbf X$, which follows a multivariate normal with covariance $\boldsymbol\Sigma= \mathbf I$. Thus, 
-$$cov(\bar X, \mathbb C) = \frac{1}{n}\mathbf 1^T \Sigma \mathbb C \mathbf X= \frac{1}{n}\mathbf 1^T \mathbb C=0$$
+- Clearly $\bar {\mathbf X}$ and $\mathbb C$ are linear combinations of $\mathbf X$, which follows a multivariate normal with covariance $\boldsymbol\Sigma= \mathbf I$. Thus, 
+$$cov(\bar {\mathbf X}, \mathbb C) = \frac{1}{n}\mathbf 1^T \Sigma \mathbb C= \frac{1}{n}\mathbf 1^T \mathbb C=0$$
 Please verify that last step. 
 
-- By Theorem on "Independence of Normals Under Jointly Normal", we have $\bar X$ and $\mathbb C\mathbf X$ are independent. 
-- Now we can conclude the $\bar X$ and $s^2$ are independent. 
+By Theorem on "Independence of Normals Under Jointly Normal", we can conclude the $\bar {\mathbf X}$ and $s^2$ are independent. 
 
 
 # MVN: $\bar {\mathbf X}$ and $S$
 ### The Independence Between Sample Mean Vector and Sample Covariance Matrix
-- Consider a random sample from $N(\boldsymbol \mu, \boldsymbol \Sigma)$ (MVN). Let $\bar{\boldsymbol X}$ be the sample mean vector. 
-- We have shown that $\mathbb E[\bar{\mathbf X}]=\boldsymbol \mu$ and $Cov[\bar{\mathbf X}]=\boldsymbol \Sigma$.
-- How to prove that the sample mean vector and the sample covariance matrix are independent?
+- How to prove that the sample mean vector and the sample covariance matrix are independent
 - Messier way: vectorize the $n\times p$ matrix $\mathbf X$ to a $(np)\times 1$ vector and then apply the condition for independent linear combinations under MVN
 - Neater way: use properties of Matrix Normal Distribution 
 
@@ -425,7 +450,7 @@ N (
 \begin{pmatrix}\mu_1 \mathbf 1_n \\ \vdots \\\mu_p \mathbf 1_n\end{pmatrix},  
 \begin{pmatrix}
 \sigma_{11}\mathbf I_n & \cdots & \sigma_{1p}\mathbf I_n\\
-\vdots & \ddots & \vdots \\
+\cdots & \cdots & \cdots \\
 \sigma_{p1}\mathbf I_n & \cdots & \sigma_{pp}\mathbf I_n
 \end{pmatrix})
 \end{aligned}
@@ -436,9 +461,9 @@ $$
 - The sample mean vector can be written as linear functions of $\tilde {\mathbf X}$:
 $$\bar{\mathbf X}=\frac{1}{n} \begin{pmatrix} \mathbf 1_n^T & \mathbf 0_n^T & \cdots &\mathbf 0_n^T \\
 \mathbf 0_n^T & \mathbf 1_n^T & \cdots &\mathbf 0_n^T \\
-\vdots & \vdots & \ddots & \vdots \\
+\cdots & \cdots & \cdots & \cdots \\
 \mathbf 0_n^T & \mathbf 0_n^T & \cdots &\mathbf 1_n^T 
-\end{pmatrix}_{p\times (np)} \tilde {\mathbf X}$$
+\end{pmatrix} \tilde {\mathbf X}$$
 
 
 ### Step 3: The sample covariance matrix
@@ -498,23 +523,3 @@ $$
 - The sample covariance matrix only depends on the centered data,$vec(\mathbb C\mathbf X)$ (the vector form) up to a constant
 - Therefor, if we have a random sample from a \textcolor{red}{MVN}, the sample mean vector and the sample covariance matrix are independent
 - The proof is lengthy. It can be more compact if we introduce matrix normal distribution.
-
-### A Simulation Study
-- Suppose we have a random sample from a normal distribution. 
-- How to use a simulation study to show that sample mean and sample variance are uncorrelated (in fact they are also independent)?
-```{r, eval=FALSE, echo=FALSE}
-# Proof of independence between sample mean and sample variance for univariate case
-#library(mvtnorm)
-
-# Generate random sample from normal distribution
-set.seed(123)
-n <- 100
-mu <- 0
-sigma2 <- 1
-X <- rnorm(n, mu, sqrt(sigma2))
-
-# Calculate sample mean and sample variance
-mean_X <- mean(X)
-var_X <- var(X)
-
-```

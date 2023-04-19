@@ -74,6 +74,46 @@
 \makeatother
 \usepackage{xcolor}
 \newif\ifbibliography
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
@@ -88,15 +128,14 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Multivariate Analysis Lecture 5: Multivariate Normal, MGF, and Independence},
+  pdftitle={Multivariate Analysis Lecture 5: Normal and Multivariate Normal},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{Multivariate Analysis Lecture 5: Multivariate Normal, MGF, and
-Independence}
+\title{Multivariate Analysis Lecture 5: Normal and Multivariate Normal}
 \author{Zhaoxia Yu\\
 Professor, Department of Statistics}
-\date{2023-04-17}
+\date{2023-04-18}
 
 \begin{document}
 \frame{\titlepage}
@@ -203,7 +242,7 @@ Professor, Department of Statistics}
   \item
     Apply MGF to univariate normal
   \item
-    Apply MGF to multivariate normal (MVN)
+    Apply MGF to multivariate normal
   \end{itemize}
 \item
   Zero-Cov vs Independence
@@ -328,7 +367,7 @@ Professor, Department of Statistics}
 \tightlist
 \item
   Recall that \(M_X(t)=exp\{\mu t + \frac{1}{2}{\sigma^2}t^2\}\) for
-  \(X\sim N(0, \sigma^2)\).
+  \(X\sim N(\mu, \sigma^2)\).
 \end{itemize}
 
 What is the distribution corresponding to each of the following MGFs?
@@ -430,7 +469,7 @@ M_Y(t) &= e^{bt} M_X(s) = e^{bt} \exp\{\mu s + \frac{1}{2}\sigma^2 s^2\} \\
 \item
   How to prove \(\bar X\) follows a normal distribution?
 \item
-  A short proof: \[
+  A compact proof: \[
   M_{\bar{X}}(t) = \prod_{i=1}^{n} M_{X_i}(\frac{t}{n})= \left(\exp\{\mu\frac{t}{n} + \frac{1}{2}\sigma^2 \frac{t^2}{n^2}\}\right)^n
   =\exp\{\mu t + \frac{1}{2}\frac{\sigma^2}{n}t^2 \}
   \] Based on the \(M_{\bar X}(t)\),
@@ -447,8 +486,8 @@ M_Y(t) &= e^{bt} M_X(s) = e^{bt} \exp\{\mu s + \frac{1}{2}\sigma^2 s^2\} \\
   \begin{aligned}
   M_{\bar X}(t)&=E[e^{t\bar X}]= E[e^{\frac{t}{n} \sum_{i=1}^n X_i}]=E[e^{\frac{t}{n} X_1 + \frac{t}{n} X_2 + \cdots + \frac{t}{n} X_n}]\\
   &\overset{iid}=E[e^{\frac{t}{n} X_1}]\cdots E[e^{\frac{t}{n} X_n}]=M_{X_1}(\frac{t}{n}) \cdots M_{X_n}(\frac{t}{n})\\
-  &= \exp\{\mu\frac{t}{n}+\frac{1}{2}\sigma^2 \frac{t}{n}\}\cdots \exp\{\mu\frac{t}{n}+\frac{1}{2}\sigma^2 \frac{t}{n}\}\\
-  &= \exp\{\mu t + \frac{1}{2}\frac{\sigma^2}{n}t\}
+  &= \exp\{\mu\frac{t}{n}+\frac{1}{2}\sigma^2 (\frac{t}{n})^2\}\cdots \exp\{\mu\frac{t}{n}+\frac{1}{2}\sigma^2 (\frac{t}{n})^2\}\\
+  &= \exp\{\mu t + \frac{1}{2}\frac{\sigma^2}{n}t^2\}
   \end{aligned}
   \] Based on the \(M_{\bar X}(t)\),
   \(\bar X\sim N(\mu, \frac{\sigma^2}{n})\).
@@ -504,12 +543,13 @@ M_{\mathbf{X}}(\mathbf{t}) = \exp\left( \boldsymbol{\mu}^T \mathbf{t} + \frac{1}
   Let
   \(\mathbf{X}_{p\times 1}\sim N(\boldsymbol \mu, \boldsymbol \Sigma)\).
 \item
+  We want to show that the linear combinations
+  \(\mathbf{Y} = \mathbf{A}_{q\times p}\mathbf{X}\) also follows a
+  multivariate normal distribution.
+\item
   The MGF of \(\mathbf X\) is \[
   M_{\mathbf{X}}(\mathbf{t}) = E[e^{t^T\mathbf X}]=\exp\left(\boldsymbol{\mu}^T \mathbf{t} + \frac{1}{2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)
   \]
-\item
-  We want to show that the linear combination
-  \(\mathbf{Y} = \mathbf{A}_{q\times p}\mathbf{X}\) also follows a MVN.
 \end{itemize}
 \end{frame}
 
@@ -530,7 +570,7 @@ M_{\mathbf{X}}(\mathbf{t}) = \exp\left( \boldsymbol{\mu}^T \mathbf{t} + \frac{1}
   \(\mathbf{A}\boldsymbol{\Sigma}\mathbf{A}^T\).
 \item
   As a result, the linear combination
-  \[\mathbf Y =\mathbf A \mathbf X \sim N(\mathbf A \boldsymbol \mu, \boldsymbol A \boldsymbol \Sigma \mathbf A^T)\]
+  \[\mathbf Y =A \mathbf X \sim N(A \boldsymbol \mu, \boldsymbol A \boldsymbol \Sigma A^T)\]
 \end{itemize}
 \end{frame}
 
@@ -542,7 +582,7 @@ M_{\mathbf{X}}(\mathbf{t}) = \exp\left( \boldsymbol{\mu}^T \mathbf{t} + \frac{1}
   Let \(\mathbf X_1, \cdots \mathbf X_n\) be a random sample from
   \(N(\boldsymbol \mu, \boldsymbol \Sigma)\).
 \item
-  We have defined the sample mean vector \(\bar{\mathbf{X}}\)
+  We have defined then the sample mean vector \(\bar{\mathbf{X}}\)
 \item
   We have shown that
 
@@ -566,7 +606,7 @@ M_{\mathbf{X}}(\mathbf{t}) = \exp\left( \boldsymbol{\mu}^T \mathbf{t} + \frac{1}
   We first calculate its MGF: \[
   \begin{aligned}
   M_{\bar{\mathbf{X}}}(\mathbf{t}) &\overset{iid}= \prod_{i=1}^n M_{\mathbf{X}_i}(\frac{1}{n}\mathbf{t}) = \left(\exp\left(\boldsymbol{\mu}^T \frac{1}{n}\mathbf{t} + \frac{1}{2} \left(\frac{1}{n}\mathbf{t}\right)^T \boldsymbol{\Sigma} \left(\frac{1}{n}\mathbf{t}\right)\right)\right)^n\\
-  &= \exp\left(n\left(\boldsymbol{\mu}^T \frac{1}{n}\mathbf{t} + \frac{1}{2n} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)\right) \\
+  &= \exp\left(n\left(\boldsymbol{\mu}^T \frac{1}{n}\mathbf{t} + \frac{1}{2n^2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)\right) \\
   &= \exp\left(\boldsymbol{\mu}^T \mathbf{t} + \frac{1}{2} \mathbf{t}^T \frac{1}{n}\boldsymbol{\Sigma} \mathbf{t}\right)
   \end{aligned}
   \]
@@ -587,15 +627,15 @@ M_{\mathbf{X}}(\mathbf{t}) = \exp\left( \boldsymbol{\mu}^T \mathbf{t} + \frac{1}
 \item
   In general, zero-correlation does not guarantee independence
 \item
-  \textbf{Theorem} If the \textcolor{red}{joint} distribution of
-  \(\mathbf X_1\) (a \(p\times 1\) random vector) and \(\mathbf X_2\) is
-  \textcolor{red}{multivariate normal}, i.e., \[
+  Independence of normals under jointly normal: If the joint
+  distribution of \(\mathbf X_1\) (a \(p\times 1\) random vector) and
+  \(\mathbf X_2\) is jointly/multivariate normal, i.e., \[
   \begin{pmatrix}\mathbf X_1 \\ \mathbf X_2
   \end{pmatrix} \sim N(
   \begin{pmatrix}\boldsymbol \mu_1\\\boldsymbol \mu_2\end{pmatrix},
   \begin{pmatrix}\boldsymbol \Sigma_{11} & \boldsymbol \Sigma_{12}\\ \boldsymbol \Sigma_{21} & \boldsymbol \Sigma_{22}\end{pmatrix}),
   \] then
-  \(\mathbf X_1 \perp \mathbf X_2 \Leftrightarrow \boldsymbol \Sigma_{12}=2\)
+  \(\mathbf X_1 \perp \mathbf X_2 \Leftrightarrow \boldsymbol \Sigma_{12}=0\)
 \item
   Proof: omitted. A result about MGF can be used to prove independence.
 \end{itemize}
@@ -609,40 +649,67 @@ M_{\mathbf{X}}(\mathbf{t}) = \exp\left( \boldsymbol{\mu}^T \mathbf{t} + \frac{1}
   Let
   \(\mathbf{X}_{p\times 1}\sim N(\boldsymbol \mu, \boldsymbol \Sigma)\).
 \item
-  Let \(\mathbf Y=\mathbf A \mathbf X\) and
-  \(\mathbf Z=\mathbf B \mathbf X\).
+  Let \(\mathbf Y=A \mathbf X\) and \(\mathbf Z=B \mathbf X\).
 \item
   What is the joint distribution of \(Y\) and \(Z\)?
 \item
   Note that \[\begin{pmatrix}
   \mathbf Y\\ \mathbf Z
-  \end{pmatrix}=\begin{pmatrix}A \\ B\end{pmatrix}\mathbf X,
+  \end{pmatrix}=\begin{pmatrix}A \\ B\end{pmatrix}\mathbf X
   \]
+\item
+  By the results in the two previous slides\textcolor{red}{???} \[
+  \begin{aligned}
+  \mathbf Y & \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
+  &\sim N(\begin{pmatrix}A \boldsymbol \mu \\ B\boldsymbol \mu \end{pmatrix}, \begin{pmatrix}A \boldsymbol \Sigma A^T & A \boldsymbol \Sigma B^T\\ B \boldsymbol \Sigma A^T & B \boldsymbol \Sigma B^T \end{pmatrix}\boldsymbol)
+  \end{aligned} 
+  \] We have \[\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0\]
 \end{itemize}
-
-i.e., the new random vector
-\(\begin{pmatrix}\mathbf Y\\ \mathbf Z\end{pmatrix}\) is a linear
-combination of \(\mathbf X\) that follows a MVN.
 \end{frame}
 
-\begin{frame}{The Joint Distribution of Two Linear Functions}
-\protect\hypertarget{the-joint-distribution-of-two-linear-functions-1}{}
+\begin{frame}[fragile]{A Simulation Question}
+\protect\hypertarget{a-simulation-question}{}
 \begin{itemize}
 \tightlist
 \item
-  As a result, the joint distribution of two linear functions, namely
-  \(\mathbf Y\) and \(\mathbf Z\) are jointly normal (i.e, MVN).
+  Suppose we have a random sample from a normal distribution.
+\item
+  How to use a simulation to show that sample mean and sample variance
+  are uncorrelated (in fact they are also independent)?
 \end{itemize}
 
-\[
-\begin{aligned}
-\begin{pmatrix}\mathbf Y \\ \mathbf Z\end{pmatrix}
-& \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
-&\sim N(\begin{pmatrix}A \boldsymbol \mu \\ B\boldsymbol \mu \end{pmatrix}, \begin{pmatrix}A \boldsymbol \Sigma A^T & A \boldsymbol \Sigma B^T\\ B \boldsymbol \Sigma A^T & B \boldsymbol \Sigma B^T \end{pmatrix}\boldsymbol)
-\end{aligned} 
-\] By the Theorem on the slide titled ``Independence of Normals Under
-Jointly Normal'',
-\[\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0\]
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Proof of independence between sample mean and sample variance for univariate case}
+\CommentTok{\#library(mvtnorm)}
+
+\CommentTok{\# Generate random sample from normal distribution}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{n }\OtherTok{\textless{}{-}} \DecValTok{100}
+\NormalTok{mu }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{sigma2 }\OtherTok{\textless{}{-}} \DecValTok{1}
+\NormalTok{X }\OtherTok{\textless{}{-}} \FunctionTok{rnorm}\NormalTok{(n, mu, }\FunctionTok{sqrt}\NormalTok{(sigma2))}
+
+\CommentTok{\# Calculate sample mean and sample variance}
+\NormalTok{mean\_X }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(X)}
+\NormalTok{var\_X }\OtherTok{\textless{}{-}} \FunctionTok{var}\NormalTok{(X)}
+
+\CommentTok{\# Verify that sample mean and sample variance are unbiased estimators}
+\CommentTok{\#assertthat::assert\_that(mean\_X == mu)}
+\CommentTok{\#assertthat::assert\_that(var\_X == sigma2)}
+
+\CommentTok{\# Use Cochran\textquotesingle{}s theorem to show independence}
+\NormalTok{k }\OtherTok{\textless{}{-}} \DecValTok{1} \CommentTok{\# degrees of freedom for sample mean}
+\NormalTok{nu }\OtherTok{\textless{}{-}}\NormalTok{ n }\SpecialCharTok{{-}} \DecValTok{1} \CommentTok{\# degrees of freedom for sample variance}
+\NormalTok{F\_stat }\OtherTok{\textless{}{-}}\NormalTok{ k }\SpecialCharTok{*}\NormalTok{ (n }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{) }\SpecialCharTok{*}\NormalTok{ var\_X }\SpecialCharTok{/}\NormalTok{ (sigma2 }\SpecialCharTok{*}\NormalTok{ nu)}
+\NormalTok{p\_value }\OtherTok{\textless{}{-}} \FunctionTok{pf}\NormalTok{(F\_stat, }\AttributeTok{df1=}\NormalTok{k, }\AttributeTok{df2=}\NormalTok{nu, }\AttributeTok{lower.tail=}\ConstantTok{FALSE}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{ (p\_value }\SpecialCharTok{\textgreater{}} \FloatTok{0.05}\NormalTok{) \{}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"Reject null hypothesis at 5\% significance level}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"Fail to reject null hypothesis at 5\% significance level}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
 \end{frame}
 
 \hypertarget{sample-mean-and-sample-variance}{%
@@ -652,6 +719,9 @@ Variance}\label{sample-mean-and-sample-variance}}
 \begin{frame}{The Independence Between Sample Mean and Sample Variance}
 \protect\hypertarget{the-independence-between-sample-mean-and-sample-variance}{}
 \begin{itemize}
+\item
+  For a random sample from a normal distribution, the sample mean and
+  sample variance are independent.
 \item
   Let \(\mathbf X =(X_1, X_2, ..., X_n)^T\) be a random sample from a
   normal distribution with mean \(\mu\) and variance \(\sigma^2\).
@@ -686,24 +756,16 @@ Variance}\label{sample-mean-and-sample-variance}}
   \[s^2=\frac{1}{n-1} (\mathbb C\mathbf X)^T (\mathbb C\mathbf X),\]
   which indicates that the distribution \(s^2\) is determined by the
   distribution of \(\mathbb C X\).
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Proof (continued)}
-\protect\hypertarget{proof-continued}{}
-\begin{itemize}
 \item
-  Clearly \(\bar X\) and \(\mathbb C \mathbf X\) are linear combinations
+  Clearly \(\bar {\mathbf X}\) and \(\mathbb C\) are linear combinations
   of \(\mathbf X\), which follows a multivariate normal with covariance
   \(\boldsymbol\Sigma= \mathbf I\). Thus,
-  \[cov(\bar X, \mathbb C) = \frac{1}{n}\mathbf 1^T \Sigma \mathbb C \mathbf X= \frac{1}{n}\mathbf 1^T \mathbb C=0\]
+  \[cov(\bar {\mathbf X}, \mathbb C) = \frac{1}{n}\mathbf 1^T \Sigma \mathbb C= \frac{1}{n}\mathbf 1^T \mathbb C=0\]
   Please verify that last step.
-\item
-  By Theorem on ``Independence of Normals Under Jointly Normal'', we
-  have \(\bar X\) and \(\mathbb C\mathbf X\) are independent.
-\item
-  Now we can conclude the \(\bar X\) and \(s^2\) are independent.
 \end{itemize}
+
+By Theorem on ``Independence of Normals Under Jointly Normal'', we can
+conclude the \(\bar {\mathbf X}\) and \(s^2\) are independent.
 \end{frame}
 
 \hypertarget{mvn-bar-mathbf-x-and-s}{%
@@ -716,15 +778,8 @@ Covariance Matrix}
 \begin{itemize}
 \tightlist
 \item
-  Consider a random sample from
-  \(N(\boldsymbol \mu, \boldsymbol \Sigma)\) (MVN). Let
-  \(\bar{\boldsymbol X}\) be the sample mean vector.
-\item
-  We have shown that \(\mathbb E[\bar{\mathbf X}]=\boldsymbol \mu\) and
-  \(Cov[\bar{\mathbf X}]=\boldsymbol \Sigma\).
-\item
   How to prove that the sample mean vector and the sample covariance
-  matrix are independent?
+  matrix are independent
 \item
   Messier way: vectorize the \(n\times p\) matrix \(\mathbf X\) to a
   \((np)\times 1\) vector and then apply the condition for independent
@@ -803,7 +858,7 @@ N (
 \begin{pmatrix}\mu_1 \mathbf 1_n \\ \vdots \\\mu_p \mathbf 1_n\end{pmatrix},  
 \begin{pmatrix}
 \sigma_{11}\mathbf I_n & \cdots & \sigma_{1p}\mathbf I_n\\
-\vdots & \ddots & \vdots \\
+\cdots & \cdots & \cdots \\
 \sigma_{p1}\mathbf I_n & \cdots & \sigma_{pp}\mathbf I_n
 \end{pmatrix})
 \end{aligned}
@@ -819,9 +874,9 @@ N (
   \(\tilde {\mathbf X}\):
   \[\bar{\mathbf X}=\frac{1}{n} \begin{pmatrix} \mathbf 1_n^T & \mathbf 0_n^T & \cdots &\mathbf 0_n^T \\
   \mathbf 0_n^T & \mathbf 1_n^T & \cdots &\mathbf 0_n^T \\
-  \vdots & \vdots & \ddots & \vdots \\
+  \cdots & \cdots & \cdots & \cdots \\
   \mathbf 0_n^T & \mathbf 0_n^T & \cdots &\mathbf 1_n^T 
-  \end{pmatrix}_{p\times (np)} \tilde {\mathbf X}\]
+  \end{pmatrix} \tilde {\mathbf X}\]
 \end{itemize}
 \end{frame}
 
@@ -918,18 +973,6 @@ N (
 \item
   The proof is lengthy. It can be more compact if we introduce matrix
   normal distribution.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{A Simulation Study}
-\protect\hypertarget{a-simulation-study}{}
-\begin{itemize}
-\tightlist
-\item
-  Suppose we have a random sample from a normal distribution.
-\item
-  How to use a simulation study to show that sample mean and sample
-  variance are uncorrelated (in fact they are also independent)?
 \end{itemize}
 \end{frame}
 
