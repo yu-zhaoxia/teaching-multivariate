@@ -161,7 +161,7 @@ $$
 \end{aligned}
 $$
 
-Let $Y_i = \gamma_i^T \mathbf Z$. Note that $Y_i$ is univariate and it is a linear combination of $\mathbf Z$, from which we can show that $Y_i \sim N(0, 1)$. 
+Let $Y_i = \gamma_i^T \mathbf Z$. Note that $Y_i$ is univariate and it is a linear combination of $\mathbf Z$, from which we can show that $Y_i \sim N(0, 1)$. In addition, we can show that $Cov(Y_i, Y_j)=0$ for $i\not=j$. Thus, $Y_1, \cdots, Y_r\overset{iid}\sim N(0,1)$.
 
 - Note that $\mathbf Z^T \mathbf P \mathbf Z=\sum_{i=1}^r Y_i^2$. By the definition of chi-squared distribution, we have 
 $\mathbf Z^T \mathbf P \mathbf Z\sim \chi_r^2$
@@ -181,8 +181,9 @@ $$\mathbb C \mathbf X = \mathbb C (\mathbf X - E[\mathbf X])$$
 - Therefore, 
 $$
 \begin{aligned}
-\frac{(n-1)s^2}{\sigma^2}&=\frac{(\mathbf X - E[\mathbf X])^T}{\sigma}\mathbb C^T \mathbb C \mathbb C \frac{(\mathbf X - E[\mathbf X])}{\sigma}\\
-&=\frac{(\mathbf X - E[\mathbf X])^T}{\sigma}\mathbb C \frac{(\mathbf X - E[\mathbf X])}{\sigma}
+\frac{(n-1)s^2}{\sigma^2}&=\frac{\mathbf X^T \mathbb C \mathbf X}{\sigma^2}=\frac{\mathbf X^T \mathbb C^T \mathbb C \mathbb C \mathbf X}{\sigma^2}\\
+&=\frac{(\mathbb C\mathbf X)^T  \mathbb C \mathbb C\mathbf X}{\sigma^2}\\
+&=\frac{(\mathbf X - E[\mathbf X])^T}{\sigma}\mathbb C  \frac{(\mathbf X - E[\mathbf X])}{\sigma}
 \end{aligned}$$
 
 ### The Sample Variance
@@ -292,7 +293,7 @@ The last step is true because for $i\not=j$, $\gamma_i \gamma_j^T=0$
 
 
 ### The Sample Covariance Matrix
-Since $Y_i$ and $Y_j$ are two linear combinations of the same MVN distributed random matrix (or its vectorized version), we have $Y_i$ and $Y_j$ are independent for $i\not=j$. 
+- Since $Y_i$ and $Y_j$ are two linear combinations of the same MVN distributed random matrix (or its vectorized version), we have $Y_i$ and $Y_j$ are independent for $i\not=j$. 
 
 - It can also be shown that $Y_i \sim N(\mathbf 0, \Sigma)$. 
 
@@ -306,7 +307,7 @@ $$(n-1)\mathbf S\sim Wishart_p(n-1, \boldsymbol \Sigma)$$
 
 - What is the distribution of a diagonal element of $(n-1)\mathbf S$?
 
-- What is the distribution of the sum of elements of $(n-1)\mathbf S$? 
+- What is the distribution of the sum of elements of $(n-1)\mathbf S$? Note, this is a special case of next question with $\mathbf B=(1, \cdots, 1)$.
 
 - What is the distribution of $(n-1)\mathbf B \mathbf S \mathbf B^T$ where $B$ is a fixed $q\times p$ matrix? 
 
@@ -347,9 +348,9 @@ $$(n-1)\mathbf B \mathbf S \mathbf B^T\sim Wishart_q(n-1, \mathbf B \boldsymbol 
 
 
 ### Definition Hotelling's $T^2$
-- \textcolor{red}{Definition. }We say a random variable follows Hotelling's $T^2$  $T_{p,\nu}^2$ if the random variable can be written as $\mathbf Z^T\left(\frac{W}{\nu}\right)^{-1}\mathbf Z$ where
+- \textcolor{red}{Definition. }We say a random variable follows Hotelling's $T_{p,\nu}^2$ if the random variable can be written as $\mathbf Z^T\left(\frac{W}{\nu}\right)^{-1}\mathbf Z$ where
   1. $\mathbf Z\sim N(\mathbf 0, \boldsymbol\Sigma)$
-  2. $\mathbf W \sim W_p(\nu, \boldsymbol\sigma)$
+  2. $\mathbf W \sim W_p(\nu, \boldsymbol\Sigma)$
   3. $\mathbf Z \perp \mathbf W$
 
 
@@ -375,7 +376,7 @@ T^2&=(\hat{\mathbf \mu} - \mathbf \mu_0)^T \left(Cov(\hat{\mathbf \mu})\right)^{
 $$
 
 - We have shown that all the three conditions for constructing a Hotelling's $T^2$ are satisfied
-- As a result, $T^2\sim T_{p, n-1}^2$. 
+- As a result, $T^2\sim T_{p, n-1}^2$ when $H_0: \boldsymbol \mu=\boldsymbol \mu_0$. 
 
 ### Hotelling's $T^2$ Distribution vs $F$ Distribution
 ```{r echo=FALSE, out.width="80%"}

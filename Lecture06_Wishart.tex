@@ -410,7 +410,8 @@ Projection Matrices}
 
 Let \(Y_i = \gamma_i^T \mathbf Z\). Note that \(Y_i\) is univariate and
 it is a linear combination of \(\mathbf Z\), from which we can show that
-\(Y_i \sim N(0, 1)\).
+\(Y_i \sim N(0, 1)\). In addition, we can show that \(Cov(Y_i, Y_j)=0\)
+for \(i\not=j\). Thus, \(Y_1, \cdots, Y_r\overset{iid}\sim N(0,1)\).
 
 \begin{itemize}
 \tightlist
@@ -452,8 +453,9 @@ it is a linear combination of \(\mathbf Z\), from which we can show that
 \item
   Therefore, \[
   \begin{aligned}
-  \frac{(n-1)s^2}{\sigma^2}&=\frac{(\mathbf X - E[\mathbf X])^T}{\sigma}\mathbb C^T \mathbb C \mathbb C \frac{(\mathbf X - E[\mathbf X])}{\sigma}\\
-  &=\frac{(\mathbf X - E[\mathbf X])^T}{\sigma}\mathbb C \frac{(\mathbf X - E[\mathbf X])}{\sigma}
+  \frac{(n-1)s^2}{\sigma^2}&=\frac{\mathbf X^T \mathbb C \mathbf X}{\sigma^2}=\frac{\mathbf X^T \mathbb C^T \mathbb C \mathbb C \mathbf X}{\sigma^2}\\
+  &=\frac{(\mathbb C\mathbf X)^T  \mathbb C \mathbb C\mathbf X}{\sigma^2}\\
+  &=\frac{(\mathbf X - E[\mathbf X])^T}{\sigma}\mathbb C  \frac{(\mathbf X - E[\mathbf X])}{\sigma}
   \end{aligned}\]
 \end{itemize}
 \end{frame}
@@ -657,11 +659,11 @@ The last step is true because for \(i\not=j\), \(\gamma_i \gamma_j^T=0\)
 
 \begin{frame}{The Sample Covariance Matrix}
 \protect\hypertarget{the-sample-covariance-matrix-3}{}
-Since \(Y_i\) and \(Y_j\) are two linear combinations of the same MVN
-distributed random matrix (or its vectorized version), we have \(Y_i\)
-and \(Y_j\) are independent for \(i\not=j\).
-
 \begin{itemize}
+\item
+  Since \(Y_i\) and \(Y_j\) are two linear combinations of the same MVN
+  distributed random matrix (or its vectorized version), we have \(Y_i\)
+  and \(Y_j\) are independent for \(i\not=j\).
 \item
   It can also be shown that \(Y_i \sim N(\mathbf 0, \Sigma)\).
 \item
@@ -684,6 +686,8 @@ and \(Y_j\) are independent for \(i\not=j\).
   What is the distribution of a diagonal element of \((n-1)\mathbf S\)?
 \item
   What is the distribution of the sum of elements of \((n-1)\mathbf S\)?
+  Note, this is a special case of next question with
+  \(\mathbf B=(1, \cdots, 1)\).
 \item
   What is the distribution of \((n-1)\mathbf B \mathbf S \mathbf B^T\)
   where \(B\) is a fixed \(q\times p\) matrix?
@@ -749,16 +753,15 @@ By the definition of Wishart distribution, we have
 \tightlist
 \item
   \textcolor{red}{Definition. }We say a random variable follows
-  Hotelling's \(T^2\) \(T_{p,\nu}^2\) if the random variable can be
-  written as \(\mathbf Z^T\left(\frac{W}{\nu}\right)^{-1}\mathbf Z\)
-  where
+  Hotelling's \(T_{p,\nu}^2\) if the random variable can be written as
+  \(\mathbf Z^T\left(\frac{W}{\nu}\right)^{-1}\mathbf Z\) where
 
   \begin{enumerate}
   \tightlist
   \item
     \(\mathbf Z\sim N(\mathbf 0, \boldsymbol\Sigma)\)
   \item
-    \(\mathbf W \sim W_p(\nu, \boldsymbol\sigma)\)
+    \(\mathbf W \sim W_p(\nu, \boldsymbol\Sigma)\)
   \item
     \(\mathbf Z \perp \mathbf W\)
   \end{enumerate}
@@ -801,7 +804,8 @@ By the definition of Wishart distribution, we have
   We have shown that all the three conditions for constructing a
   Hotelling's \(T^2\) are satisfied
 \item
-  As a result, \(T^2\sim T_{p, n-1}^2\).
+  As a result, \(T^2\sim T_{p, n-1}^2\) when
+  \(H_0: \boldsymbol \mu=\boldsymbol \mu_0\).
 \end{itemize}
 \end{frame}
 
