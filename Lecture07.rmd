@@ -106,7 +106,7 @@ Sigma=diag(1+rho, p, p) - matrix(rho, p, p)
 wmat.array=array(0, c(B, p, p)) #wishart-distributed
 for(b in 1:B){
   X=mvrnorm(n, rep(0,p), Sigma)
-  wmat.array[b,,]=cov(X)}
+  wmat.array[b,,]=(n-1)*cov(X)}
 apply(wmat.array, c(2,3), mean)
 Sigma*(n-1)
 ```
