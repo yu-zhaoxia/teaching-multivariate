@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## Due on \textcolor{red}{Monday, May 1st 2023}. R Code should be included as appendices. 
-- \textcolor{red}{Problem 1}: Choose a $3-by-3$ covariance matrix with non-zero covariances (the off-diagonal elements should not be 0). Also a choose a sample size $n$ (e.g., n=100, 500, 1000, etc ). Using the covariance matrix you chose, simulate 1,000 data sets from a trivariate normal distribution.  
+- \textcolor{red}{Problem 1}: Choose a $3-by-3$ covariance matrix with non-zero covariances (the off-diagonal elements should not be 0). Using the covariance matrix you chose, simulate 1,000 data sets from a trivariate normal distribution (set also n=1000).  
   0. Hints: 
     - Hint 1: the R library MASS provides a function to generate a random sample from a multivariate normal distribution. 
     - Hint 2: Make sure that the covariance matrix you choose is positive definite.  You can compute the eigenvalues by the "eigen" function in R and and check whether all the eigenvalues are positive. 

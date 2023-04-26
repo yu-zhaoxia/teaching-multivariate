@@ -68,6 +68,24 @@ $$\mathbf X \sim N(\mathbf 1_n \otimes \boldsymbol \mu^T, \boldsymbol \Sigma, \m
 $$(n-1)\mathbf S \sim Wishart_p(n-1, \boldsymbol\Sigma)$$ 
 
 
+### A Simulation Study to Understand the Wishart Distribution
+- Recall that if $W\sim Wishart_p(k, \boldsymbol \Sigma)$, then $E[\mathbf W]=k\Sigma$.
+
+\tiny
+```{r}
+library(MASS)
+p=2; n=5; B=1000; rho=0.7
+Sigma=diag(1+rho, p, p) - matrix(rho, p, p)
+wmat.array=array(0, c(B, p, p)) #wishart-distributed
+for(b in 1:B){
+  X=mvrnorm(n, rep(0,p), Sigma)
+  wmat.array[b,,]=(n-1)*cov(X)}
+apply(wmat.array, c(2,3), mean)
+Sigma*(n-1)
+```
+\normalsize
+
+
 ## Hotelling's $T^2$
 ### Definition of Hotelling's $T^2$
 - Hotelling generalized the student's t, which is for univarite, to Hotelling's T<sup>2</sup>, which is the multivariate version
@@ -94,23 +112,6 @@ $$T^2=(\hat{\mathbf \mu} - \mathbf \mu_0)^T \left(Cov(\hat{\mathbf \mu})\right)^
 knitr::include_graphics("img/T2vsF.png")
 ```
 
-## A Simulation Study
-### Understand the Wishart Distribution
-- Recall that if $W\sim Wishart_p(k, \boldsymbol \Sigma)$, then $E[\mathbf W]=k\Sigma$.
-
-\tiny
-```{r}
-library(MASS)
-p=2; n=5; B=1000; rho=0.7
-Sigma=diag(1+rho, p, p) - matrix(rho, p, p)
-wmat.array=array(0, c(B, p, p)) #wishart-distributed
-for(b in 1:B){
-  X=mvrnorm(n, rep(0,p), Sigma)
-  wmat.array[b,,]=cov(X)}
-apply(wmat.array, c(2,3), mean)
-Sigma*(n-1)
-```
-\normalsize
 
 
 
@@ -149,6 +150,7 @@ eigen(my.cov)#to check whether the cov matrix is p.d.
 ```
 \normalsize
 
+
 ### Example of Multivariate One-Sample Problem: Protein Intake
 - Estimate the mean vector using the sample mean vector
 - Estimate covariance of the sample mean vector. Recall that $cov(\bar{\mathbf X})=\frac{\boldsymbol \Sigma}{n}$
@@ -179,29 +181,38 @@ $$\{\mathbf\mu: (\bar{\mathbf X} - \boldsymbol \mu)^T \left(Cov(\bar{\mathbf X})
 
 
 ### Example of Multivariate One-Sample Problem: Protein Intake
-- Confidence intervals, which are in the form of 
-$$\mbox{estimate}\pm \mbox{critical value} \times \mbox{standard error}$$  
-are often preferred
-- If there is only one parameter of interest, we can construct a C.I. using t-distribution, just as in univariate analysis
-- Example. What is the mean protein intake? We have discussed the problem in Lecture 04. 
-  - Lecture 04: we constructed a large-sample C.I. by using 1.96 as the critical value. (See the protein intake example)
-  - This lecture: we construct a C.I. by using $t_{n-1, 1-\frac{\alpha}{2}}$ as the critical value
-  
-$\bar{X}_{(j)} \pm t_{n-1, 1- \frac{\alpha}{2}}\sqrt{\frac{s^2_{X_{(j)}}}{n}} \mbox{ for } j=1,\cdots, p$.
-
-### Example of Multivariate One-Sample Problem: Protein Intake
 - The confidence region has exactly $(1-\alpha)100\%$ confidence; however
-- In many situations, we would like to construct confidence intervals for multiple parameters
-- This is known as simultaneous intervals
-- If we use the conventional method to construct individual C.I.s, we will have lower than $(1-\alpha)100\%$ confidence to cover all the parameters simultaneously
+- In many situations, we would like to construct confidence intervals, which are in the form of 
+$$\mbox{estimate}\pm \mbox{critical value} \times \mbox{standard error}$$  
+- If there is only one parameter of interest, we can construct a C.I. using t-distribution, just as in univariate analysis
+- Example. What is the mean protein intake from source $j$? 
+  - Lecture 04: we constructed a large-sample C.I. by using 1.96 as the critical value. (See the protein intake example)
+  - This lecture: we construct a C.I. for $\mu_j$ by using $t_{n-1, 1-\frac{\alpha}{2}}$ as the critical value
+  $\bar{X}_{(j)} \pm t_{n-1, 1- \frac{\alpha}{2}}\sqrt{\frac{s^2_{X_{(j)}}}{n}} \mbox{ for } j=1,\cdots, p$.
 
-### Example of Multivariate One-Sample Problem: Protein Intake
-- Some linear algebra result ensures that the following method gives $(1-\alpha)100\%$ confidence to cover all linear combinations of the parameters (in the form of $a^T\boldsymbol \mu$) simultaneously
+# Simultaneous C.I. 
+### The Coverage of simultaneous C.I.s
+- Let $A_j=\{\mu_j\mbox{ is in the constructed C.I. }\}$. The C.I. in the previous slide has $(1-\alpha)100\%$ coverage for a specific $\mu_j$, i.e., 
+$$Pr(A_j)=1-\alpha$$
+- If we are interested in all the parameters, which are $\mu_1, \mu_2, \mu_3, \mu_4$ in the protein intake example. The coverage for all vector is 
+$$Pr(A_1\cap A_2 \cap A_3 \cap A_4)$$
+- Clearly $Pr(A_1\cap A_2 \cap A_3 \cap A_4)<1-\alpha$
+- Thus, if we use $t_{n-1, 1-\frac{\alpha}{2}}$ as the critical value, we do not have enough coverage for all the parameters $\boldsymbol \mu$ simultaneously
+
+- What we need to construct are \textcolor{red}{simultaneous confidence intervals}
+
+
+### Methods for Simultaneous Confidence Intervals
+- Method 1 for simultaneous C.I. $T^2$
+Some linear algebra result ensures that the following method gives $(1-\alpha)100\%$ confidence to cover all linear combinations of the parameters (in the form of $a^T\boldsymbol \mu$) simultaneously
 $$a^T\bar{\mathbf X}\pm \sqrt{\frac{(n-1)p}{n-p}F_{p, n-p, 1-\alpha}} se(a^T\bar{\mathbf X}) $$
-- Example, consider the individual means $\mu_j, j=1,\cdots, 4$ in the protein intake example, the following intervals are $95\%$ simultaneous C.I. for the mean protein intake from the four sources
+
+  - Example, consider the individual means $\mu_j, j=1,\cdots, 4$ in the protein intake example, the following intervals are $95\%$ simultaneous C.I. for the mean protein intake from the four sources
+
+- Method 2 Bonferroni's correction: simply replace $\alpha$ with $\alpha/k$ where $k$ is the total number of linear functions of the mean parameters: $t_{n-1, 1-\alpha/(2k)}$
 
 
-### Example of Multivariate One-Sample Problem: Protein Intake
+### Simultaneous C.I.s using $T^2$: Protein Intake
 
 \tiny
 ```{r}
@@ -210,31 +221,58 @@ colMeans(protein)
 #standard errors
 sqrt(diag(cov(protein)/n))
 #critical value based on T2
-sqrt((n-1)*p/(n-p)*qf(0.95, p, n-p))
+cv=sqrt((n-1)*p/(n-p)*qf(0.95, p, n-p))
 #lower bounds
-low.bound=colMeans(protein) - sqrt((n-1)*p/(n-p)*qf(0.95, p, n-p)) *sqrt(diag(cov(protein)/n))
+low.bound=colMeans(protein) - cv *sqrt(diag(cov(protein)/n))
 #upper bounds
-up.bound=colMeans(protein) + sqrt((n-1)*p/(n-p)*qf(0.95, p, n-p)) *sqrt(diag(cov(protein)/n))
+up.bound=colMeans(protein) + cv *sqrt(diag(cov(protein)/n))
 ```
 \normalsize
 
 
-### Example of Multivariate One-Sample Problem: Protein Intake
+### Simultaneous C.I.s using $T^2$: Protein Intake
+
 ```{r}
 #put everything into a table
 data.frame(lower=low.bound, mean=colMeans(protein), 
            upper=up.bound)
 ```
 
-### Example of Multivariate One-Sample Problem: Protein Intake
-- Three choices of criticl values
+### Simultaneous C.I.s using Bonferroni: Protein Intake
+
+\tiny
+```{r}
+#sample means
+colMeans(protein)
+#standard errors
+sqrt(diag(cov(protein)/n))
+#critical value based on T2
+cv=qt(1-0.05/p/2, n-1)
+#lower bounds
+low.bound=colMeans(protein) - cv *sqrt(diag(cov(protein)/n))
+#upper bounds
+up.bound=colMeans(protein) + cv *sqrt(diag(cov(protein)/n))
+```
+\normalsize
+
+
+### Simultaneous C.I.s using Bonferroni: Protein Intake
+```{r}
+#put everything into a table
+data.frame(lower=low.bound, mean=colMeans(protein), 
+           upper=up.bound)
+```
+
+### Comparison of Different Critical Values
+- Three choices of critical values
   - unadjusted: $t_{n-1, 1-\alpha/2}$. Should \textcolor{red}{NOT} be used if multiple linear functions need to be estimated
   - $T^2$: $\sqrt{\frac{(n-1)p}{n-p}F_{p, n-p, 1-\alpha}}$
   - Bonferroni's correction: simply replace $\alpha$ with $\alpha/k$ where $k$ is the total number of linear functions of the mean parameters: $t_{n-1, 1-\alpha/(2k)}$
 
 - Example: the critical values for the individual means from four protein sources
 
-### Example of Multivariate One-Sample Problem: Protein Intake
+
+### Comparison of Different Critical Values Protein Intake
 
 \tiny
 ```{r}
@@ -326,8 +364,8 @@ Hotelling.T2.2sample=function(X, Y){
 
 
 ### Multivariate Two-Sample Problems: Wite an R Function
-- The built-in function "t.test" serves a dual function for univariate analyis
-- We will write a dual function Hotelling.T2
+- The built-in function "t.test" serves a dual-purpose function for univariate analyis
+- We will write a dual-purpose function Hotelling.T2
 
 ```{r}
 Hotelling.T2=function(X, Y=NULL, mu0=NULL)
@@ -396,7 +434,7 @@ CI.upper=mean1-mean2+qt(1-0.05/(2*p), n1+n2-2)*sqrt(diag((1/n1+1/n2)*Sp) ) ), 3)
 
 
 ### Linear Functions of Differences: Iris Setosa vs Versicolor
-- Method 1 Bonferroni
+- Method 2 Bonferroni
 
 \tiny
 ```{r}
@@ -462,7 +500,6 @@ $$
 - When $n_1-p$ and $n_2-p$ are large, we replace $\frac{(n_1+n_2-2)p}{n_1+n_2-p-1}F_{p, n_1+n_2-p-1}$ with $\chi_{p}^2$
 
 ### Assignment 2: Due on Monday, May 1st
-
 \tiny
 - \textcolor{red}{Problem 1}: Choose a $3-by-3$ covariance matrix with non-zero covariances. Also choose a sample size $n$ (e.g., n=100, 500, 1000, etc). Simulate 1,000 data sets from a trivariate normal distribution. 
   0. Hints: 
