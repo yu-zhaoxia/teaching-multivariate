@@ -464,7 +464,7 @@ $$
 ### Assignment 2: Due on Monday, May 1st
 
 \tiny
-- \textcolor{red}{Problem 1}: Choose a $3-by-3$ covariance matrix with non-zero covariances. Also choose a sample size $n$. Simulate 1,000 data sets from a trivariate normal distribution. 
+- \textcolor{red}{Problem 1}: Choose a $3-by-3$ covariance matrix with non-zero covariances. Also choose a sample size $n$ (e.g., n=100, 500, 1000, etc). Simulate 1,000 data sets from a trivariate normal distribution. 
   0. Hints: 
     - Hint 1: the R library MASS provides a function to generate a random sample from a multivariate normal distribution. 
     - Hint 2: Make sure that the covariance matrix you choose is positive definite.  You can compute the eigenvalues by the "eigen" function in R and and check whether all the eigenvalues are positive. 
