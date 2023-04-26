@@ -266,7 +266,7 @@ qt(1-0.05/p/2, n-1)
   $$X_{11}, \cdots, X_{1,n_1}\overset{iid} \sim N(\mu_1,\sigma^2)$$
   - Sample 2 is from population 2: 
   
-  $$X_{21}, \cdots, X_{2,n_1}\overset{iid} \sim N(\mu_2,\sigma^2)$$
+  $$X_{21}, \cdots, X_{2,n_2}\overset{iid} \sim N(\mu_2,\sigma^2)$$
 - Null hypothesis: $H_0: \mu_1=\mu_2$
 
 
@@ -297,7 +297,7 @@ $$t = \dfrac{\bar{x}_1-\bar{x}_2}{\sqrt{s^2_p(\dfrac{1}{n_1}+\dfrac{1}{n_2})}} $
 
 
 ### Multivarite Two-Sample Problems
-- SPooled sample variance
+- Pooled sample covariance matrix
 $$\mathbf{S}_p = \dfrac{(n_1-1)\mathbf{S}_1+(n_2-1)\mathbf{S}_2}{n_1+n_2-2}$$
 where
 $$\mathbf{S}_i = \dfrac{1}{n_i-1}\sum_{j=1}^{n_i}{(\mathbf X_{ij}-\bar{\mathbf X}_i)(\mathbf X_{ij}-\bar{\mathbf X}_i)'}$$
@@ -400,7 +400,7 @@ CI.upper=mean1-mean2+qt(1-0.05/(2*p), n1+n2-2)*sqrt(diag((1/n1+1/n2)*Sp) ) ), 3)
 
 \tiny
 ```{r}
-cv=sqrt((n1+n2-2)*p/(n1+n2-p-1)*qf(1-0.05, p, n1+n2-p-1 ))
+cv=qt(1-0.05/p/2, n1+n2-2)
 round(data.frame(diff=mean.diff, se=sqrt(diag((1/n1+1/n2)*Sp) ),
 CI.lower=mean1-mean2-qt(1-0.05/(2*p), n1+n2-2)*sqrt(diag((1/n1+1/n2)*Sp) ),
 CI.upper=mean1-mean2+qt(1-0.05/(2*p), n1+n2-2)*sqrt(diag((1/n1+1/n2)*Sp) ) ), 3)
@@ -462,7 +462,9 @@ $$
 - When $n_1-p$ and $n_2-p$ are large, we replace $\frac{(n_1+n_2-2)p}{n_1+n_2-p-1}F_{p, n_1+n_2-p-1}$ with $\chi_{p}^2$
 
 ### Assignment 2: Due on Monday, May 1st
-- \textcolor{red}{Problem 1}: Choose a $3-by-3$ covariance matrices with non-zero covariances. For each covariance matrix, simulate 1,000 data sets from a trivariate normal distribution. 
+
+\tiny
+- \textcolor{red}{Problem 1}: Choose a $3-by-3$ covariance matrix with non-zero covariances. Also choose a sample size $n$. Simulate 1,000 data sets from a trivariate normal distribution. 
   0. Hints: 
     - Hint 1: the R library MASS provides a function to generate a random sample from a multivariate normal distribution. 
     - Hint 2: Make sure that the covariance matrix you choose is positive definite.  You can compute the eigenvalues by the "eigen" function in R and and check whether all the eigenvalues are positive. 
@@ -472,3 +474,5 @@ $$
 - \textcolor{red}{Problem 2}: Find a good data example to conduct a two-sample Hotelling's $T^2$ test. Do not use the data example discussed in this course. Please (1) include visualizations as exploratory methods and (2) make conclusion in the context of the data example.  
 
 - R Code should be included as appendices. 
+
+\normalsize

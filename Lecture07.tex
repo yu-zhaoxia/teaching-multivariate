@@ -319,8 +319,8 @@ Professor, Department of Statistics}
 
 \begin{verbatim}
 ##            [,1]       [,2]
-## [1,]  0.9583646 -0.6909337
-## [2,] -0.6909337  1.0107182
+## [1,]  1.0364864 -0.7285167
+## [2,] -0.7285167  1.0205611
 \end{verbatim}
 
 \begin{Shaded}
@@ -739,7 +739,7 @@ Protein Intake}
     Sample 2 is from population 2:
   \end{itemize}
 
-  \[X_{21}, \cdots, X_{2,n_1}\overset{iid} \sim N(\mu_2,\sigma^2)\]
+  \[X_{21}, \cdots, X_{2,n_2}\overset{iid} \sim N(\mu_2,\sigma^2)\]
 \item
   Null hypothesis: \(H_0: \mu_1=\mu_2\)
 \end{itemize}
@@ -797,7 +797,7 @@ Protein Intake}
 \protect\hypertarget{multivarite-two-sample-problems-1}{}
 \begin{itemize}
 \item
-  SPooled sample variance
+  Pooled sample covariance matrix
   \[\mathbf{S}_p = \dfrac{(n_1-1)\mathbf{S}_1+(n_2-1)\mathbf{S}_2}{n_1+n_2-2}\]
   where
   \[\mathbf{S}_i = \dfrac{1}{n_i-1}\sum_{j=1}^{n_i}{(\mathbf X_{ij}-\bar{\mathbf X}_i)(\mathbf X_{ij}-\bar{\mathbf X}_i)'}\]
@@ -1018,7 +1018,7 @@ Versicolor}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cv}\OtherTok{=}\FunctionTok{sqrt}\NormalTok{((n1}\SpecialCharTok{+}\NormalTok{n2}\DecValTok{{-}2}\NormalTok{)}\SpecialCharTok{*}\NormalTok{p}\SpecialCharTok{/}\NormalTok{(n1}\SpecialCharTok{+}\NormalTok{n2}\SpecialCharTok{{-}}\NormalTok{p}\DecValTok{{-}1}\NormalTok{)}\SpecialCharTok{*}\FunctionTok{qf}\NormalTok{(}\DecValTok{1}\FloatTok{{-}0.05}\NormalTok{, p, n1}\SpecialCharTok{+}\NormalTok{n2}\SpecialCharTok{{-}}\NormalTok{p}\DecValTok{{-}1}\NormalTok{ ))}
+\NormalTok{cv}\OtherTok{=}\FunctionTok{qt}\NormalTok{(}\DecValTok{1}\FloatTok{{-}0.05}\SpecialCharTok{/}\NormalTok{p}\SpecialCharTok{/}\DecValTok{2}\NormalTok{, n1}\SpecialCharTok{+}\NormalTok{n2}\DecValTok{{-}2}\NormalTok{)}
 \FunctionTok{round}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{diff=}\NormalTok{mean.diff, }\AttributeTok{se=}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{diag}\NormalTok{((}\DecValTok{1}\SpecialCharTok{/}\NormalTok{n1}\SpecialCharTok{+}\DecValTok{1}\SpecialCharTok{/}\NormalTok{n2)}\SpecialCharTok{*}\NormalTok{Sp) ),}
 \AttributeTok{CI.lower=}\NormalTok{mean1}\SpecialCharTok{{-}}\NormalTok{mean2}\SpecialCharTok{{-}}\FunctionTok{qt}\NormalTok{(}\DecValTok{1}\FloatTok{{-}0.05}\SpecialCharTok{/}\NormalTok{(}\DecValTok{2}\SpecialCharTok{*}\NormalTok{p), n1}\SpecialCharTok{+}\NormalTok{n2}\DecValTok{{-}2}\NormalTok{)}\SpecialCharTok{*}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{diag}\NormalTok{((}\DecValTok{1}\SpecialCharTok{/}\NormalTok{n1}\SpecialCharTok{+}\DecValTok{1}\SpecialCharTok{/}\NormalTok{n2)}\SpecialCharTok{*}\NormalTok{Sp) ),}
 \AttributeTok{CI.upper=}\NormalTok{mean1}\SpecialCharTok{{-}}\NormalTok{mean2}\SpecialCharTok{+}\FunctionTok{qt}\NormalTok{(}\DecValTok{1}\FloatTok{{-}0.05}\SpecialCharTok{/}\NormalTok{(}\DecValTok{2}\SpecialCharTok{*}\NormalTok{p), n1}\SpecialCharTok{+}\NormalTok{n2}\DecValTok{{-}2}\NormalTok{)}\SpecialCharTok{*}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{diag}\NormalTok{((}\DecValTok{1}\SpecialCharTok{/}\NormalTok{n1}\SpecialCharTok{+}\DecValTok{1}\SpecialCharTok{/}\NormalTok{n2)}\SpecialCharTok{*}\NormalTok{Sp) ) ), }\DecValTok{3}\NormalTok{)}
@@ -1140,10 +1140,12 @@ Versicolor}
 
 \begin{frame}{Assignment 2: Due on Monday, May 1st}
 \protect\hypertarget{assignment-2-due-on-monday-may-1st}{}
+\tiny
+
 \begin{itemize}
 \item
-  \textcolor{red}{Problem 1}: Choose a \(3-by-3\) covariance matrices
-  with non-zero covariances. For each covariance matrix, simulate 1,000
+  \textcolor{red}{Problem 1}: Choose a \(3-by-3\) covariance matrix with
+  non-zero covariances. Also choose a sample size \(n\). Simulate 1,000
   data sets from a trivariate normal distribution.
 
   \begin{enumerate}
@@ -1183,6 +1185,8 @@ Versicolor}
 \item
   R Code should be included as appendices.
 \end{itemize}
+
+\normalsize
 \end{frame}
 
 \end{document}
