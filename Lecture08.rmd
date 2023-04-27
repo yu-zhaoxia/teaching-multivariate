@@ -1,0 +1,731 @@
+---
+title: "Multivariate Analysis Lecture 8: Eigenvalues, Covariance Matrices, and MANOVA"
+author: | 
+  | Zhaoxia Yu
+  | Professor, Department of Statistics
+date: "`r Sys.Date()`"
+output: 
+  beamer_presentation:
+    theme: "Ilmenau"
+    slide_level: 3
+    keep_tex: true
+header-includes:
+- \setbeamertemplate{navigation symbols}{}
+- \setbeamertemplate{footline}[page number]
+- \usepackage{amsmath}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr) #the pipe (%>%) tool is extremely useful
+library(MASS)
+```
+
+### Outline of Lecture 08
+- Eigenvalues of covariance matrices
+- Examples of $2\times 2$ covariance matrices
+- Review of one-way ANOVA
+- One-way MANOVA
+- A heads up of the midterm project
+
+# Eigenvalues and Cov Matrices
+## Eigenvalues
+### Eigenvalues and Eigenvectors
+- Let $A$ be a $p\times p$ square matrix. 
+- We say $\nu\in \mathbb R^p$ is an eigenvector and $\lambda\in \mathbb R$ is the corresponding eigenvalue of $A$ if
+$$A\nu=\lambda \nu$$
+- The eigenvalues $\lambda$ of $A$ are roots of the characteristic equation
+$$\det \left( \lambda I -A \right) = 0$$
+
+### The Spectral Decomposition of A Symmetric Matrix
+- Let $A_{p\times p}$ be a symmetric matrix 
+
+$$\begin{aligned} A & = \Gamma \Lambda \Gamma^T=\sum_{i=1}^{p}\lambda_i \mathbf{e}_i \mathbf{e}_i' \end{aligned}$$
+where 
+
+  - $\lambda_1, \cdots, \lambda_p$, often ordered from the largest to the smallest, are the eigenvalues of $A$
+  - $\Gamma$ is an orthogonal matrix, i.e., $\Gamma\Gamma^T=\Gamma^T\Gamma=\mathbf I$ and the columns of $\Gamma$ are the eigenvectors of $A$.
+  - $\Lambda$ is the diagonal matrix of the eigenvalues
+
+## Covariance Matrices
+### A Covariance Matrix Has to be P.(S.)D.
+- A covariance matrix has to be either positive definite (p.d.) or positive semidefinite (p.s.d.)
+- What is the definition of p.d. or p.s.d.?
+  - We say $\mathbf A_{p\times p}$ is p.d. (p.s.d.) is $x^T \mathbf A x >0$ ($\ge 0$) for any $x\in \mathbb R^p$ and $x\ne 0$
+- Why do covariance matrices has to be p.d. or p.s.d? The following page provides a nice explanation: 
+
+https://gowrishankar.info/blog/why-covariance-matrix-should-be-positive-semi-definite-tests-using-breast-cancer-dataset/
+
+
+### A Covariance Matrix Has to be P.(S.)D.
+- Intuitively, the information of the pairwise covariance/correlation has to be consistent. Can the following matrix be a covariance matrix?
+$$
+\begin{pmatrix}
+1 & 0.9 & 0.9\\
+0.9 & 1 & 0\\
+0.9 & 0 & 1
+\end{pmatrix}
+$$
+- The matrix indicates that 
+  - Variable 1 and 2 are highly correlated
+  - Variable 1 and 3 are highly correlated
+  - Variable 2 and 3 are not correlated
+- The pairwise correlations do not seem to be consistent
+
+### A Covariance Matrix Has to be P.(S.)D.
+- Examine the following matrix, which involves a parameter $\rho$
+$$A=
+\begin{pmatrix}
+1 & 0.9 & 0.9\\
+0.9 & 1 & \rho\\
+0.9 & \rho & 1
+\end{pmatrix}
+$$
+- What values can $\rho$ take in order for the matrix to be an appropriate covariance matrix?
+- This is a linear algebra problem. In order for the matrix to be a covariance matrix, the eigenvalues should be non-negative.
+- Recall that the eigenvalues are the roots to 
+$$0=\det \left( \lambda I - A\right) =
+|\begin{pmatrix}
+\lambda -1 & -0.9 & -0.9\\
+-0.9 & \lambda -1 & -\rho\\
+-0.9 & -\rho & \lambda-1
+\end{pmatrix}|$$
+<!--=(\lambda-1)^3-2*0.9^2\rho + 2*0.9^2(\lambda-1) + \rho^2(\lambda-1)-->
+
+
+## Examples 
+### Eigenvalues of Covariance Matrix: Example 1
+\footnotesize
+```{r}
+p=2; n=1000; rho1=0; rho2=0.9; rho3=0.5; rho4=-0.5
+Sigma1=diag(1-rho1, p, p) + matrix(rho1, p, p)
+Sigma2=diag(1-rho2, p, p) + matrix(rho2, p, p)
+Sigma3=diag(1-rho3, p, p) + matrix(rho3, p, p)
+Sigma4=diag(1-rho4, p, p) + matrix(rho4, p, p)
+X1=data.frame(mvrnorm(n, rep(0,p), Sigma1)); names(X1)=c("x","y")
+X2=data.frame(mvrnorm(n, rep(0,p), Sigma2)); names(X2)=c("x","y")
+X3=data.frame(mvrnorm(n, rep(0,p), Sigma3)); names(X3)=c("x","y")
+X4=data.frame(mvrnorm(n, rep(0,p), Sigma4)); names(X4)=c("x","y")
+```
+\normalsize
+
+
+### Eigenvalues of Covariance Matrix: Example 1
+- Simulated data
+\tiny
+```{r,out.width="70%"}
+par(mfrow=c(2,2),pty="s")
+plot(X1);plot(X2);plot(X3);plot(X4)
+```
+\normalsize
+
+
+### Eigenvalues of Covariance Matrix: Example 1
+- The true covariance matrices
+
+\tiny
+```{r}
+Sigma1
+Sigma2
+Sigma3
+Sigma4
+```
+\normalsize
+
+### Eigenvalues of Covariance Matrix: Example 1
+- Eigenvalues of the true covariance matrices
+
+\tiny
+```{r}
+eigen(Sigma1)$values
+eigen(Sigma2)$values
+eigen(Sigma3)$values
+eigen(Sigma4)$values
+```
+\normalsize
+
+### Eigenvalues of Covariance Matrix: Example 1
+- Eigenvalues of the estimated covariance matrices
+
+\tiny
+```{r}
+eigen(cov(X1))$values
+eigen(cov(X2))$values
+eigen(cov(X3))$values
+eigen(cov(X4))$values
+```
+\normalsize
+
+
+### Eigenvalues of Covariance Matrix: Example 2
+
+\footnotesize
+```{r}
+n=1000
+Sigma1=diag(c(4,1), 2, 2) 
+Sigma2=diag(c(1,4), 2, 2) 
+theta=pi/6
+R1=matrix(c(cos(theta), sin(theta), -sin(theta), cos(theta)), 2,2)
+theta=pi/4+pi/2
+R2=matrix(c(cos(theta), sin(theta), -sin(theta), cos(theta)), 2,2)
+Sigma3=R1%*%Sigma1%*%t(R1)
+Sigma4=R2%*%Sigma1%*%t(R2)
+X1=data.frame(mvrnorm(n, rep(0,2), Sigma1)); names(X1)=c("x","y")
+X2=data.frame(mvrnorm(n, rep(0,2), Sigma2)); names(X2)=c("x","y")
+X3=data.frame(mvrnorm(n, rep(0,2), Sigma3)); names(X3)=c("x","y")
+X4=data.frame(mvrnorm(n, rep(0,2), Sigma4)); names(X4)=c("x","y")
+```
+\normalsize
+
+
+### Eigenvalues of Covariance Matrix: Example 2
+- Simulated data
+
+\tiny
+```{r,out.width="70%"}
+par(mfrow=c(2,2),pty="s")
+plot(X1, xlim=c(-5,5), ylim=c(-5,5));plot(X2, xlim=c(-5,5), ylim=c(-5,5));
+plot(X3, xlim=c(-5,5), ylim=c(-5,5));plot(X4, xlim=c(-5,5), ylim=c(-5,5))
+```
+\normalsize
+
+
+
+
+### Eigenvalues of Covariance Matrix: Example 2
+- The true covariance matrices
+
+\tiny
+```{r}
+Sigma1
+Sigma2
+Sigma3
+Sigma4
+```
+\normalsize
+
+### Eigenvalues of Covariance Matrix: Example 2
+- Eigenvalues of the true covariance matrices
+
+\tiny
+```{r}
+eigen(Sigma1)$values
+eigen(Sigma2)$values
+eigen(Sigma3)$values
+eigen(Sigma4)$values
+```
+\normalsize
+
+### Eigenvalues of Covariance Matrix: Example 2
+- Eigenvalues of the estimate covariance matrices
+
+\tiny
+```{r}
+eigen(cov(X1))$values
+eigen(cov(X2))$values
+eigen(cov(X3))$values
+eigen(cov(X4))$values
+```
+\normalsize
+
+
+# One-way ANOVA
+### One-way ANOVA: Notations and Assumptions
+- $g$ \textcolor{red}{independent} samples
+  - $Y_{11}, \cdots Y_{1,n_1}\overset{iid}\sim N(\mu_1, \sigma^2)$
+  - $Y_{21}, \cdots Y_{2,n_2}\overset{iid}\sim N(\mu_2, \sigma^2)$
+  - $\cdots \cdots$
+  - $Y_{g1}, \cdots Y_{g,n_g}\overset{iid}\sim N(\mu_g, \sigma^2)$
+- Total sample size $n=n_1+\cdots + n_g=\sum_{i=1}^g n_i$
+- Group means: $\bar{ Y}_{i.}$ for $i=1,\cdots, g$ 
+- Grand/overall mean: $\bar{Y}_{..}$
+
+
+
+### One-Way ANOVA: Partition the Sum of Squares of Total:
+
+\scriptsize	
+$$\begin{array}{lll} SSTO & = & \sum_{i=1}^{g}\sum_{j=1}^{n_i}\left(Y_{ij}-\bar{Y}_{..}\right)^2  =  \sum_{i=1}^{g}\sum_{j=1}^{n_i}[(Y_{ij}-\bar{Y}_{i.})+(\bar{Y}_{i.}-\bar{Y}_{..})]^2 \\ & = &\sum_{i=1}^{g}\sum_{j=1}^{n_i}(Y_{ij}-\bar{Y}_{i.})^2+\sum_{i=1}^{g}n_i(\bar{Y}_{i.}-\bar{Y}_{..})^2 + \\
+&&2 \sum_{i=1}^{g}\sum_{j=1}^{n_i}[(Y_{ij}-\bar{Y}_{i.})(\bar{Y}_{i.}-\bar{Y}_{..})]\\
+&=&\sum_{i=1}^{g}\sum_{j=1}^{n_i}(Y_{ij}-\bar{Y}_{i.})^2+\sum_{i=1}^{g}n_i(\bar{Y}_{i.}-\bar{Y}_{..})^2 + \\
+&&2 \sum_{i=1}^{g}[(\bar{Y}_{i.}-\bar{Y}_{..})\sum_{j=1}^{n_i}(Y_{ij}-\bar{Y}_{i.})]\\
+&=&\sum_{i=1}^{g}\sum_{j=1}^{n_i}(Y_{ij}-\bar{Y}_{i.})^2+\sum_{i=1}^{g}n_i(\bar{Y}_{i.}-\bar{Y}_{..})^2 + 2 \sum_{i=1}^{g}[(\bar{Y}_{i.}-\bar{Y}_{..})\cdot 0]\\
+&=&\underset{SSE}{\underbrace{\sum_{i=1}^{g}\sum_{j=1}^{n_i}[(Y_{ij}-\bar{Y}_{i.})^2}}+\underset{SSTR}{\underbrace{\sum_{i=1}^{g}n_i(\bar{Y}_{i.}-\bar{Y}_{..})^2}}  
+\end{array}
+$$
+\normalsize
+
+### One-Way ANOVA: E(SSE)
+- $SSTO=SSE+SSTR=SSW+SSB$:
+- $SSE$ is also known as $SSW$, the \textcolor{red}{within-group} variance
+$$SSE=\sum_{i=1}^{g}\sum_{j=1}^{n_i}(Y_{ij}-\bar{Y}_{i.})^2=\sum_{i=1}^g (n_i-1)s_i^2$$
+where $s_i^2$ is the sample variance for the $i$th group. Recall that $E[s_i^2]=\sigma^2$. Therefore, 
+$$E[SSE]=\sum_{i=1}^g (n_i-1)\sigma^2=(n-g)\sigma^2$$
+
+### One-Way ANOVA: E(SSTR)
+- $SSTR$ is also known as $SSB$, the \textcolor{red}{between-group} variance
+- The calculation of $E(SSTR)$ requires the following results
+
+$$\begin{array}{lll} 
+E[\bar{Y}_{i.}^2]&=& Var[\bar{Y}_{i.}] + \mu_i^2=\frac{\sigma^2}{n_i} +\mu_i^2 \\
+E[\bar{Y}_{..}^2]&=& Var[\bar{Y}_{..}] + \mu_{..}^2=\frac{\sigma^2}{n} +\mu_{..}^2\\
+E[\bar{Y}_{i.}\bar{Y}_{..}] &=&\frac{1}{n}E[\bar{Y}_{i.}\sum_{j=1}^g n_j \bar Y_{j.}]= \frac{1}{n}E[\bar{Y}_{i.}(n_i\bar{Y}_{i.} + \sum_{j\ne i}^g n_j \bar Y_{j.})]\\
+&=& \frac{n_i}{n}E[\bar{Y}_{i.}^2] + \mu_i \sum_{j\ne i} \frac{n_j}{n}\mu_j= \frac{1}{n}\sigma^2 + \frac{n_i}{n}\mu_i^2 + \mu_i \sum_{j\ne i} \frac{n_j}{n}\mu_j\\
+&=& \frac{1}{n}\sigma^2+ \mu_i \bar \mu_{..}
+\end{array}
+$$
+
+
+
+### One-Way ANOVA: E(SSTR) (continued)
+$$\begin{array}{lll} 
+E[SSTR] 
+&=& \sum_{i=1}^g n_i E[(\bar{Y}_{i.}-\bar{Y}_{..})^2]\\
+&=& \sum_{i=1}^g n_i E[\bar{Y}_{i.}^2+\bar{Y}_{..}^2 - 2\bar{Y}_{i.}\bar{Y}_{..} ]\\
+&=& \sum_{i=1}^g n_i E[\bar{Y}_{i.}^2+\bar{Y}_{..}^2 - 2\bar{Y}_{i.}\bar{Y}_{..} ]\\
+&=& \sum_{i=1}^g n_i (\frac{\sigma^2}{n_i} +\mu_i^2 + \frac{\sigma^2}{n} +\mu_{..}^2 -2[\frac{1}{n}\sigma^2+ \mu_i \bar \mu_{..}])\\
+&=& (g-1)\sigma^2 + \sum_{i=1}^g n_i (\mu_i - \bar u_{..})^2
+\end{array}
+$$
+where $\bar \mu_{..}=\frac{1}{n} \sum_{i=1}^g n_i \mu_i$.
+
+
+
+### One-Way ANOVA: Mean of Sum of Squares
+- The null hypothesis
+$$H_0\colon \mu_1 = \mu_2 = \dots = \mu_g$$
+
+- The alternative hypothesis
+$$H_a\colon \mu_i \ne \mu_j \mbox{ for at least one pair of } (i,j)$$ 
+
+- Mean sum of squares: $MSE=\frac{1}{n-g}SSE$, $MSTR=\frac{1}{g-1}SSTR$
+
+- $E(MSE)=\sigma^2$
+- $E(MSTR)=\sigma^2 + \frac{1}{g-1}\sum_{i=1}^g n_i (\mu_i - \bar u_{..})^2\overset{H_0}=\sigma^2$
+- Thus, a reasonable statistic is the ratio of the two mean sum of squares
+
+### One-Way ANOVA: F-statistic
+- The F-statistic is defined as 
+$$F=\frac{MSTR}{MSE}$$
+- The null distribution
+$$F=\frac{\frac{SSTR}{\sigma^2}/(g-1)}{\frac{SSE}{\sigma^2}/(n-g)}\overset{H_0}\sim F_{g-1, n-g}$$
+- To derive the null distribution of $F$, we need to show that 
+  - $\frac{SSTR}{\sigma^2}\overset{H_0}\sim \chi_{g-1}^2$
+  - $\frac{SSE}{\sigma^2}\sim \chi_{n-g}^2$
+  - $SSTR$ and $SSE$ are independent
+
+
+### ANOVA Table and Distributions
+
+\footnotesize	
+\begin{table}[h!]
+\centering
+\begin{tabular}{ccccc}
+Source & SS & MS & DF & F\\ \hline
+Treatment & $SSTR=\sum_{i=1}^g\sum_{j=1}^{n_i} (\bar Y_{i.}-\bar Y_{..})^2$ & $MSTR=\frac{SSTR}{g-1}$ & g-1 & $F=\frac{MSTR}{MSE}$\\
+Error & $SSE=\sum_{i=1}^g\sum_{j=1}^{n_i} (Y_{ij}-\bar Y_{i.})^2$ & $MSE=\frac{SSE}{n-g}$ & n-g & \\ \hline
+Total & $SSTO=\sum_{i=1}^g\sum_{j=1}^{n_i} (Y_{ij}-\bar Y_{..})^2$ & & & \\
+\hline
+\end{tabular}
+\end{table}
+\normalsize
+
+# MANOVA Sample Cov
+### ANOVA to MANOVA
+- So far we have learned
+  - One-sample Hotelling's $T^2$
+  - Two-sample Hotelling's $T^2$
+- The next logical extension is to multiple samples, i.e., the multivariate version anova, or MANOVA
+- Compared to one-sample or two-sample multivariate analysis, there are many choices for comparing multiple samples for multivariate data
+- We will cover the following methods: 
+
+
+
+
+
+
+### Notations and Assumptions
+- $g$ \textcolor{red}{independent} random samples
+  - $\mathbf Y_{11}, \cdots \mathbf Y_{1,n_1}\overset{iid}\sim N(\boldsymbol \mu_1, \boldsymbol\Sigma)$
+  - $\mathbf Y_{21}, \cdots \mathbf Y_{2,n_2}\overset{iid}\sim N(\boldsymbol \mu_2, \boldsymbol\Sigma)$
+  - $\cdots \cdots$
+  - $\mathbf Y_{g1}, \cdots \mathbf Y_{g,n_g}\overset{iid}\sim N(\boldsymbol \mu_g, \boldsymbol\Sigma)$
+- $n_i$: the number of observations in group $i$
+- The $i$th random sample is from $N(\boldsymbol \mu_i, \boldsymbol\Sigma)$
+
+
+### Notations and Assumptions (continued)
+- Each $\mathbf Y_{ij}\in \mathbb R^p$, i.e,
+$$\left(\begin{array}{c}Y_{ij1}\\Y_{ij2}\\\vdots\\Y_{ijp}\end{array}\right)$$
+
+- The null hypothesis
+$$H_0\colon \boldsymbol \mu_1 = \boldsymbol \mu_2 = \dots = \boldsymbol \mu_g$$
+
+- The alternative hypothesis
+$$H_1\colon \boldsymbol \mu_i \ne \boldsymbol \mu_j \mbox{ for at least one pair of } (i,j)$$ 
+
+
+
+### The Total Covariance Matrix
+- The total covariance matrix is the covariance matrix if the group information is ignored. If we pool all the $n=n_1+\cdots+n_g=\sum_{i=1}^g n_g$ observations together, what is the covariance matrix?
+
+\footnotesize
+$$\begin{array}{lll}
+\mathbf{T} 
+& = & \sum_{i=1}^{g}\sum_{j=1}^{n_i}(\mathbf Y_{ij}- \bar {\mathbf Y}_{..})(\mathbf Y_{ij}-\bar {\mathbf Y}_{..})' \\ 
+& = & \sum_{i=1}^{g}\sum_{j=1}^{n_i}\{(\mathbf Y_{ij}-\bar {\mathbf{ Y}}_i)+(\bar{ \mathbf Y}_i-\bar{\mathbf Y}_{..})\}\{(\mathbf Y_{ij}-\bar{\mathbf Y}_i)+(\bar{\mathbf Y}_i-\bar{\mathbf Y}_{..})\}' 
+\\ & = & \underset{W}{\underbrace{\sum_{i=1}^{g}\sum_{j=1}^{n_i}(\mathbf Y_{ij}-\bar{\mathbf  Y}_{i.})(\mathbf Y_{ij}-\bar{ \mathbf Y}_{i.})'}}+\underset{B}{\underbrace{\sum_{i=1}^{g}n_i(\bar{ \mathbf Y}_{i.}-\bar{\mathbf Y}_{..})(\bar{\mathbf Y}_{i.}-\bar{\mathbf Y}_{..})'}} + 0
+\end{array}$$
+\normalsize
+
+### The Within-Group Sample Covariance Matrix
+- In the definition of the total covariance matrix, we compare each observation to the grand mean vector
+- In within-group covariance matrix, we compare each observation to its group mean
+$$\mathbf W=\sum_{i=1}^{g}\sum_{j=1}^{n_i}(\mathbf Y_{ij}-\bar{\mathbf Y}_{i.})(\mathbf Y_{ij}-\bar{\mathbf Y}_{i.})'$$
+
+
+### The Within-Group Sample Covariance Matrix (continued)
+
+- Let $\mathbf W_i=\sum_{j=1}^{n_i}(\mathbf Y_{ij}-\bar{\mathbf Y}_{i.})(\mathbf Y_{ij}-\bar{\mathbf Y}_{i.})'$. We can show that 
+$$\mathbf W_1, \cdots, \mathbf W_g \overset{independent}\sim Wishart_p(n_i-1, \boldsymbol \Sigma)$$
+- Recall that the sum of independently distributed chi-squared distributed random variables also follows a chi-squared distribution. Similarly, $$\mathbf{ W=\sum_{i=1}^g W_i \sim Wishart_p(n-g, \boldsymbol \Sigma)}$$
+
+### The Between-Group Sample Covariance Matrix
+- The between-group sample covariance matrix captures the difference in mean vectors between groups
+
+$$\mathbf B=\sum_{i=1}^{g}n_i(\bar{\mathbf Y}_{i.}-\bar{\mathbf Y}_{..})(\bar{\mathbf Y}_{i.}-\bar{\mathbf Y}_{..})'$$
+
+- When the null hypothesis is true, $\mathbf B$ follows a Wishart distribution
+$$\mathbf B\overset{H_0}\sim Wishart_p(g-1, \boldsymbol \Sigma)$$
+
+### Outline of Proof
+- Let $\mathbf Y_{n\times p}$ denote the data matrix
+- Let $\mathbf X_{n\times g}$ denote the design matrix, which consists of dummy variables of the group membership. We also define $\mathbf {P_{n\times n}=X(X^TX)^{-1}X^T}$. Then
+
+\footnotesize
+$$\mathbf X=
+\begin{pmatrix}
+\mathbf 1_{n_1} & \mathbf 0_{n_1} & \cdots & \mathbf 0_{n_1}\\
+\mathbf 0_{n_2} & \mathbf 1_{n_2} & \cdots & \mathbf 0_{n_2}\\
+\cdots & \cdots & \cdots & \cdots \\
+\mathbf 0_{n_g} & \mathbf 0_{n_g} & \cdots & \mathbf 1_{n_g}
+\end{pmatrix}, 
+\mathbf P=
+\begin{pmatrix}
+\frac{1}{n_1}\mathbf 1_{n_1}\mathbf 1_{n_1}^T & \mathbf 0 & \cdots & \mathbf 0\\
+\mathbf 0 & \frac{1}{n_2}\mathbf 1_{n_2}\mathbf 1_{n_2}^T& \cdots & \mathbf 0\\
+\cdots & \cdots & \cdots & \cdots \\
+\mathbf 0 & \mathbf 0 & \cdots &  \frac{1}{n_g}\mathbf 1_{n_g}\mathbf 1_{n_g}^T
+\end{pmatrix}
+$$
+\normalsize
+
+### Outline of Proof (continued)
+- It can be shown that
+$$\mathbf W = \mathbf Y^T (\mathbf I - \mathbf P)\mathbf Y \mbox{ , }
+\mathbf B = \mathbf Y^T (\mathbf P-\frac{1}{n}\mathbf 1_n \mathbf 1_n^T)\mathbf Y
+$$
+
+
+
+- It is not difficult to verify that $\mathbf P$, $\mathbf I - \mathbf P$, and $\mathbf P -\frac{1}{n}\mathbf 1_n \mathbf 1_n^T$ are all projection matrices. For a projection matrix, its rank equals its trace. Thus, it is not difficult to show that 
+$$rank(\mathbf P)=g, rank(\mathbf I - \mathbf P)=n-g, rank(\mathbf P -\frac{1}{n}\mathbf 1_n \mathbf 1_n^T)=g-1$$
+- In Lecture 06 we showed that $(n-1)\mathbf S \sim Wishart_p(n-1, \boldsymbol \Sigma)$. Use similar methods, we can show that 
+$$
+\begin{aligned}
+\mathbf W &\sim Wishart_p(n-g, \boldsymbol \Sigma) \mbox{ , }\mathbf B \overset{H_0}\sim Wishart_p(g-1, \boldsymbol \Sigma)\\
+\mathbf W & \perp \mathbf B 
+\end{aligned}
+$$
+
+### MANOVA Table
+- We can also construct a table
+
+\footnotesize	
+\begin{table}[h!]
+\centering
+\begin{tabular}{ccc}
+Source & Sample Cov & DF\\ \hline
+Treatment & $\mathbf B=\sum_{i=1}^{g}n_i(\bar{\mathbf Y}_{i.}-\bar{\mathbf Y}_{..})(\bar{\mathbf Y}_{i.}-\bar{\mathbf Y}_{..})'$ & g-1 \\
+Error & $\mathbf W=\sum_{i=1}^{g}\sum_{j=1}^{n_i}(\mathbf Y_{ij}-\bar{\mathbf Y}_{i.})(\mathbf Y_{ij}-\bar{\mathbf Y}_{i.})'$ & n-g  \\ \hline
+Total & $\mathbf T=\sum_{i=1}^{g}\sum_{j=1}^{n_i}(\mathbf Y_{ij}- \bar {\mathbf Y}_{..})(\mathbf Y_{ij}-\bar {\mathbf Y}_{..})'$ &  \\
+\hline
+\end{tabular}
+\end{table}
+\normalsize
+
+
+# MANOVA Test Statistics
+
+### MANOVA Test Statistics
+- In one-way ANOVA, we understand that $SSB$ should be large relative to $SSW$ when the null hypothesis is not true
+- In the multivariate version, we also expect that $\mathbf B$ should be large relative to $\mathbf W$ when the null hypothesis is not true
+- However, $\mathbf B$ and $\mathbf W$ are matrices. How to define "large"?
+
+
+### Iris Data: $B$ and $W$
+
+\tiny
+```{r}
+#rearrange the data such as the response matrix is 
+#an n-by-p matrix
+Y=cbind(SepalL=c(iris3[,1,1],iris3[,1,2],iris3[,1,3]), 
+SepalW=c(iris3[,2,1],iris3[,2,2],iris3[,2,3]), 
+PetalL=c(iris3[,3,1],iris3[,3,2],iris3[,3,3]), 
+PetalW=c(iris3[,4,1],iris3[,4,2],iris3[,4,3]))
+#for unknown reasons, data.frame won't work but cbind works
+#alternatively, we can use the following way to define y
+#Y=aperm(iris3,c(1,3,2));dim(y)=c(150,4)
+
+#define the covariate variable X, which is vector of labels
+iris.type=rep(c("Setosa","Versicolor","Virginica"),each=50)
+T=(150-1)*cov(Y)
+W=(50-1)*cov(iris3[,,1]) +(50-1)*cov(iris3[,,2])+(50-1)*cov(iris3[,,3])
+B=T-W
+```
+\normalsize
+
+
+### Iris Data: $B$ and $W$
+
+\tiny
+```{r}
+B
+W
+```
+
+### MANOVA in R
+
+\footnotesize
+```
+summary.manova {stats}	R Documentation
+Summary Method for Multivariate Analysis of Variance
+Description
+A summary method for class "manova".
+
+Usage
+## S3 method for class 'manova'
+summary(object,
+        test = c("Pillai", "Wilks", "Hotelling-Lawley", "Roy"),
+        intercept = FALSE, tol = 1e-7, ...)
+```
+\normalsize
+
+
+### MANOVA - Method 1: Pallai Trace
+$$V = trace(\mathbf{\mathbf B(\mathbf B+\mathbf W)^{-1}})=trace(\mathbf B \mathbf T^{-1})$$
+
+### MANOVA - Method 2: Wilk's Lambda
+- Wilk's Lambda distribution
+Let $\mathbf A\sim Wishart_p(m_1, \mathbf I)$ and $\mathbf B\sim Wishart_p(m_2, \mathbf I)$ be independent with $m_1>p$. We say 
+$$\Lambda=\dfrac{|\mathbf{A}|}{|\mathbf{A+B}|}\sim \Lambda (p, m_1, m_2)$$
+
+- Test Statistic
+$$\Lambda^* = \dfrac{|\mathbf{W}|}{|\mathbf{B+W}|}=\dfrac{|\mathbf{W}|}{|\mathbf{T}|}=\dfrac{|\mathbf{\boldsymbol \Sigma^{-1/2} W\boldsymbol \Sigma^{-1/2} }|}{|\mathbf{\boldsymbol \Sigma^{-1/2} (B+W)\boldsymbol \Sigma^{-1/2} }|}$$
+- By the definition of Wilk's Lambda distribution, 
+$$\Lambda^* \overset{H_0}\sim \Lambda (p, n-g, g-1)$$
+
+
+### MANOVA - Method 3: Lawley-Hotelling Trace
+
+$$T^2_0 = trace(\mathbf{BW}^{-1})$$
+
+### MANOVA - Method 4: Roy's Largest Root
+- Two equivalent test statistics have been used
+$$
+\begin{aligned}
+\lambda_{max}(\mathbf B\mathbf W^{-1})\\
+\lambda_{max}(\mathbf B\mathbf {(B+W)}^{-1})
+\end{aligned}
+$$
+
+### Test Statistics and the Eigenvalues of $\mathbf B \mathbf W^{-1}$
+- One interesting observation is that all the test statistics can be expressed in terms of eigenvalues of $\mathbf B \mathbf W^{-1}$. Let $\lambda_1, \cdots, \lambda_p$ denote the eigenvalues, from the largest to the smallest. We have 
+
+- Pillai trace
+$$tr(\mathbf B (\mathbf B + \mathbf W)^{-1})=\sum_{i=1}^{min(p, g-1)}\frac{\lambda_i}{1+\lambda_i}$$
+
+- Wilk's Lambda
+$$\Lambda^*= \prod_{i=1}^{min(p, g-1)}\frac{1}{1+\lambda_i}$$
+
+
+### Test Statistics and the Eigenvalues of $\mathbf B \mathbf W^{-1}$
+- Lawley-Hotelling trace
+$$trace(\mathbf B \mathbf W^{-1}) = \sum_{i=1}^{min(p, g-1)}\lambda_i$$
+
+- Roy's largest root
+$$
+\begin{aligned}
+\lambda_{max}(\mathbf B\mathbf W^{-1}) = \lambda_1\\
+\lambda_{max}(\mathbf B\mathbf {(B+W)}^{-1})= \frac{\lambda_1}{1+\lambda_1}
+\end{aligned}
+$$
+
+### Proof
+- If you are curious about how to prove these results, I provide an example. 
+$$
+\begin{aligned}
+(\Lambda ^{*})^{-1} &= \dfrac{|\mathbf{B+W}|}{|\mathbf{W}|} = |\mathbf{I +W^{-1} B}|\\
+&= \prod_{i=1}^p [\mbox{the ith eigenvalue of } \mathbf{I +W^{-1} B}]\\
+&= \prod_{i=1}^p [1 + \mbox{the ith eigenvalue of } \mathbf{W^{-1} B}]\\
+&= \prod_{i=1}^p (1 + \lambda_i)\overset{1}=\prod_{i=1}^{min(p,g-1)} (1 + \lambda_i)
+\end{aligned}
+$$
+As a result, $\Lambda ^{*}=\prod_{i=1}^p \frac{1}{1 + \lambda_i}$
+
+### Proof (continued)
+- The last step implies that $rank(\mathbf W^{-1}\mathbf B)=min(p, g-1)$
+- Why is it true?
+  - First, $rank(\mathbf W^{-1}\mathbf B)=rank(\mathbf B)$
+  - Second, because $\mathbf B\overset{H_0}\sim Wishart_p(g-1, \boldsymbol \Sigma)$, there exists $\mathbf Y_{(g-1)\times p}$ such that 
+  $$\mathbf B = \mathbf Y^T \mathbf Y \mbox{ , }$$
+and $\mathbf Y$ is a random sample of size $g-1$ from $N(\mathbf 0, \boldsymbol \Sigma)$. The rank of $\mathbf Y$ is $rank(\mathbf Y)=min(p, g-1)$.
+  - Third, $rank(\mathbf B)= rank(\mathbf Y^T\mathbf Y)=rank(\mathbf Y)=min(p, g-1)$. 
+  
+
+### Example - Iris Data
+
+\footnotesize
+```{r, out.width="60%"}
+mycolors=rainbow(12)[9:1]
+image(t(iris[150:1, 1:4]),col = mycolors, xaxt="n", yaxt="n")
+```
+\normalsize
+
+### Iris Data: Univariate One-way ANOVA: Data Formatting
+```{r}
+#rearrange the data in the (X,Y) format
+y=c(iris3[,1,1], iris3[,1,2], iris3[,1,3])
+#alternatively, you may use: 
+#y=aperm(iris3[,1,], c(1,2)); dim(y)=c(150,1)
+
+#define the covariate variable X, 
+#which is vector of labels
+iris.type=rep(c("Setosa","Versicolor","Virginica"),each=50)
+```
+
+### Iris Data: Univariate One-way ANOVA: Exploratory
+```{r, eval=FALSE}
+#visual checking
+par(mfrow=c(2,2))
+#box plot
+boxplot(y~iris.type, main="SepalL")
+#alternatively, you may use: boxplot(iris3[,1,], 
+#main="SepalL")
+
+#qq plots
+qqnorm(iris3[,1,1], main="Q-Q Plot: Setosa"); 
+qqline(iris3[,1,1])
+qqnorm(iris3[,1,2], main="Q-Q Plot: Versicolor"); 
+qqline(iris3[,1,2])
+qqnorm(iris3[,1,3], main="Q-Q Plot: Virginica"); 
+qqline(iris3[,1,3])
+```
+
+
+### Iris Data: Univariate One-way ANOVA: Exploratory
+```{r, echo=FALSE}
+#visual checking
+par(mfrow=c(2,2))
+#box plot
+boxplot(y~iris.type, main="SepalL")
+#alternatively, you may use: boxplot(iris3[,1,], 
+#main="SepalL") 
+
+#qq plots
+qqnorm(iris3[,1,1], main="Q-Q Plot: Setosa"); qqline(iris3[,1,1])
+qqnorm(iris3[,1,2], main="Q-Q Plot: Versicolor"); qqline(iris3[,1,2])
+qqnorm(iris3[,1,3], main="Q-Q Plot: Virginica"); qqline(iris3[,1,3])
+```
+
+### Iris Data: Univariate One-way ANOVA: Analysis
+```{r}
+obj.aov=aov(y~iris.type)
+summary(obj.aov)
+```
+
+### Iris Data: MANOVA: Data Formatting 
+```{r}
+#rearrange the data such as the response matrix is 
+#an n-by-p matrix
+Y=cbind(SepalL=c(iris3[,1,1],iris3[,1,2],iris3[,1,3]), 
+SepalW=c(iris3[,2,1],iris3[,2,2],iris3[,2,3]), 
+PetalL=c(iris3[,3,1],iris3[,3,2],iris3[,3,3]), 
+PetalW=c(iris3[,4,1],iris3[,4,2],iris3[,4,3]))
+#for unknown reasons, data.frame won't work but cbind works
+#alternatively, we can use the following way to define y
+#Y=aperm(iris3,c(1,3,2));dim(y)=c(150,4)
+
+#define the covariate variable X, which is vector of labels
+iris.type=rep(c("Setosa","Versicolor","Virginica"),each=50)
+```
+
+### Iris Data: MANOVA: Exploratory
+```{r, eval=FALSE}
+#visual investigation
+par(mfrow=c(2,2))
+boxplot(iris3[,1,],main="SepalL")
+boxplot(iris3[,2,],main="SepalW")
+boxplot(iris3[,3,],main="PetalL")
+boxplot(iris3[,4,],main="PetalW")
+```
+
+### Iris Data: MANOVA: Exploratory
+```{r, echo=FALSE}
+#visual investigation
+par(mfrow=c(2,2))
+boxplot(iris3[,1,],main="SepalL")
+boxplot(iris3[,2,],main="SepalW")
+boxplot(iris3[,3,],main="PetalL")
+boxplot(iris3[,4,],main="PetalW")
+```
+
+### Conducting MANOVA "Manually"
+
+\footnotesize
+```{r}
+T=(150-1)*cov(Y)
+W=(50-1)*cov(iris3[,,1]) +(50-1)*cov(iris3[,,2])+(50-1)*cov(iris3[,,3])
+B=T-W
+Lambda=prod(1/(1+ eigen(B%*%solve(W))$values))
+(150-3-2)/3*(1-sqrt(Lambda))/sqrt(Lambda)
+# Using relationship between Wilk's lambda and F-distribution 
+# (see wikipedia about "Wilks's lambda distribution")
+1-pf((150-3-2)/3*(1-sqrt(Lambda))/sqrt(Lambda), 2*3, 150-3-2)
+```
+\normalsize
+
+### Conducting MANOVA using "manova" in R
+```{r}
+obj=manova(Y~iris.type)
+obj.aov
+```
+
+### Conducting MANOVA using "manova" in R
+
+\footnotesize
+```{r}
+summary(obj, test="Pillai")
+summary(obj, test="Wilks")
+```
+\normalsize
+
+### Conducting MANOVA using "manova" in R
+
+\footnotesize
+```{r}
+summary(obj, test="Hotelling-Lawley")
+summary(obj, test="Roy")
+```
+\normalsize
+
+### Too Many Choices?
+- Due to the nature of multivariate analysis, we have seen many choices for conducting one-way MANOVA
+- Do they work equally well?
+- Does their performance depend on the true distribution? 
+- You will be asked to compare the methods in your midterm project
+
+
+
+
+
