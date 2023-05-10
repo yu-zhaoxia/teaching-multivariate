@@ -229,7 +229,7 @@ sum(lambda[1:2])/sum(lambda)
   - PCi: $Y_i=\mathbf X \gamma_i$, which is a $n\times 1$ vector
 
 - Equivalently, compute 
-$$Y_{pc}=Y \Gamma$$
+$$Y_{pc}=\mathbf X \Gamma$$
 which is the $n\times p$ matrix with the $i$th column being the $i$th PC. 
 
 
