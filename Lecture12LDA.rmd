@@ -192,7 +192,7 @@ $$
 
 ### Allocate New Observations
 - The linear function 
-$$f(x)=a^T X \mbox{ where } a=\mathbf  S_p^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)$$
+$$f(x)=a^T x \mbox{ where } a=\mathbf  S_p^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)$$
 is called \textcolor{red}{Fisher's linear discriminant function}. 
 
 - Let 
@@ -482,10 +482,103 @@ sum(proj.scalar[-c(1:n2)]<m)/n2
 
 
 ## PCA vs LDA
-### The linear combinations
+### PCA and LDA: Linear Combinations
+- Although both are linear combinations, the goals are quite different
+- LDA vs the 1st PC: 
+  - LDA: $a=\mathbf  S_p^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)$
+  - First PC: $a=\gamma_1$, the first eigenvector of $\boldsymbol \Sigma$.
+- In the Iris two-class two-feature example, the coefficients are 
+
+\tiny
 ```{r}
-eigen(cov(sample12))$vector[,1]
+lda.coeff
+pca.coeff=eigen(cov(sample12))$vector[,1]
+pca.coeff
 ```
+
+
+### PCA and LDA: Linear Combinations
+
+\tiny
+```{r, eval=FALSE}
+proj.pca=(sample12%*%pca.coeff)%*%matrix(pca.coeff, 1,2)
+par(pty="s")
+plot(sample12, xlim=c(-1,8), ylim=c(-1,8), xlab=xlab, ylab=ylab, type="n")
+points(sample1, pch=pch[1], col=col[1])
+points(sample2, pch=pch[2], col=col[2])
+points(0, 0)
+arrows(0, 0, lda.coeff[1], lda.coeff[2], length = 0.1, angle=15, col="blue")
+abline(a=0, b=lda.coeff[2]/lda.coeff[1])
+arrows(0, 0, pca.coeff[1], pca.coeff[2], length = 0.1, angle=15, col="black")
+abline(a=0, b=pca.coeff[2]/pca.coeff[1])
+```
+\normalsize
+
+
+### PCA and LDA: Linear Combinations
+
+```{r, echo=FALSE}
+proj.pca=(sample12%*%pca.coeff)%*%matrix(pca.coeff, 1,2)
+par(pty="s")
+plot(sample12, xlim=c(-1,8), ylim=c(-1,8), xlab=xlab, ylab=ylab, type="n")
+points(sample1, pch=pch[1], col=col[1])
+points(sample2, pch=pch[2], col=col[2])
+points(0, 0)
+arrows(0, 0, lda.coeff[1], lda.coeff[2], length = 0.1, angle=15, col="blue")
+abline(a=0, b=lda.coeff[2]/lda.coeff[1])
+arrows(0, 0, pca.coeff[1], pca.coeff[2], length = 0.1, angle=15, col="black")
+abline(a=0, b=pca.coeff[2]/pca.coeff[1])
+```
+
+
+### PCA and LDA: Projections
+
+\tiny
+```{r, eval=FALSE}
+proj.pca=(sample12%*%pca.coeff)%*%matrix(pca.coeff, 1,2)
+par(pty="s")
+plot(sample12, xlim=c(-1,8), ylim=c(-1,8), xlab=xlab, ylab=ylab, type="n")
+points(sample1, pch=pch[1], col=col[1])
+points(sample2, pch=pch[2], col=col[2])
+points(0, 0)
+arrows(0, 0, lda.coeff[1], lda.coeff[2], length = 0.1, angle=15, col="blue")
+abline(a=0, b=lda.coeff[2]/lda.coeff[1])
+arrows(0, 0, pca.coeff[1], pca.coeff[2], length = 0.1, angle=15, col="black")
+abline(a=0, b=pca.coeff[2]/pca.coeff[1])
+for(i in 1: (n1+n2)){  
+  text(x=proj[i,1],y=proj[i,2], labels="|", col="blue",
+       srt=atan(lda.coeff[2]/lda.coeff[1])*180/pi, cex=0.5)
+  text(x=proj.pca[i,1],y=proj.pca[i,2], labels="|", col="black",
+       srt=atan(pca.coeff[2]/pca.coeff[1])*180/pi, cex=0.5)}
+text(x=0, y=1.2, "lda", srt=-60, col="blue")
+text(x=4, y=6, "pca", srt=45, col="black")
+```
+\normalsize
+
+
+### PCA and LDA: Projections
+
+\tiny
+```{r, echo=FALSE}
+proj.pca=(sample12%*%pca.coeff)%*%matrix(pca.coeff, 1,2)
+par(pty="s")
+plot(sample12, xlim=c(-1,8), ylim=c(-1,8), xlab=xlab, ylab=ylab, type="n")
+points(sample1, pch=pch[1], col=col[1])
+points(sample2, pch=pch[2], col=col[2])
+points(0, 0)
+arrows(0, 0, lda.coeff[1], lda.coeff[2], length = 0.1, angle=15, col="blue")
+abline(a=0, b=lda.coeff[2]/lda.coeff[1])
+arrows(0, 0, pca.coeff[1], pca.coeff[2], length = 0.1, angle=15, col="black")
+abline(a=0, b=pca.coeff[2]/pca.coeff[1])
+for(i in 1: (n1+n2)){  
+  text(x=proj[i,1],y=proj[i,2], labels="|", col="blue",
+       srt=atan(lda.coeff[2]/lda.coeff[1])*180/pi, cex=0.5)
+  text(x=proj.pca[i,1],y=proj.pca[i,2], labels="|", col="black",
+       srt=atan(pca.coeff[2]/pca.coeff[1])*180/pi, cex=0.5)}
+text(x=0, y=1.2, "lda", srt=-60, col="blue")
+text(x=4, y=6, "pca", srt=45, col="black")
+```
+\normalsize
 
 ## LDA in R
 ### Use the "lda" function in R
