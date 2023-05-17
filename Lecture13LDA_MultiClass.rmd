@@ -573,7 +573,7 @@ $$\operatorname*{argmin}_g D^2(X_0, g)$$
 ### The Number of Linear Discriminants
 - Recall that $rank(B)=min(p, g-1)$ (Lecture 8). The number of total linear discriminants is $min(p,g-1)$. 
 - In the two-class, $rank(B)=1$. Thus, there is only one linear discrminant.
-- When $rank(B)$ is large, it is often helpful to use all linear discriminants.
+- When $rank(B)$ is large, it is often helpful to use the top linear discriminants.
 - A scree plot of the eigenvalues of $\mathbf W^{-1}\mathbf B$ can be used to find an elbow point, if there is one
 
 
