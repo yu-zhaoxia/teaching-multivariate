@@ -143,7 +143,7 @@ $$(x-\boldsymbol \mu_1)^T \boldsymbol \Sigma_1^{-1} (x-\boldsymbol \mu_1) - (x-\
 
 ### QDA for Two-Class Problems
 - Replace unknown parameters with estimate, we have the classification rule: allocate $x$ to class 1 if 
-$$(x-\bar {\mathbf X}_1)^T \mathbf S _1^{-1} (x-\bar {\mathbf X}_1) - (x-\bar {\mathbf X}_2)^T \mathbf S_2^{-1} (x-\bar {\mathbf X}_2) > log(\frac{|\mathbf S_2|}{|\mathbf S_1|})$$
+$$(x-\bar {\mathbf X}_1)^T \mathbf S _1^{-1} (x-\bar {\mathbf X}_1) - (x-\bar {\mathbf X}_2)^T \mathbf S_2^{-1} (x-\bar {\mathbf X}_2) < log(\frac{|\mathbf S_2|}{|\mathbf S_1|})$$
 
 ### QDA for g-Class Problems
 
@@ -208,15 +208,18 @@ partimat(Species ~ ., data = iris, method = "lda")
 
 ### Risk and Posterior Risk
 - Risk of a classifier $\delta$
-$$R(\delta, z)=\Pr [\delta(X)\not= Z|Z=z]=\left\{
+$$\begin{aligned}
+R(\delta, z)&=\Pr [\delta(X)\not= Z|Z=z]=\mathbb E_{X|z} [\mathbb I_{\delta(X)\not= Z}|Z=z]\\
+&=\left\{
 \begin{array}{cc}
 \Pr[\delta(X)=0|z=1] & \mbox{ if } z=1\\
 \Pr[\delta(X)=1|z=0] & \mbox{ if } z=0
-\end{array}\right.$$
+\end{array}\right.
+\end{aligned}$$
 
 - The posterior risk of $\delta$
 $$\begin{aligned}
-PR(\delta(x)) &= \Pr[\delta(x)\not= Z|x]\\
+PR(\delta(x)) &= \Pr[\delta(x)\not= Z|x]=\mathbb E_{Z|x} [\mathbb I_{\delta(X)\not= Z}|X=x]\\
 &=\left\{
 \begin{array}{cc}
 \Pr[Z=0|x] & \mbox{ if } \delta(x)=1\\
@@ -228,6 +231,8 @@ PR(\delta(x)) &= \Pr[\delta(x)\not= Z|x]\\
 ### Bayes Risk
 - Bayes risk
 $$B(\delta)=\Pr [\delta(X)\not= Z]$$
+- Note that 
+$$B(\delta)=\Pr [\delta(X)\not= Z]=\mathbb E_{XZ} [\mathbb I_{\delta(X)\not= Z}]=E_X[PR(\delta, X)]=E_Z[R(\delta, Z)]$$
 
 - Rewrite the Bayes risk
 $$\begin{aligned}
@@ -236,6 +241,8 @@ B(\delta) &=\Pr [\delta(X)\not= Z]\\
 &=\Pr [\delta(X)=1| Z=0]\Pr[Z=0] + \Pr [\delta(X)=0| Z=1] \Pr[Z=1]\\
 &=\pi \Pr [\delta(X)=0| Z=1]+ (1-\pi)\Pr [\delta(X)=1| Z=0]
 \end{aligned}$$
+- The above expression is baesd on the fact 
+$$B(\delta)=\mathbb E_{XZ} [\mathbb I_{\delta(X)\not= Z}]$$
 
 ### Bayes Classification Rule
 - Want to find $\delta^*$ that minimizes $B(\delta)$
@@ -281,7 +288,7 @@ $$\begin{aligned}
 - Read this slide if you would like to review Bayes' theorem
 - Let $A$ and $B$ be two events. 
 - Bayes' theorem says
-$$\Pr(B|A) = \dfrac{\Pr(A,  B)}{\Pr(A)}$$
+$$\Pr(B|A) = \dfrac{\Pr(A,  B)}{\Pr(A)}=\dfrac{\Pr(A|B)\Pr(B)}{\Pr(A)}$$
 where $\Pr(A,B)$ means the joint probability that both $A$ and $B$ occur. We can use alternative expressions such as 
 $\Pr(A \text{ and } B)$ and $\Pr(A \cap B)$.
 
@@ -479,7 +486,7 @@ abline(h=0)
 
 ### Risk and Posterior Risk
 - Risk of a classifier $\delta$
-$$R(\delta, z)=\mathbb E [L(\delta(X), z)]=\left\{
+$$R(\delta, z)=\mathbb E_{X|Z=z} [L(\delta(X), z)]=\left\{
 \begin{array}{cc}
 C(0|1)\Pr[\delta(X)=0|z=1] & \mbox{ if } z=1\\
 C(1|0)\Pr[\delta(X)=1|z=0] & \mbox{ if } z=0
@@ -487,7 +494,7 @@ C(1|0)\Pr[\delta(X)=1|z=0] & \mbox{ if } z=0
 
 - The posterior risk of $\delta$
 $$\begin{aligned}
-PR(\delta(x)) &= \mathbb E[L(\delta(x), Z)]\\
+PR(\delta(x)) &= \mathbb E_{Z|x}[L(\delta(x), Z)]\\
 &=\left\{
 \begin{array}{cc}
 C(1|0)\Pr[Z=0|x] & \mbox{ if } \delta(x)=1\\
@@ -498,13 +505,13 @@ C(0|1)\Pr[Z=1|x] & \mbox{ if } \delta(x)=0
 
 ### Bayes Risk
 - Bayes risk
-$$B(\delta)=\mathbb E [L(\delta(X), Z)]$$
+$$B(\delta)=\mathbb E_{XZ} [L(\delta(X), Z)]$$
 - Rewrite the Bayes risk
 
 \tiny
 $$\begin{aligned}
-B(\delta) &=\mathbb E [L(\delta(X), Z)]\\
-&=L(\delta(X)=1, Z=0) + L(\delta(X)=0, Z=1)\\
+B(\delta) &=\mathbb E_{XZ} [L(\delta(X), Z)]\\
+&=L(\delta(X)=1, Z=0)\Pr[\delta(X)=1, Z=0] + L(\delta(X)=0, Z=1)[\delta(X)=0, Z=1]\\
 &=C(1|0)\Pr [\delta(X)=1, Z=0] + C(0|1)\Pr [\delta(X)=0, Z=1]\\
 &=C(1|0)\Pr [\delta(X)=1| Z=0]\Pr[Z=0] + C(0|1)\Pr [\delta(X)=0| Z=1] \Pr[Z=1]\\
 &=C(0|1)\pi \Pr [\delta(X)=0| Z=1]+ (1-\pi)C(1|0)\Pr [\delta(X)=1| Z=0]
