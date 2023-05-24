@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-## Due on \textcolor{red}{Monday, May 29 2023}. R Code should be included as appendices. 
+## Due on \textcolor{red}{Tuesday, May 30 2023}. R Code should be included as appendices. 
 - \textcolor{red}{Problem 1}: Find an example that has three classes and choose two quantitative variables/features to analyze. Do NOT use any data set we have analyzed in class. Randomly select 10 observations for testing and the rest for training. 
 
 \textbf{Method 1}
