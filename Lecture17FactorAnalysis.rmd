@@ -183,25 +183,22 @@ $$\sigma_{ii} = \sum_{k=1}^m l_{ik}^2 + \psi_i$$
   - specific variance $\psi_i$, which is the specific variance of $X_i$
 
 
-### Example
+### Example of Communality
 
 \tiny
 ```{r}
 obj=factanal(exam, factors=2)
 L=obj$loadings[,1:2] 
 Psi=diag(obj$uniquenesses)
-S=diag(sqrt(diag(cov(exam))))
-round(cov(exam),2) 
+#communality
+1-obj$uniquenesses
 ```
 \normalsize
+- For Geometry, the communality is 0.39 and the uniqueness (specific variance) is 0.61. 
 
-### Example
+\normalsize
 
-\tiny
-```{r}
-obj=factanal(exam, factors=2)
-L=obj$loadings[,1:2] 
-Psi=diag(obj$uniquenesses)
+```{r, echo=FALSE, eval=FALSE}
 S=diag(sqrt(diag(cov(exam))))
 round(cov(exam),2) 
 #FA models correlation, L%*%t(L)+ Psi is estimated corr 
@@ -209,20 +206,19 @@ round(  S%*% (L%*%t(L))%*% S + S%*%Psi%*%S, 2)
 S%*% (L%*%t(L))%*% S
 S%*%Psi%*%S
 ```
-\normalsize
 
-- For Geometry, the communality is 2.06 and the specific variance is 2.96. 
+
 
 # Non-uniqueness 
 ### Non-uniqueness of Factor Loadings
 - The factor loading coefficient is NOT unique. 
-- Suppose $\textbf{X} = \boldsymbol{\mu} + \textbf{Lf}+ \boldsymbol{\epsilon}$
+- Suppose $\textbf{X} = \boldsymbol{\mu} + \textbf{LF}+ \boldsymbol{\epsilon}$
 - Consider any $m\times m$ orthogonal matrix $\Gamma$, which satisfies $\Gamma \Gamma^T=\Gamma^T \Gamma=\mathbf I$. 
-- Let $\tilde {\mathbf L}=L\gamma$
+- Let $\tilde {\mathbf L}=\mathbf L \Gamma$
 The model $\textbf{X} = \boldsymbol{\mu} + \tilde {\textbf L} \mathbf F+ \boldsymbol{\epsilon}$
 
 give the same $\Sigma$ because 
-$$cov(\tilde {\textbf L} \mathbf F)= \tilde {\textbf L} cov (\mathbf F)\tilde {\textbf L}^T=\tilde {\textbf L} \tilde {\textbf L}^T=\mathbf L \mathbf \Gamma \mathbf \Gamma^T \mathbf L^T=\mathbf L \mathbf L^T=cov(\mathbf {LF})$$
+$$cov(\tilde {\textbf L} \mathbf F)= \tilde {\textbf L} cov (\mathbf F)\tilde {\textbf L}^T=\tilde {\textbf L} \tilde {\textbf L}^T=\mathbf L  \Gamma \Gamma^T \mathbf L^T=\mathbf L \mathbf L^T=cov(\mathbf {LF})$$
 
 
 ### Non-uniqueness of Factor Loadings
@@ -244,6 +240,69 @@ R=matrix(c(cos(theta), sin(theta), -sin(theta), cos(theta)), 2,2)
 L.tilde=L%*%R
 
 L.tilde %*% t(L.tilde) + Psi
+```
+\normalsize
+
+
+# Factor Rotation
+## Rotation for Better Interpretation
+- Interpretation of final results are easier for some choices of $\mathbf L$ than others. 
+- We often rotate the factors to gain insights or for better interpretation
+- This is one advantage of factor analysis
+- In practice,
+  - Step 1: fit a factor model by imposing conditions that lead to a unique solution
+  - Step 2: the loading matrix L is rotated (multiplied by an orthogonal matrix) in a way that gives a good interpretation of the data. Trial and error
+- Well know criteria of rotation exist
+
+### Factor Rotation
+
+\tiny
+```{r}
+principal(exam, nfactors=2)
+```
+\normalsize
+
+
+### Factor Rotation
+
+\tiny
+```{r, out.width="70%"}
+plot(principal(exam, nfactors=2))
+```
+\normalsize
+
+
+### Factor Rotation
+
+\tiny
+```{r}
+principal(exam,nfactors=2, rotate="none")
+```
+\normalsize
+
+
+### Factor Rotation
+
+\tiny
+```{r, out.width="70%"}
+plot(principal(exam,nfactors=2, rotate="none"))
+```
+\normalsize
+
+### Factor Rotation
+
+\tiny
+```{r}
+principal(exam,nfactors=2, rotate="promax")
+```
+\normalsize
+
+
+### Factor Rotation
+
+\tiny
+```{r, out.width="70%"}
+plot(principal(exam,nfactors=2, rotate="promax"))
 ```
 \normalsize
 
@@ -346,69 +405,6 @@ factanal(exam, factors=2)
 \normalsize
 
 
-
-
-# Factor Rotation
-## Rotation for Better Interpretation
-- Interpretation of final results are easier for some choices of $\mathbf L$ than others. 
-- We often rotate the factors to gain insights or for better interpretation
-- This is one advantage of factor analysis
-- In practice,
-  - Step 1: fit a factor model by imposing conditions that lead to a unique solution
-  - Step 2: the loading matrix L is rotated (multiplied by an orthogonal matrix) in a way that gives a good interpretation of the data. Trial and error
-- Well know criteria of rotation exist
-
-### Factor Rotation
-
-\tiny
-```{r}
-principal(exam, nfactors=2)
-```
-\normalsize
-
-
-### Factor Rotation
-
-\tiny
-```{r, out.width="70%"}
-plot(principal(exam, nfactors=2))
-```
-\normalsize
-
-
-### Factor Rotation
-
-\tiny
-```{r}
-principal(exam,nfactors=2, rotate="none")
-```
-\normalsize
-
-
-### Factor Rotation
-
-\tiny
-```{r, out.width="70%"}
-plot(principal(exam,nfactors=2, rotate="none"))
-```
-\normalsize
-
-### Factor Rotation
-
-\tiny
-```{r}
-principal(exam,nfactors=2, rotate="promax")
-```
-\normalsize
-
-
-### Factor Rotation
-
-\tiny
-```{r, out.width="70%"}
-plot(principal(exam,nfactors=2, rotate="promax"))
-```
-\normalsize
 
 
 # Confirmatory FA
