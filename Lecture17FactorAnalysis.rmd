@@ -29,7 +29,19 @@ library("gridExtra")
 library(knitr)
 library(corrplot)#for visualizing the corr matrix of the iris data
 #install.packages("psych")
+
+library(png)
+library(grid)
+library(gridExtra)
+
 library(psych)
+library(semPlot)  
+#install.packages("semPlot")
+#install.packages("lavaan")
+#install.packages("lavaanPlot")
+library(lavaan)
+library(lavaanPlot)
+
 ```
 
 # Motivating Example
@@ -37,23 +49,14 @@ library(psych)
 
 \tiny
 ```{r}
-exam.cor=rbind(
-c(1.000,  0.439,  0.410,  0.288,  0.329,  0.248),
-c(0.439,  1.000,  0.351,  0.354,  0.320,  0.329),
-c(0.410,  0.351,  1.000,  0.164,  0.190,  0.181),
-c(0.288,  0.354,  0.164,  1.000,  0.595,  0.470),
-c(0.329,  0.320,  0.190,  0.595,  1.000,  0.464),
-c(0.248,  0.329,  0.181,  0.470,  0.464,  1.000))
-exam.cov=diag(c(2, 3, 2, 3, 2, 2)) %*%exam.cor %*% diag(c(2, 3, 2, 3, 2, 2))
-
-set.seed(2)
-exam=round(mvrnorm(n=60, mu=rep(80,6), Sigma=exam.cov))
-colnames(exam)=c("Gaelic",
-"English",
-"History",
-"Arithmetic",
-"Algebra",
-"Geometry")
+set.seed(6)
+mu=rnorm(60, sd=1)
+mu1=mu+rnorm(60)
+mu2=mu+rnorm(60)
+exam=cbind(mu1+rnorm(60, sd=0.5), mu1+rnorm(60, sd=0.5), mu1+rnorm(60, sd=0.5), 
+          mu2+rnorm(60, sd=0.5), mu2+rnorm(60, sd=0.5), mu2+rnorm(60, sd=0.5))
+colnames(exam)=c("Gaelic","English","History",
+                 "Arithmetic","Algebra","Geometry")
 exam=data.frame(exam)
 ```
 \normalsize
@@ -194,7 +197,7 @@ Psi=diag(obj$uniquenesses)
 1-obj$uniquenesses
 ```
 \normalsize
-- For Geometry, the communality is 0.39 and the uniqueness (specific variance) is 0.61. 
+- For Geometry, the communality is ____ and the uniqueness (specific variance) is ____. 
 
 \normalsize
 
@@ -254,32 +257,51 @@ L.tilde %*% t(L.tilde) + Psi
   - Step 2: the loading matrix L is rotated (multiplied by an orthogonal matrix) in a way that gives a good interpretation of the data. Trial and error
 - Well know criteria of rotation exist
 
-### Factor Rotation
+
+## Two Major Types of Rotation
+- An orthogonal rotation
+  - maintains the perpendicularity between factors after rotation.
+  - assumes that factors are unrelated or independent of each other.
+  - Varimax is the most commonly used method of orthogonal rotation.
+- An oblique rotation
+  - allows factors to be correlated and does not maintain a 90 degrees angle.
+  - assumes that factors are related or dependent on each other.
+  - One popular method is Promax 
+- Orthogonal rotations are mathematically appealing/convenient
+- There is no reason that factors have to be uncorrelated
+
+### 
 
 \tiny
-```{r}
-principal(exam, nfactors=2)
+```{r, echo=FALSE}
+img1 <-  rasterGrob(as.raster(readPNG("img/rotation_orthogonal.png")), interpolate = FALSE)
+img2 <-  rasterGrob(as.raster(readPNG("img/rotation_oblique.png")), interpolate = FALSE)
+grid.arrange(img1, img2, ncol = 2)
 ```
 \normalsize
 
+
+
+### Varimax and Promax
+- https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1745-3984.2006.00003.x
+- Consider a rotation matrix with angle $\psi$
+
+$$\begin{pmatrix}
+cos \psi & -sin \psi\\
+sin \psi & cos \psi
+\end{pmatrix}$$
+
+- The Varimax method looks for $\psi$ that maximizes the Varimax criterion
+$$\frac{1}{p}\sum_{i} \left[\sum_j l_{ij}^4/h_i - (\sum_j (l_{ij}/h_i)^2)^2/p \right] $$
+- The Promax is based on Varimax. It basically shrinks small loadings by using a powerful function
 
 ### Factor Rotation
 
 \tiny
 ```{r, out.width="70%"}
-plot(principal(exam, nfactors=2))
-```
-\normalsize
-
-
-### Factor Rotation
-
-\tiny
-```{r}
 principal(exam,nfactors=2, rotate="none")
 ```
 \normalsize
-
 
 ### Factor Rotation
 
@@ -289,16 +311,37 @@ plot(principal(exam,nfactors=2, rotate="none"))
 ```
 \normalsize
 
-### Factor Rotation
+
+### Factor Rotation: varimax (an orthogonal rotation)
 
 \tiny
 ```{r}
+principal(exam, nfactors=2)
+```
+\normalsize
+
+
+### Factor Rotation: varimax (an orthogonal rotation)
+
+\tiny
+```{r, out.width="70%"}
+plot(principal(exam, nfactors=2),xlim=c(-0.2,1),ylim=c(-0.2,1))
+abline(h=0, v=0)
+```
+\normalsize
+
+
+### Factor Rotation: an oblique (non-orthogonal) rotation
+
+\tiny
+```{r, out.width="70%"}
 principal(exam,nfactors=2, rotate="promax")
 ```
 \normalsize
 
 
-### Factor Rotation
+
+### Factor Rotation: an oblique (non-orthogonal) rotation
 
 \tiny
 ```{r, out.width="70%"}
@@ -307,6 +350,12 @@ plot(principal(exam,nfactors=2, rotate="promax"))
 \normalsize
 
 
+### Factor Rotation
+- The following articles provide nice descriptions of the two major types of rotations:
+
+https://scholarworks.umass.edu/cgi/viewcontent.cgi?article=1251&context=pare
+
+https://www.theanalysisfactor.com/rotations-factor-analysis/
 
 
 # Computation
@@ -318,7 +367,7 @@ where $\Gamma=(\gamma_1, \cdots, \gamma_p)$ is an orthogonal matrix and $\Lambda
 - The spectral decomposition can be rewritten to 
 $$\boldsymbol \Sigma=\sum_{i=1}^p \lambda_i \gamma_i\gamma_i^T=\sum_{i=1}^p (\sqrt{\lambda_i}\gamma_i)(\sqrt{\lambda_i}\gamma_i)^T$$
 
-## Method 1: Use PCA
+### Method 1: Use PCA
 
 - Suppose that $\lambda_m, \lambda_{m+1}, \cdots, 
 \lambda_p$ are small. Then 
@@ -334,7 +383,7 @@ $$\boldsymbol \Sigma\approx \sum_{i=1}^m (\sqrt{\lambda_i}\gamma_i)(\sqrt{\lambd
 ## Method 2: MLE
 - We impose multivariate normality on the common and specific factors
 
-$$\mathbf f\sim N(\mathbf 0, \mathbf I), \epsilon\sim N(\mathbf 0, \Psi)$$
+$$\mathbf F\sim N(\mathbf 0, \mathbf I), \epsilon\sim N(\mathbf 0, \Psi)$$
 
 - The log-likelihood is
 $$\begin{aligned}
@@ -345,7 +394,7 @@ where $\mathbf {X}_i\in \mathbb R^p$ denotes the $i$ observation (not the $i$th 
 
 
 
-### The Number of Common Factors
+## The Number of Common Factors
 - The $p\times p$ covariance matrix $\Sigma$ is symmetric. As a result, there are $\frac{p(p+1)}{2}$ parameters. 
 - A factor mode imposes a structure on $\Sigma$
 - For a FA model with $m$ common factors
@@ -385,45 +434,53 @@ df&=\frac{p(p+1)}{2}-[mp+p-\frac{m(m-1)}{2}]\\
 
 
 ### Test for the Adequacy of the Number of Common Factors
-- The result indicates that 1 factor might be inadequate as the p-value is small. 
+- The result indicates that 1 factor is not adequate as the p-value is small. 
+- The p-value is about whether the correlation structure specified in the proposed model is significantly different from that of the full model 
 
 \tiny
 ```{r}
-factanal(exam, factors=1)
+factanal(exam, factors=1)$PVAL
 ```
 \normalsize
 
 
 
 ### Test for the Adequacy of the Number of Common Factors
-- The result indicates that 2 factors is adequate becaue the fit is not substantially from the full model. 
+- The result indicates that 2 factors is adequate because the fit is not substantially from the full model. 
 
 \tiny
 ```{r}
-factanal(exam, factors=2)
+factanal(exam, factors=2)$PVAL
 ```
 \normalsize
 
 
 
 
-# Confirmatory FA
+# CFA vs EFA
 
-### Exploratory or Confirmatory Factor Analysis
-- Exploratory Factory Analysis (EFA)
+### Exploratory Factor Analysis
 - The FA approach we have discussed is exploratory in nature. 
 - In fact, we can perform EFA and identify latent factors by using only correlations, not the data
-- The purpose of EFA is to explore the possible underlying structure that can explain the observed correlations
+- The purpose of EFA is to explore the possible underlying structure that can explain the observed pattern of correlations
 - EFA is used when researchers do not have a specific idea about the underlying structure of data
+- EFA tries to identify the factor configuration (model)
 - EFA is hypothesis-generating
   
   
 ### Exploratory or Confirmatory Factor Analysis
-- Confirmatory Factory Analysis (EFA) is used when a researcher has specific hypotheses or theories about the factor structure of their data.
+- Confirmatory Factory Analysis (CFA) is used when a researcher has specific hypotheses or theories about the factor structure of their data.
 - It is a "theory-driven" approach.
 - In CFA, the researcher specifies the number of factors and which variables load onto which factors.
 - CFA is typically used in later stages of research to test or confirm the factor structure suggested by EFA  
 - CFA is hypothesis testing. A pre-specified model is required
+
+### EFA vs CFA
+- EFA tries to
+- CFA
+  - a model or several candidate models have been determined beforehand
+  - the number of factors 
+
 
   
 ### Exploratory or Confirmatory Factor Analysis
@@ -436,5 +493,117 @@ factanal(exam, factors=2)
   - You have a predetermined theory or model.
   - You aim to test the hypothesis about the factor structure.
   - You need to confirm or disconfirm theories.
+
+# CFA: Example
+## R Packages 
+- Conduct CFA in R
+- R packages: 
+  - sem
+  - OpenMx
+  - lavaan
+
+## An Example using "lavaan"
+- CFA can be performed using the latent variable analysis ("lavaan") package in r
+
+\tiny
+```{r}
+
+model1 <- '
+verbal =~ Gaelic + English + History
+math =~ Arithmetic + Algebra + Geometry'
+
+obj=cfa(model1, data=data.frame(exam))
+```
+\normalsize
+
+### Visualize the Model
+```{r}
+#lavaanPlot(model=obj)
+#lavaanPlot(model=obj, coefs=TRUE)
+#semPaths(obj, what="est")
+#Why set the factor loading for the fest feature to one? Identifiability
+```
+
+
+### Understand the Output
+
+\tiny
+```{r, echo=TRUE, eval=FALSE}
+#Std.lv: estimates when only latent variables are standardized 
+#Std.all: estimates when all variables are standardized.
+summary(obj, fit.measures = TRUE)
+```
+\normalsize
+
+
+
+
+### Understand the Baseline model
+
+\tiny
+```{r}
+model0 <- '
+Gaelic ~~ Gaelic
+English ~~ English
+History ~~ History
+Arithmetic ~~ Arithmetic
+Algebra ~~ Algebra
+Geometry ~~ Geometry
+'
+obj0=cfa(model0, data=data.frame(exam))
+#https://stats.oarc.ucla.edu/wp-content/uploads/2020/02/fit3.png
+#semPaths(obj0, what="est")
+```
+\normalsize
+
+
+### Understanding the Model Fit Statistics
+- We often need to compare a FA (reduced) model to the full model
+$$H_0: \boldsymbol \Sigma(\mathbf L, \Psi)=\boldsymbol \Sigma$$
+- Chi-square test. Derived from the likelihood ratio test. Depends on sample sizes.
+
+- RMSEA: root mean square error of approximation compares the sample correlation matrix and the model correlation matrix.  <0.06 is good.
+$$RMSEA = \sqrt{\frac{\delta}{df(N-1)}}$$
+where $\delta=\chi^2 - df$. 
+
+
+### Understanding the Model Fit Statistics
+
+- CFI: comparative fit index that measures the relative difference between two models; is not affected by sample size too much; between 0 and 1; the larger the better. >0.9 is good
+
+$$CFI= \frac{\delta(\mbox{Baseline}) - \delta(\mbox{User})}{\delta(\mbox{Baseline})}$$
+
+- More can be found in wikipedia and 
+
+  - https://doi.org/10.1016/B978-0-444-53737-9.50010-4
+  - Bentler PM. Comparative fit indexes in structural models. Psychological bulletin. 1990 Mar;107(2):238.
+  - http://www.davidakenny.net/cm/fit.htm
+
+
+### 
+
+\tiny
+```{r}
+fitMeasures(obj0, c("chisq", "cfi", "rmsea"))
+fitMeasures(obj, c("chisq", "cfi", "rmsea"))
+```
+\normalsize
+
+
+
+### Compute Factor scores
+
+\tiny
+```{r, out.width="80%"}
+objscores <- lavPredict(obj)
+plot(objscores)
+```
+\normalsize
+
+
+### Helpful Resources
+- https://quantdev.ssri.psu.edu/tutorials/intro-basic-confirmatory-factor-analysis
+- https://lavaan.ugent.be/tutorial/tutorial.pdf
+- https://stats.oarc.ucla.edu/r/seminars/rcfa/
 
 
