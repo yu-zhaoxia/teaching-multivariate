@@ -139,7 +139,7 @@ $$\frac{a^T\bar {\mathbf X}_1-a^T\bar {\mathbf X}_2}{\sqrt{(\frac{1}{n_1} + \fra
   
 ### FLDA: Maximum Separability
 - The sign does not matter. So we consider the squared statistic
-$$\frac{(a^T\bar {\mathbf X}_1-a^T\bar {\mathbf X}_2)^2}{{(\frac{1}{n_1} + \frac{1}{n_2})a^T \boldsymbol \Sigma a}}$$
+$$\frac{(a^T\bar {\mathbf X}_1-a^T\bar {\mathbf X}_2)^2}{(\frac{1}{n_1} + \frac{1}{n_2})a^T \boldsymbol \Sigma a}$$
 
 - Note that this is the squared t-statistic for testing $a^T\mathbf \mu_1=a^T\mathbf \mu_2$
 
