@@ -77,7 +77,7 @@ $$\frac{a^T\bar {\mathbf X}_1-a^T\bar {\mathbf X}_2}{\sqrt{(\frac{1}{n_1} + \fra
   
 ### FLDA: Maximum Separability
 - The sign does not matter. So we consider the squared statistic
-$$\frac{(a^T\bar {\mathbf X}_1-a^T\bar {\mathbf X}_2)^2}{{(\frac{1}{n_1} + \frac{1}{n_2})a^T \boldsymbol \Sigma a}}$$
+$$\frac{(a^T\bar {\mathbf X}_1-a^T\bar {\mathbf X}_2)^2}{(\frac{1}{n_1} + \frac{1}{n_2})a^T \boldsymbol \Sigma a}$$
 
 - Note that this is the squared t-statistic for testing $a^T\mathbf \mu_1=a^T\mathbf \mu_2$
 
@@ -87,7 +87,7 @@ $$\frac{(a^T\bar {\mathbf X}_1 - a^T\bar {\mathbf X}_2)^2}{a^T \boldsymbol \Sigm
 
 ### FLDA: Maximum Separability
 - The maximization problem is
-$$\operatorname*{argmin}_a \frac{a^T(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)^Ta}{a^T \boldsymbol \Sigma a}$$
+$$\operatorname*{argmax}_a \frac{a^T(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)^Ta}{a^T \boldsymbol \Sigma a}$$
 - Use an argument similar to PCA, such $a$ is the first eigenvector of $\boldsymbol \Sigma ^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)^T$.
 
 - We can show that $a=\mathbf  S_p^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)$. 
@@ -246,6 +246,12 @@ text(x=0, y=1.2, "lda", srt=-60, col="blue")
 text(x=4, y=6, "pca", srt=45, col="black")
 ```
 \normalsize
+
+
+```{r, each=FALSE}
+lda.iris = lda(Species ~ ., data = iris[51:150, c(1,2,5)])
+
+```
 
 # Three-Class LDA
 ### Three-Class Classification
@@ -463,7 +469,7 @@ con.mat=table(Pred = predict(lda.iris, iris[, c(1,2,5)])$class,
 #Confusion Matrix
 con.mat
 #Training Error
-sum(diag(con.mat))/sum(con.mat)
+1-sum(diag(con.mat))/sum(con.mat)
 ```
 \normalsize
 
@@ -494,7 +500,7 @@ con.mat=table(Pred = predict(lda.iris, iris)$class,
 #Confusion Matrix
 con.mat
 #Training Error
-sum(diag(con.mat))/sum(con.mat)
+1-sum(diag(con.mat))/sum(con.mat)
 ```
 \normalsize
 
@@ -565,10 +571,11 @@ $$Y_{ij}^{(k)}=\gamma_k^T X_{ij}$$
 - Allocate an observation to the group with the minimum distance defined by the Euclidean distance in space spanned by the linear discriminants. 
 - Let $X_0$ be a new observation. 
 - Calculate $Y_0^{(k)}=\gamma_k^T X_0$, the projection of $X_0$ to the $k$th linear discriminant for $k=1, \cdots, rank(B)$.
-- Calculate the distances
-$$D^2(X_0, g) = \sum_{k=1}^{rank(B)} [Y_0^{(k)} - \bar Y_{g.}^{(k)}]^2$$
+- Calculate the distance between $(Y_0^{(1)}, \cdots, Y_0^{(rank(B))})$ and $(\bar Y_{i.}^{(1)}, \cdots, \bar Y_{i.}^{(rank(B))})$
+ 
+$$D^2(X_0, i) = \sum_{k=1}^{rank(B)} [Y_0^{(k)} - \bar Y_{i.}^{(k)}]^2$$
 - Allocate $X_0$ to 
-$$\operatorname*{argmin}_g D^2(X_0, g)$$
+$$\operatorname*{argmin}_i D^2(X_0, i)$$
 
 ### The Number of Linear Discriminants
 - Recall that $rank(B)=min(p, g-1)$ (Lecture 8). The number of total linear discriminants is $min(p,g-1)$. 
