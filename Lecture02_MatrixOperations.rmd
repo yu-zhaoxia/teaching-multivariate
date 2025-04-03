@@ -18,7 +18,13 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyr) #the pipe (%>%) tool is extremely useful
 library(MASS)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  paste0("\n \\", "tiny","\n\n", x, "\n\n \\Huge")
+})
 ```
+
 
 
 ## Matrix Multiplication
@@ -32,12 +38,12 @@ $$\left(AB\right)_{i,j}=\sum_{k=1}^n a_{ik}b_{kj}$$
 
 
 ### Definition of Matrix Multiplication
-```{r echo=FALSE, out.width="90%"}
+```{r echo=FALSE, out.width="90%", fig.align='center'}
 knitr::include_graphics("img/MatrixMultiplicationWiki.png")
 ```
 
 ### Matrix Multiplication
-```{r echo=FALSE, out.width="50%"}
+```{r echo=FALSE, out.width="50%", fig.align='center'}
 knitr::include_graphics("img/MatrixMultiplication.png")
 ```
 
@@ -54,7 +60,7 @@ knitr::include_graphics("img/MatrixMultiplication.png")
 ### Iris data
 * Three species of iris flowers: setosa, versicolor, and virginica
 * Four features: sepal length, sepal width, petal length, and petal width
-```{r echo=FALSE, out.width="60%"}
+```{r echo=FALSE, out.width="60%", fig.align='center'}
 knitr::include_graphics("img/iris.png")
 ```
 
@@ -75,7 +81,7 @@ knitr::include_graphics("img/iris.png")
 * Fisher used the iris dataset as an example of discriminant analysis
 
 ### Iris data
-```{r echo=FALSE, out.width="70%"}
+```{r echo=FALSE, out.width="70%", fig.align='center'}
 knitr::include_graphics("img/iris.png")
 ```
 
@@ -83,11 +89,14 @@ knitr::include_graphics("img/iris.png")
 * The iris data is stored in two different formats: 
   + as a 3D array: iris3
   + as a long matrix: iris
+
 ```{r}
 #?iris
 dim(iris3)
 dim(iris)
 ```
+
+
 ### Iris data in R
 ```{r}
 dimnames(iris3)
@@ -107,16 +116,18 @@ attributes(iris)
 ```
 
 ### Heatmap of the Iris Data
-```{r, out.width="50%",eval=FALSE}
+```{r, out.height="90%",eval=FALSE, fig.align='center'}
 Y=as.matrix(iris[, 1:4])
 rownames(Y)=iris[,5]
+colnames(Y)=c("SepL", "SepW", "PetL", "PetW")
 heatmap(Y[150:1, ],col=rainbow(12),Rowv=NA, Colv=NA)
 ```
 
 ### Heatmap of the Iris Data
-```{r, out.width="60%",echo=FALSE}
+```{r, out.height="90%",echo=FALSE, fig.align='center'}
 Y=as.matrix(iris[, 1:4])
 rownames(Y)=iris[,5]
+colnames(Y)=c("SepL", "SepW", "PetL", "PetW")
 heatmap(Y[150:1, ],col=rainbow(12),Rowv=NA, Colv=NA)
 ```
 
@@ -148,13 +159,13 @@ colMeans(Y)
 
 ### Left multiply a matrix to Y: Example 2
 * Let 
-$$B=\frac{1}{50}\begin{pmatrix}
+$$B_{3\times 150}=\frac{1}{50}\begin{pmatrix}
 \mathbf 1_{1\times 50} & -\mathbf 1_{1\times 50} & \mathbf 0_{1\times 50}\\
 \mathbf 1_{1\times 50} & \mathbf 0_{1\times 50} & -\mathbf 1_{1\times 50} \\
 \mathbf 0_{1\times 50} & \mathbf 1_{1\times 50} & -\mathbf 1_{1\times 50} \\
 \end{pmatrix}$$
 i.e.,
-$$B=\begin{pmatrix}
+$$B_{3\times 150}=\begin{pmatrix}
 \frac{1}{50}& \cdots& \frac{1}{50}&
 -\frac{1}{50}& \cdots& -\frac{1}{50}&
 0 & \cdots & 0\\
@@ -169,7 +180,7 @@ $$B=\begin{pmatrix}
 * What does $BY$ give us?
 
 ### Left multiply a matrix to Y: example2
-* $BY$ gives the pairwise difference in group means for each feature
+* $B_{3\times 150}Y_{150\times 4}$ gives the pairwise difference in group means for each feature
 ```{r}
 B=1/50*rbind(
   rep(c(1,-1, 0), each=50), 
@@ -197,7 +208,7 @@ $$C=\begin{pmatrix}
 0 & 0 & 0.393701 & 0\\
 0 & 0 & 0 & 0.393701
 \end{pmatrix}$$
-* $YC$ is the data in inch. 
+* $Y_{150\times 4}C_{4\times 4}$ is the data in inch. 
 
 ### Right multiply a matrix to Y: convert cm to inch
 ```{r}
@@ -218,6 +229,103 @@ C=diag(1,150) - \frac{150}matrix(1, 150, 150)
   S=cov(Y)
   ```
 To compute $S^{-1/2}$, you may need a R package, such as "qtl2pleio".
+
+
+## Spectral Decomposition
+
+### Spectral Decomposition
+* Generate 1000 data points from a multivariation normal with mean $\mathbf 0$ and covariance matrix 
+$$\Sigma=\begin{pmatrix}0.8125000 & 0.3247595\\
+0.3247595 & 0.4375000\end{pmatrix}$$
+
+* How did I obtain this covariance matrix?
+
+```{r}
+theta=-pi/6
+R=matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), 2, 2)
+Lambda=diag(c(1,0.25))
+Sigma=R%*%Lambda%*%t(R)
+X=mvrnorm(1000, mu=rep(0,2), Sigma=Sigma)
+```
+
+### Spectral Decomposition
+* Scatter plot of the data $X$
+```{r, fig.align='center',  out.width='60%'}
+plot(X, xlim=c(-3,3), ylim=c(-3,3), xlab="", ylab="", main="original")
+abline(a=0, b=1/2, col="red")
+```
+
+
+### Spectral Decomposition
+* Conduct spectral decomposition of $cov(X)$.
+```{r}
+R.obs=eigen(cov(X))$vectors
+print(R.obs)
+Lambda.obs=diag(eigen(cov(X))$values)
+print(Lambda.obs)
+```
+
+### Spectral Decomposition
+
+* Verify the spectral decomposition of $cov(X)$.
+```{r}
+print(cov(X))
+print(R.obs%*% Lambda.obs %*% t(R.obs))
+```
+
+### Spectral Decomposition
+* standardizing X is equivalent to two steps:
+
+* 1. rotate the n-by-2 data matrix X by multiplying R. 
+
+* 2. scale Y by multipling Lambda^{-1/2} to obtain Z
+
+```{r}
+Y=X%*%R.obs
+Z=Y%*%diag(1/sqrt(diag(Lambda.obs)))
+#note: for each 2-by-1 vector xi, the rotated vector yi is given by
+#yi=R.obs^T xi
+```
+
+### Spectral Decomposition
+```{r, fig.align='center',  out.width='60%'}
+par(mfrow=c(2,2))
+plot(X, xlim=c(-3,3), ylim=c(-3,3), xlab="", ylab="", main="original")
+abline(a=0, b=1/2, col="red")
+plot(Y, xlim=c(-3,3), ylim=c(-3,3), xlab="", ylab="", main="rotated")
+plot(Z, xlim=c(-3,3), ylim=c(-3,3), xlab="", ylab="", main="rorated+rescaled")
+```
+
+### Spectral Decomposition
+
+* Let's reverse the process
+
+* 1. rescale $Z$ by multiplying Lambda.obs^{1/2} to obtain $Y$
+
+* 2. rotate $Y$ by multiplying $R^T$ to obtain $X$
+
+```{r}
+Y=Z%*%sqrt(Lambda.obs)
+X.recovered=Y%*%t(R.obs)
+```
+
+### Spectral Decomposition
+```{r, fig.align='center',  out.width='60%'}
+par(mfrow=c(2,2))
+plot(X, xlim=c(-3,3), ylim=c(-3,3), xlab="", ylab="", main="original")
+abline(a=0, b=1/2, col="red")
+plot(Y, xlim=c(-3,3), ylim=c(-3,3), xlab="", ylab="", main="rotated")
+plot(Z, xlim=c(-3,3), ylim=c(-3,3), xlab="", ylab="", main="rorated+rescaled")
+plot(X.recovered, xlim=c(-3,3), ylim=c(-3,3), xlab="", ylab="", main="recovered")
+```
+
+
+### 
+```{r}
+#SVD of a matrix X is given by X=UDV^T
+#where U cand V
+```
+
 
 ## Singular Value Decomposition (SVD)
 
@@ -246,30 +354,36 @@ where
 * SVD helps us understand the linear transformation of a matrix in terms of its components: rotation, scaling, and reflection.
 * $U$ and $V^T$ represent rotations in the input and output spaces respectively, while $D$ represents scaling along the axes.
 * SVD allows us to find a lower-dimensional representation of the data by capturing the most important singular values and their corresponding singular vectors.
+
+### Applications of SVD
 * SVD can be used for various applications such as image compression, recommendation systems, and data analysis.
   + Image Compression: SVD can be used to reduce the size of an image by compressing it while retaining its important features.
   + Recommendation Systems: SVD can be used to make personalized recommendations in recommendation systems by factorizing user-item interaction matrices.
   + Data Analysis: SVD can be used for dimension reduction, noise reduction, and feature extraction in data analysis tasks such as clustering, classification, and regression.
   
-### SVD can be used for image compression 
-```{r echo=FALSE, out.width="60%"}
+### SVD for image compression 
+```{r echo=FALSE, out.width="60%", fig.align='center'}
 knitr::include_graphics("img/SVD_Approx.png")
 ```
 
 ### SVD: Example 1
-*The original image
-```{r echo=FALSE, out.width="60%"}
+
+* The original image
+
+```{r echo=FALSE, out.width="60%", fig.align='center'}
 knitr::include_graphics("img/svdexample.jpg")
 ```
 
+<!--
 ### SVD: Example 1
-*The original image
-```{r echo=FALSE, out.width="60%"}
+
+```{r echo=FALSE, out.width="60%", fig.align='center'}
 knitr::include_graphics("img/240svd_Approx.png")
 ```
+-->
 
 ### SVD: Example 1
-```{r}
+```{r, fig.align='center'}
 #install and load "jpeg"
 library(jpeg)
 mydata=readJPEG("img/svdexample.jpg", native = FALSE)
@@ -281,39 +395,45 @@ obj=svd(mydata)
 ```
 
 ### SVD Example 1: R 
-```{r, eval=FALSE}
+```{r, eval=FALSE, fig.align='center', out.width="80%"}
 par(mfrow=c(2,2))
-image(mydata,col=gray(c(0:10)/10))
+#image(mydata,col=gray(c(0:10)/10))
+
+image(t(mydata)[,nrow(mydata):1],col=gray(c(0:10)/10), 
+      xlab="", ylab="", main="original")
 
 plot(obj$d, ylab="singular values")
 
 n=1
 mydata.approx=obj$u[,1] %*% t(obj$v[,1])*obj$d[1]
-image(mydata.approx, main="rank 1", col=gray(c(0:10)/10))
+image(t(mydata.approx)[, nrow(mydata.approx):1], main="rank 1", col=gray(c(0:10)/10))
 
 n=10
 mydata.approx=obj$u[,1:n]%*% diag(obj$d[1:n]) %*% t(obj$v[,1:n])
-image(mydata.approx, main="rank 10", col=gray(c(0:10)/10))
+image(t(mydata.approx)[, nrow(mydata.approx):1], main="rank 10", col=gray(c(0:10)/10))
 ```
 
 ### SVD Example 1: R 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align='center', out.width="80%"}
 par(mfrow=c(2,2))
-image(mydata,col=gray(c(0:10)/10))
+#image(mydata,col=gray(c(0:10)/10))
+
+image(t(mydata)[,nrow(mydata):1],col=gray(c(0:10)/10), 
+      xlab="", ylab="", main="original")
 
 plot(obj$d, ylab="singular values")
 
 n=1
 mydata.approx=obj$u[,1] %*% t(obj$v[,1])*obj$d[1]
-image(mydata.approx, main="rank 1", col=gray(c(0:10)/10))
+image(t(mydata.approx)[, nrow(mydata.approx):1], main="rank 1", col=gray(c(0:10)/10))
 
 n=10
 mydata.approx=obj$u[,1:n]%*% diag(obj$d[1:n]) %*% t(obj$v[,1:n])
-image(mydata.approx, main="rank 10", col=gray(c(0:10)/10))
+image(t(mydata.approx)[, nrow(mydata.approx):1], main="rank 10", col=gray(c(0:10)/10))
 ```
 
 ### SVD: Example 2
-```{r, eval=FALSE}
+```{r, eval=FALSE, fig.align='center', out.width="80%"}
 BikeMan=readJPEG("BikeMan.jpg", native = FALSE)
 BikeMan=BikeMan[,,1]
 
@@ -335,7 +455,7 @@ image(BikeMan.approx, main="rank 30", col=gray(c(0:10)/10))
 ```
 
 ### SVD: Example 2
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align='center', out.width="80%"}
 BikeMan=readJPEG("img/BikeMan.jpg", native = FALSE)
 BikeMan=BikeMan[,,1]
 
@@ -359,7 +479,9 @@ image(BikeMan.approx, main="rank 30", col=gray(c(0:10)/10))
 ## Another Matrix Operation: Kronecker Product
 ### Definition
 * The Kronecker product, denoted by $\bigotimes$ is a mathematical operation that combines two matrices to create a larger matrix.
-* \textcolor{pink}{It is named after the Danish mathematician Heinrich Kronecker, who introduced it in the late 19th century.} Chatgpt gives \textcolor{red}{wrong} information. 
+
+<!-- * \textcolor{pink}{It is named after the Danish mathematician Heinrich Kronecker, who introduced it in the late 19th century.} Chatgpt gives \textcolor{red}{wrong} information. -->
+
 * According to wikipedia, "The Kronecker product is named after the German mathematician Leopold Kronecker (1823–1891), even though there is little evidence that he was the first to define and use it. "
 * Why is it useful? It provide compact Representation. Kronecker product allows for compact representation of large matrices by expressing them as a combination of smaller matrices.
 
@@ -385,7 +507,7 @@ a_{m1} * B & a_{m2} * B & ... & a_{mn} * B
 \end{pmatrix}$$
 
 ### Definition
-```{r echo=FALSE, out.width="80%"}
+```{r echo=FALSE, out.width="80%", fig.align='center'}
 knitr::include_graphics("img/kronecker_prod.png")
 ```
 
@@ -394,7 +516,7 @@ knitr::include_graphics("img/kronecker_prod.png")
 * SVD: Biclustering via Sparse Singular Value Decomposition”
 https://www.unc.edu/~haipeng/publication/ssvd.pdf
 
-## Homework 1 (Due on \textcolor{red}{April 2023})
+## Homework 1 
 ### Problem 1
 * Suppose $X_1, X_2, Y_1, Y_2$ are mutually independent.
     + $X_1$ and $X_2$ are iid from $N(\mu=0, \sigma_x^2=2^2)$
@@ -421,7 +543,7 @@ $$P(|X_1-X_2|>4), P(|Y_1-Y_2|>4)$$
 * Check the following
   + Let $C=\mathbf I_{150} - \frac{1}{150}J$, where $J_{150\times 150}$ is an all-ones matrices . Use R to verify that $CY$ centers each column/feature. The R code for $C$ is "
 ```{}  
-C=diag(1,150) - \frac{150}matrix(1, 150, 150)
+C=diag(1,150) - \frac{1}{150}matrix(1, 150, 150)
 ```
 
   + Let $S$ be the sample covariance matrix. Use R to verify that each column of $CYS^{-1/2}$ has been centered and standardized (in fact, the columns have also been de-correlated). Hints:
