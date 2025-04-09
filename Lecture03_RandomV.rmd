@@ -362,12 +362,12 @@ $$ \normalsize
 ### Covariance Matrix of Two Random Vectors
 
 -   E.g.,
-    $$\mathbf X_{2\times 1}=\begin{pmatrix}X_1 & X_2\end{pmatrix}^T, \mathbf Y_{3\times 1}=\begin{pmatrix}Y_1 & Y_2 & Y_3\end{pmatrix}$$
+    $$\mathbf X_{2\times 1}=\begin{pmatrix}X_1 & X_2\end{pmatrix}^T, \mathbf Y_{3\times 1}=\begin{pmatrix}Y_1 & Y_2 & Y_3\end{pmatrix}^T$$
     \tiny $$
     \begin{aligned}
     Cov(\mathbf X,\mathbf Y)=& E[(X-E(X))(Y-E(Y))^T]\\
     =&E[\begin{pmatrix}X_1 -\mu_{x1} \\ X_2- \mu_{x2}\end{pmatrix}
-    (Y_1-\mu_{y1}, Y_2 -\mu_{y2}, Y_3-\mu_{y3})^T]\\
+    (Y_1-\mu_{y1}, Y_2 -\mu_{y2}, Y_3-\mu_{y3})]\\
     =&\begin{bmatrix} 
     E[(X_1 -\mu_{x1})(Y_1 -\mu_{y1})] &E[(X_1 -\mu_{x1})(Y_2 -\mu_{y2})]  &E[(X_1 -\mu_{x1})(Y_3 -\mu_{y3})] \\
     E[(X_2 -\mu_{x2})(Y_1 -\mu_{y1})] &E[(X_2 -\mu_{x2})(Y_2 -\mu_{y2})]  &E[(X_3 -\mu_{x3})(Y_3 -\mu_{y3})]\end{bmatrix}\\
@@ -603,19 +603,18 @@ Therefore, $$(n-1)S=(C\mathbf X)^T C\mathbf X= \mathbf X^T C \mathbf X$$
 -   The variance of $Y$ depends on the covariance structure of
     $\mathbf{X}$, as well as the weights given by $\mathbf{a}$. 
     
-%- We call forms like $\mathbf a^T \boldsymbol \Sigma \mathbf a$ as quadratic forms. 
+- We call forms like $\mathbf a^T \boldsymbol \Sigma \mathbf a$ as quadratic forms. 
 - Note, we can also write the variance of $Y$ as:
 
 \footnotesize
 $$
 \begin{aligned}
 \mathbf a^T \boldsymbol \Sigma a &&\\
-=& \sum_i\sum_j a_{ij} x_i x_j&\\
-=& a_{11}x_1^2 + a_{12}x_1 x_2 + \cdots + a_{1p}x_1 x_p + a_{21}x_2 x_1 + \cdots + a_{p1}x_p x_1 + \cdots&\\
-=& a_{11}x_1^2 + a_{22}x_2^2 + \cdots + a_{pp}x_p^2 + 2(a_{12}x_1 x_2 + a_{13}x_1 x_3 + \cdots + a_{p1}x_p x_1 + \cdots)&\\
+=& \sum_i\sum_j \sigma_{ij} a_i a_j&\\
+=& \sigma_{11}a_1^2 + \sigma_{12}a_1 a_2 + \cdots + \sigma_{1p}a_1 a_p + \sigma_{21}a_2 a_1 + \cdots + \sigma_{p1}a_p a_1 + \cdots&\\
+=& \sigma_{11}a_1^2 + \sigma_{22}a_2^2 + \cdots + \sigma_{pp}a_p^2 + 2(\sigma_{12}a_1 a_2+ \sigma_{13}a_1 a_3 + \cdots + \sigma_{p-1,p}a_{p-1} a_p)&\\
 \end{aligned}$$
 
-\normalsize
 
 -   A quadratic form is a polynomial of degree 2 in the components
         of a vector, and it can be expressed as:
@@ -623,12 +622,14 @@ $$
         where $\mathbf{A}$ is a symmetric matrix.
 - We will discuss distributions of certain quadratics forms later. 
 
+\normalsize
+
 ## Example
 
 ### Linear Combinations of Iris Setosa Features
 
 -   Recall that for the iris setosa, $\mathbf X$ is $50\times 4$.
--   Consider a linear combination of the features $Y= Xb$, where $$
+-   Consider a linear combination of the features $Y= \mathbf Xb$, where $$
     b=\begin{pmatrix}
     1/4 \\ 1/4 \\ 1/4 \\ 1/4
     \end{pmatrix}$$
@@ -638,7 +639,7 @@ $$
 ### Linear Combinations of Iris Setosa Features
 
 $$\begin{aligned}
-Y&=Xb=
+Y&=\mathbf Xb=
 \begin{pmatrix} X_1^T \\ \vdots \\ X_n^T  \end{pmatrix} b
  =
 \begin{pmatrix} X_1^Tb \\ \vdots \\ X_n^Tb  \end{pmatrix}
