@@ -21,42 +21,35 @@ library(tidyr) #the pipe (%>%) tool is extremely useful
 library(MASS)
 library(corrplot)#for visualizing the corr matrix of the iris data
 library(car)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  paste0("\n \\", "footnotesize","\n\n", x, "\n\n \\Huge")
+})
 ```
 
 
-# Review of Lecture 03
+# Outline
+- Review of Lecture 03
+- Inference of Means
+- Inference of a Linear Combination of Mean
+- A Simulation Study
+- Generalized Variance
+- Normal and Multivariate Normal
 
-### Outline
-- Definitions
-- A random variable from a univariate distribution
-- A random sample from a univariate distribution
-- A random vector from a multivariate distribution
-- A random sample from a multivariate distribution
-- Linear combinations of a random vector
+# Lecture 3
+## Random Samples
+- Univariate distribution: If $X_1, \cdots, X_n\overset{iid}\sim (\mu, \sigma^2)$, then
+  - $\bar X\sim (\mu, \sigma^2/n)$
+  - $E[s^2]=\sigma^2$ where $s^2=\frac{1}{n-1}\sum_{i=1}^n (X_i-\bar X)^2$. 
 
+- Multivariate distribution: If $X_1, \cdots, X_n\overset{iid}\sim (\boldsymbol \mu, \boldsymbol \Sigma)$, then
+  - $\bar{X}\sim (\boldsymbol \mu, \frac{1}{n}\boldsymbol \Sigma)$
+  - $E[\mathbf S]=\boldsymbol \Sigma$ where $\mathbf S=\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar{X})(X_i-\bar{X})^T$.
 
-### Definitions: Mean and Variance
-- Let $X$ be a random variance. Its mean, denoted by $E[X]$, is defined as 
-  
-$$
-\mu=E[X] = \left\{
-    \begin{array}{ll}
-    \int_{-\infty}^{\infty} x f(x) dx & \mbox{if } X \mbox{ is continuous}\\
-    \sum_{i} x_i p_i & \mbox{if } X \mbox{ is discrete}    \end{array}
-\right.
-$$
+## Linear Combinations of a Random Vector
 
-  - Its variance, denoted by $Var(X)$, is defined as $E[(X-\mu)^2]$, 
-  
-$$
-\sigma^2=Var[X] = E[(X-\mu)^2] = \left\{
-    \begin{array}{ll}
-    \int_{-\infty}^{\infty} (x-\mu)^2 f(x) dx & \mbox{if } X \mbox{ is continuous}\\
-    \sum_{i} (x_i-\mu)^2 p_i & \mbox{if } X \mbox{ is discrete}    \end{array}
-\right.
-$$
-
-### Definitions: Mean Vector and Covariance Matrix
+### Random Vectors
 - Let $\mathbf X_{p\times 1}=(X_1, \cdots, X_p)^T$ be a random vector. Its mean is defined as 
   $$E[\mathbf X]=\begin{pmatrix}
   E[X_1]\\ \vdots \\ E[X_p]
@@ -66,12 +59,26 @@ $$
 
   $$\boldsymbol \Sigma_{p\times p} = Cov(\mathbf X) = E[(\mathbf X -\boldsymbol \mu)(\mathbf X - \boldsymbol \mu)^T]$$
 
-### Random Vectors: An Example
-- Let $X_1, \cdots, X_n$ be iid random variables from a univariate distribution with mean $\mu$ and variance $\sigma^2$. We say $X_1, \cdots, X_n$ form a random sample. 
+- If $\mathbf X\sim (\boldsymbol \mu, \boldsymbol \Sigma)$, then
+$Y=\mathbf a^T\mathbf X\sim (\mathbf a^T\boldsymbol \mu, \mathbf a^T\boldsymbol \Sigma \mathbf a)$. 
+
+### Linear Combinations of Random Vectors
+- What is a linear combination? E.g., $\mathbf X = (X_1, X_2, X_3)^T$, $a=(1/3, 1/3, 1/3)^T$. Then
+$$Y=a^TX=\frac{1}{3}(X_1 + X_2 + X_3)$$
+
+- Note, $Y$, $\mathbf a^T \boldsymbol \mu$, and $\mathbf a^T \boldsymbol \Sigma \mathbf a$ are all scalars.
+
+- $\mathbf a^T \boldsymbol \mu$ is the innuer product between $\mathbf a$ and $\boldsymbol \mu$, i.e., $\sum_{i=1}^p a_i \mu_i$. 
+- $\mathbf a^T \boldsymbol \Sigma \mathbf a$ is the quadratic form of $\boldsymbol \Sigma$, i.e., $\sum_{i=1}^p\sum_{j=1}^p a_i a_j \sigma_{ij}$, where $\sigma_{ij}$ is the $(i,j)$th element of $\boldsymbol \Sigma$.
+
+### Linear Combinations: Example
+- Example 1: Assume we have a random sample from a distribution with mean $\mu$ and variance $\sigma^2$, i.e., $X_1, \cdots, X_n\overset{iid}\sim (\mu, \sigma^2)$.
+
 - We often stack the random variables vertically:
 $$\mathbf X_{n\times 1}=\begin{pmatrix}
-X_1 \\ \vdots \\ X_n\end{pmatrix},$$
-- Remark: $\mathbf X$ is a \textcolor{red}{random vector} with mean vector and covariance matrix
+X_1 \\ \vdots \\ X_n\end{pmatrix}.$$
+- An equivalent expression,  $\mathbf X=(X_1, \cdots, X_n)^T$.
+- Note that $\mathbf X$ is a \textcolor{red}{random vector} with mean vector and covariance matrix
   $$E[\mathbf X]=\mu \mathbf 1_n =\begin{pmatrix}\mu \\ \vdots \\ \mu\end{pmatrix},
   Cov(\mathbf X)=\sigma^2 \mathbf I_n = \begin{bmatrix} 
 \sigma^2 & 0 & \cdots & 0 \\ 
@@ -82,13 +89,38 @@ X_1 \\ \vdots \\ X_n\end{pmatrix},$$
 $$
 
 
+### Linear Combinations: Example
+- We can express the sample mean as a linear combination of the random vector $\mathbf X$: 
+$$\bar X= \frac{1}{n}\mathbf 1^T \mathbf X,$$
+where $\mathbf 1=(1, \cdots, 1)^T$ is a $n\times 1$ vector.
+- By the linear combination results, we have
+\begin{align*}
+E[\bar X]&=\frac{1}{n} \mathbf 1^T E[\mathbf X]=\frac{1}{n} \mathbf 1^T \mu \mathbf 1=\mu\\
+Var[\bar X]&=\frac{1}{n^2} \mathbf 1^T Cov(\mathbf X) \mathbf 1=\frac{1}{n^2} \mathbf 1^T \sigma^2 \mathbf I_n \mathbf 1 = \frac{1}{n}\sigma^2.
+\end{align*}
 
-### A Random Vector From a Multivariate Distribution
-- Let $\mathbf X_{p\times 1}$ be a random vector from a multivariate distribution with mean vector $\boldsymbol \mu_{p\times 1}$ and covariance matrix $\boldsymbol \Sigma_{p\times p}$. 
-- In other words, 
-  - $E(\mathbf X)=\boldsymbol \mu$
-  - $Cov(\mathbf X)=\boldsymbol \Sigma$.
+# Inference of Means
+## Univariate
+- A random sample $X_1, \cdots, X_n$ from a univariate distribution with mean $\mu$ and variance $\sigma^2$.
+- We are interested in making inference about the population mean $\mu$.
+- The sample mean $\bar X$ is an unbiased estimator of $\mu$, i.e., $E[\bar X]=\mu$. We often use $\hat\mu=\bar X$ to estimate $\mu$.
+- How to quantify the uncertainty of $\hat\mu$? Recall that $Var(\bar X)=\frac{\sigma^2}{n}$..
+- $\sigma^2$ is unknown. But the sample variance $s^2$ is an unbiased estimator of $\sigma^2$, i.e., $E[s^2]=\sigma^2$. We often use $\hat\sigma^2=s^2$ to estimate $\sigma^2$.
+- The sample variance $s^2$ is defined as
+$$s^2=\frac{1}{n-1}\sum_{i=1}^n (X_i-\bar X)^2$$
 
+### Standard Error of $\bar X$
+- The standard error of $\bar X$ is defined as $se(\bar X)=\sqrt{Var(\bar X)}=\frac{\sigma}{\sqrt{n}}$.
+- We can estimate it by $se(\bar X)=\frac{s}{\sqrt{n}}$.
+- A ``large-sample'' (approximate) confidence interval for $\mu$ is given by
+$$\bar X \pm z_{\alpha/2} se(\bar X)$$
+where $z_{\alpha/2}$ is the upper $\alpha/2$ quantile of the standard normal distribution.
+- A ``small-sample'' (approximate) confidence interval for $\mu$ is given by
+$$\bar X \pm t_{\alpha/2} se(\bar X)$$
+where $t_{\alpha/2}$ is the upper $\alpha/2$ quantile of the t-distribution with $n-1$ degrees of freedom.
+
+
+## Multivariate
 ### A Random Sample From a Multivariate Distribution
 - Consider a random sample $\mathbf X_1, \cdots, \mathbf X_n$ from a multivariate distribution with mean vector $\boldsymbol \mu_{p\times 1}$ and covariance matrix $\boldsymbol \Sigma_{p\times p}$. 
 - We often stack the random vectors to form an $n\times p$ matrix: 
@@ -113,91 +145,13 @@ where $\mathbf C_{n\times n}=\mathbf I-\frac{1}{n}\mathbf J=\mathbf I-\frac{1}{n
 - This expression is helpful when we derive the distribution of $\mathbf S$.
 
 
-# Linear Combination of a Random Vector
+# Inference of a Linear Combination of Means
+## Linear Combinations of Means
+- In many situations, the parameter of interest is a function of the means.
+- For example, we may be interested in the mean of a linear combination of the means, i.e., $\boldsymbol \mu^T \mathbf a$, where $\mathbf a=(a_1, \cdots, a_p)^T$ is a $p\times 1$ vector.
+- In the following simulated study, we will show how to construct a large-sample confidence interval for $\boldsymbol \mu^T \mathbf a$.
 
-### Definition of a Linear Combination of a Random Vector
-- Let $\mathbf{X}_{p\times 1}=(X_1, \cdots, X_n)^T$ be a $p$-dimensional random vector with mean vector $\boldsymbol{\mu}$ and covariance matrix $\boldsymbol{\Sigma}$.
-
-- Consider a linear combination of the form:
-  $$  Y = \mathbf{a}^T\mathbf{X}=\sum_{i=1}^p a_i X_i$$
-  
-  where $\mathbf{a}$ is a $p$-dimensional constant vector.
-  
-- Note $Y=\mathbf{a}^T\mathbf{X}=\mathbf{X}^T \mathbf a$, both gives the same univariate random variable $Y$.
-
-- E.g., $\mathbf X = (X_1, X_2, X_3)^T$, $a=(1/3, 1/3, 1/3)^T$. Then
-$$Y=a^TX=\frac{1}{3}(X_1 + X_2 + X_3)$$
-
-### Mean of $Y=a^TX$
-- The mean of $Y$ can be expressed as:
-  $$
-  \begin{aligned}
-  E(Y) &= E(\mathbf{a}^T\mathbf{X}) \\
-  &= \mathbf{a}^T E(\mathbf{X}) \\
-  &= \mathbf{a}^T \boldsymbol{\mu}
-  \end{aligned}
-  $$
-- Intuitively, the mean of $Y$ is a weighted average of the components of $\mathbf{X}$, with weights given by the corresponding components of $\mathbf{a}$.
-
-
-### Variance of $Y$
-- $Var(Y)=\mathbf a^T \boldsymbol \Sigma \mathbf a$
-
-Proof: Because $Y-EY$ is univariate, $Y-EY=(Y-EY)^T$. Therefore, 
-$$\begin{aligned}
-Var(Y)&=E[(Y-EY)^2]=E[(Y-EY)(Y-EY)^T]\\
-&=E[(\mathbf a^T\mathbf X-\mathbf a^T\boldsymbol \mu )(\mathbf a^T \mathbf X-\mathbf a^T\boldsymbol \mu )^T]=E[\mathbf a^T(\mathbf X-\boldsymbol \mu)(\mathbf X -\boldsymbol \mu)^T\mathbf a]\\
-&=\mathbf a^T E[(\mathbf X-\boldsymbol \mu)(\mathbf X -\boldsymbol \mu)^T]\mathbf a = \mathbf a^T Cov(\mathbf X) a= \mathbf a^T \boldsymbol \Sigma a
-\end{aligned}$$
-The last step is due to the definition of covariance matrix. 
-
-- The variance of $Y$ depends on the covariance structure of $\mathbf{X}$, as well as the weights given by $\mathbf{a}$. 
-
-
-### Linear Combinations of Iris Setosa Features
-- Recall that for the iris setosa, $\mathbf X$ is $50\times 4$. 
-- Consider a linear combination of the features $Y= Xb$, where 
-$$
-b=\begin{pmatrix}
-1/4 \\ 1/4 \\ 1/4 \\ 1/4
-\end{pmatrix}$$
-- $Yb$ is a $50\times 1$ vector, with the $i$th row be the average of the four features of the $i$th iris setosa flower. To see this
-
-
-### Linear Combinations of Iris Setosa Features
-$$\begin{aligned}
-Y&=Xb=
-\begin{pmatrix} X_1^T \\ \vdots \\ X_n^T  \end{pmatrix} b
- =
-\begin{pmatrix} X_1^Tb \\ \vdots \\ X_n^Tb  \end{pmatrix}
-=\begin{pmatrix} b^TX_1 \\ \vdots \\ b^TX_n  \end{pmatrix}\\
-&=\begin{pmatrix} \frac{x_{11} +x_{12} + x_{13} + x_{14}}{4}  \\ 
-\vdots \\ 
- \frac{x_{n1} +x_{n2} + x_{n3} + x_{n4}}{4}   \end{pmatrix}
-\end{aligned}
-$$
-
-### Linear Combinations of Iris Setosa Features: sample mean
-```{r}
-setosa=as.matrix(iris[iris$Species=="setosa", 1:4])
-sample.meanvec=matrix(colMeans(setosa), 4, 1)
-rownames(sample.meanvec)=colnames(setosa)
-colnames(sample.meanvec)="mean"
-b=matrix(1/4, 4, 1)
-Y=setosa%*%b
-#sample mean of Y: the following two results are the same
-mean(Y)
-t(b)%*%sample.meanvec
-```
-
-### Linear Combinations of Iris Setosa Features: sample variance
-```{r}
-#sample variance of Y: the following two results are the same
-var(Y)
-t(b)%*%cov(setosa)%*%b
-```
-
-# A Simulated Study
+## A Simulated Study
 
 ### Daily Intake of Protein 
 - This is a simulated data set
@@ -262,6 +216,7 @@ $$\hat{Var}(\bar{\mathbf X})=\frac{1}{60}\mathbf S$$
 
 
 ### Linear Functions/Combinations: Three Questions
+- Suppose we only have a random sample and we would like to make inference of the following:
 - Q1: Construct a large-sample (approximate) C.I. for protein from meat. In other words, the parameter of interest is $\mu_1$.
 
 - Q2: Construct a large-sample C.I. for the total protein intake
@@ -296,16 +251,18 @@ $$\hat{Var}(\bar X_{(1)})=\mathbf a^T \frac{\mathbf S}{60} \mathbf a$$
 
 ### Linear Functions/Combinations: Question 1 (continued)
 - R code to compute using the above two ways
+
 ```{r}
-# Method 1
-sqrt(S[1,1]/60)
+sqrt(S[1,1]/60) # Method 1
 
 # Method 2
 a=matrix(c(1,0,0,0),4,1)
 sqrt(t(a)%*%S%*%a/60)
 ```
-- Both methods give $s.e.(\bar X_{(1)})=0.27$
-- An approximate 95% C.I. for $\mu_1$ is $24.0 \pm 1.96*0.27$
+
+* Both methods give $s.e.(\bar X_{(1)})=0.27$
+
+* An approximate 95% C.I. for $\mu_1$ is $24.0 \pm 1.96*0.27$
 
 ### Linear Functions/Combinations: Question 2 (continued)
 ```{r}
@@ -359,6 +316,7 @@ X2=mvrnorm(100, mu=c(0,0), Sigma=Sigma2)
 Sigma3=matrix(c(5,-4,-4,5), 2,2)
 X3=mvrnorm(100, mu=c(0,0), Sigma=Sigma3)
 ```
+
 ### Generalized Variance: An Example
 ```{r, out.width="100%", out.height="50%"}
 par(mfrow=c(1,3))
@@ -372,8 +330,6 @@ plot(X1); plot(X2); plot(X3)
 - The generalized variance does not capture all the information contained in the covariance matrix.
 - The eigenvalues provide more information than the determinant - Principal Component Analysis!
 
-### How to Interpret A Covariance Matrix? - the 2D Situation
-https://datascienceplus.com/understanding-the-covariance-matrix/
 
 
 # Normal Distributions: univariate, multivariate, matrix normal distributions
@@ -385,7 +341,27 @@ https://datascienceplus.com/understanding-the-covariance-matrix/
 - \textcolor{red}{New material}: A random sample, denoted by $\mathbf X_1, \cdots, \mathbf X_n$, from a multivariate normal distribution $N(\boldsymbol \mu, \boldsymbol \Sigma)$
   - What are the distributions of $\bar{\mathbf X},  \mathbf S$? What useful statistics can be constructed?
   
+## Derivation of t-test
+- A random sample $X_1, \cdots, X_n$ from a univariate Normal distribution with mean $\mu$ and variance $\sigma^2$.
+$$X_1, \cdots, X_n \overset{iid}\sim N(\mu, \sigma)^2$$
+- The sample mean $\bar X \sim N(\mu, \sigma^2/n)$. Standardized the sample mean:
+$$\frac{\bar X - \mu}{\sigma/\sqrt{n}} \sim N(0, 1)$$
+- The sample variance $s^2 \sim \chi^2_{n-1}$, i.e., $\frac{(n-1)s^2}{\sigma^2} \sim \chi^2_{n-1}$.
+- The sample variance $s^2$ is independent of $\bar X$.
+
+
+### Derivation of t-test
+- The t-statistic is defined as
+$$t=\frac{\bar X - \mu}{s/\sqrt{n}}=\frac{\sqrt{n}(\bar X - \mu)}{s}$$
+- It follows a t-distribution with $n-1$ degrees of freedom, denoted by $t_{n-1}$.
+
+- The t-distribution is a family of distributions that are symmetric and bell-shaped, like the standard normal distribution, but have heavier tails.
+- The t-distribution is used in hypothesis testing and confidence intervals for small sample sizes, particularly when the population standard deviation is unknown.
+
+- The t-distribution approaches the standard normal distribution as the sample size increases.
+
 ### The Big Picture: Univariate
+\small
 - A random sample, denoted by $X_1, \cdots, X_n$, from a (univariate) normal distribution $N(\mu, \sigma^2)$
 - Let $\mathbf X_{n\times 1}=(X_1, \cdots, X_n)^T$. It is random vector with a multivarite normal distribution, i.e., 
   $$\mathbf X_{n\times 1}=(X_1, \cdots, X_n)^T \sim \mathbf N(\mu\mathbf 1, \sigma^2\mathbf I)$$
@@ -395,7 +371,7 @@ https://datascienceplus.com/understanding-the-covariance-matrix/
 4. a t-statistic is 
 $$\frac{\frac{\bar X-\mu}{\sqrt{\sigma^2/n}}}{\sqrt{\frac{(n-1)s^2/\sigma^2}{n-1}}}=\frac{\sqrt{n}(\bar X-\mu)}{s}$$
 It follows the t-distribution with n-1 degrees of freedom, denoted by $t_{n-1}$.
-
+\normalsize
 
 ### The Big Picture: Multivariate  
 - A random sample $\mathbf X_1, \cdots, \mathbf X_n$ from a multivariate normal distribution $\mathbf N(\boldsymbol \mu, \boldsymbol \Sigma)$.
