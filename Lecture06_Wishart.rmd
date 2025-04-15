@@ -99,6 +99,51 @@ $$
 \right.
 $$
 
+### Example: Projection onto a Plane in \(\mathbb{R}^3\)
+
+### Step 1: Define the Subspace (Plane \(x + y + z = 0\))
+The plane equation \(x + y + z = 0\) has normal vector \(\mathbf{n} = [1,1,1]^T\).  
+We need two basis vectors \(\mathbf{a}_1, \mathbf{a}_2\) that span the plane:
+
+```{r basis}
+a1 <- c(1, -1, 0)   # Satisfies x + y + z = 0
+a2 <- c(0, 1, -1)    # Also satisfies x + y + z = 0
+A <- cbind(a1, a2)   # Basis matrix
+print(A)
+```
+
+### Step 2: Compute Projection Matrix \(P = A(A^TA)^{-1}A^T\)
+```{r projection-matrix}
+P <- A %*% solve(t(A) %*% A) %*% t(A)
+print(P)
+```
+
+**Key Property**: Verify \(P^2 = P\) (idempotent):
+```{r idempotent}
+all.equal(P, P %*% P)  # Should return TRUE
+```
+
+### Step 3: Project a Vector onto the Plane
+Let's project \(\mathbf{v} = [3,1,2]^T\):
+
+```{r project-vector}
+v <- c(1, 1, 2)
+v_proj <- P %*% v
+print(v_proj)  # Result should satisfy x + y + z = 0
+```
+
+**Verification**: Check if \(v_{\text{proj}}\) lies on the plane:
+```{r verify}
+sum(v_proj)  # Should be 0 (or very close due to floating-point)
+```
+
+### Explanation:
+1. **Basis Vectors**: We chose \(\mathbf{a}_1 = [1,-1,0]^T\) and \(\mathbf{a}_2 = [0,1,-1]^T\) because they are linearly independent and satisfy the plane equation.
+2. **Projection**: The matrix \(P\) sends any vector to its closest point on the plane.
+3. **Visual Check**: The red point (projection) lies on the plane, and the blue point (original vector) connects to it via a dashed line (orthogonal to the plane).
+
+**Interactive Tip**: Run this in RStudio and rotate the plot to see orthogonality!
+
 ### A Special Projection Matrix: the Centering Matrix
 - The centering matrix $\mathbb C=\mathbf I - \frac{1}{n} \mathbf 1\mathbf 1^T$ is a very special matrix. 
 - It is a projection matrix, which is defined as both symmetric and idempotent:
