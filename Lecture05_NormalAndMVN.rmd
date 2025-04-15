@@ -19,7 +19,20 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyr) #the pipe (%>%) tool is extremely useful
 library(MASS)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  paste0("\n \\", "footnotesize","\n\n", x, "\n\n \\Huge")
+})
 ```
+
+```{r early-exit, echo=FALSE, eval=FALSE}
+condition_to_stop=1
+if (condition_to_stop) {
+  knitr::knit_exit()  # Stops knitting and renders what's processed so far
+}
+```
+
 
 # The Big Picture
 
@@ -101,7 +114,7 @@ $$M_X(t)=\mathbb{E}[e^{tX}]$$
 - The definition can be extended to random vectors and random matrices
   - Consider a random vector $\mathbf X_{p\times 1}$. Let $t$ be a $p\times 1$ vector. 
   
-  $$M_{\mathbf X}= \mathbb E [e{t^T\mathbf X}]$$
+  $$M_{\mathbf X}= \mathbb E [e^{t^T\mathbf X}]$$
   
   - Consider a random matrix $\mathbf X_{n\times p}$. Let $t$ be a $n\times p$ matrix. 
   
@@ -138,7 +151,8 @@ $$
 \begin{aligned}
 \text{Var}(X) &= E[(X-\mu)^2] = ... =E[X^2] - (E[X])^2\\
 &= M_X''(0) - M_X'(0)^2 = \sigma^2
-\end{aligned}$$
+\end{aligned}
+$$
 
 
 ### MGF of Univariate Normal: Examples
@@ -194,6 +208,7 @@ M_Y(t) &= e^{bt} M_X(s) = e^{bt} \exp\{\mu s + \frac{1}{2}\sigma^2 s^2\} \\
 $$
 
 - $M_Y(t)$ has the form of the MGF of a normal distribution: $Y = aX + b\sim N(a\mu+b, a^2\sigma^2)$.
+
 
 
 
@@ -253,14 +268,12 @@ $$
 ### MGF of MVN: Examples
 1. Bivariate standard normal distribution:
 
-   $$\boldsymbol{\mu}=\begin{pmatrix}0 \\ 0\end{pmatrix}, \boldsymbol{\Sigma}=\begin{pmatrix}1 & 0 \\ 0 & 1\end{pmatrix}, M_{\mathbf{X}}(\mathbf{t}) = \exp\left(\frac{1}{2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)
-$$
+$$\boldsymbol{\mu}=\begin{pmatrix}0 \\ 0\end{pmatrix}, \boldsymbol{\Sigma}=\begin{pmatrix}1 & 0 \\ 0 & 1\end{pmatrix}, M_{\mathbf{X}}(\mathbf{t}) = \exp\left(\frac{1}{2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)$$
 
 2. Bivariate normal distribution with specific mean vector and covariance matrix:
 
 $$\boldsymbol{\mu}=\begin{pmatrix}1 \\ 2\end{pmatrix},
-\boldsymbol{\Sigma}=\begin{pmatrix}4 & 1 \\ 1 & 9\end{pmatrix},    M_{\mathbf{X}}(\mathbf{t}) = \exp\left(\boldsymbol{\mu}^T \mathbf{t} + \frac{1}{2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)
-$$
+\boldsymbol{\Sigma}=\begin{pmatrix}4 & 1 \\ 1 & 9\end{pmatrix},    M_{\mathbf{X}}(\mathbf{t}) = \exp\left(\boldsymbol{\mu}^T \mathbf{t} + \frac{1}{2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)$$
 
 
 
@@ -296,15 +309,18 @@ $$
 - Next, we will show that it follows a multivariate normal distribution. 
 
 ### MGF of MVN: The Sample Mean Vector
-- We first calculate its MGF:
-$$
-\begin{aligned}
-M_{\bar{\mathbf{X}}}(\mathbf{t}) &\overset{iid}= \prod_{i=1}^n M_{\mathbf{X}_i}(\frac{1}{n}\mathbf{t}) = \left(\exp\left(\boldsymbol{\mu}^T \frac{1}{n}\mathbf{t} + \frac{1}{2} \left(\frac{1}{n}\mathbf{t}\right)^T \boldsymbol{\Sigma} \left(\frac{1}{n}\mathbf{t}\right)\right)\right)^n\\
-&= \exp\left(n\left(\boldsymbol{\mu}^T \frac{1}{n}\mathbf{t} + \frac{1}{2n^2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)\right) \\
-&= \exp\left(\boldsymbol{\mu}^T \mathbf{t} + \frac{1}{2} \mathbf{t}^T \frac{1}{n}\boldsymbol{\Sigma} \mathbf{t}\right)
-\end{aligned}
-$$
-- $M_{\bar{\mathbf{X}}}(\mathbf{t})$ has the form of the MGF of a multivariate normal distribution with mean vector $\boldsymbol{\mu}$ and covariance matrix $\frac{1}{n}\boldsymbol{\Sigma}$, i.e,
+$$\begin{aligned}
+M_{\bar{\mathbf{X}}}(\mathbf{t}) &= E[e^{\mathbf{t}^T \bar {\mathbf{X}}}] = E[e^{\mathbf{t}^T(\frac{X_1}{n} + \cdots + \frac{X_1}{n})}]
+= E[e^{\frac{\mathbf{t}^T}{n} X_1 + \cdots + \frac{\mathbf{t}^T}{n} X_n}]\\
+&\overset{iid}= E[e^{\frac{\mathbf{t}^T}{n} X_1}] \cdots E[e^{\frac{\mathbf{t}^T}{n} X_n}]
+= M_{X_1}(\frac{\mathbf{t}}{n}) \cdots M_{X_n}(\frac{\mathbf{t}}{n})\\
+&= \prod_{i=1}^n M_{\mathbf{X}_i}(\frac{\mathbf{t}}{n}) = \left(\exp\left(\boldsymbol{\mu}^T \frac{\mathbf{t}}{n} + \frac{1}{2} \left(\frac{\mathbf{t}}{n}\right)^T \boldsymbol{\Sigma} \left(\frac{\mathbf{t}}{n}\right)\right)\right)^n\\
+&= \exp\left(n\left(\boldsymbol{\mu}^T \frac{\mathbf{t}}{n} + \frac{1}{2n^2} \mathbf{t}^T \boldsymbol{\Sigma} \mathbf{t}\right)\right) \\
+&= \exp\left(\boldsymbol{\mu}^T \mathbf{t} + \frac{1}{2} \mathbf{t}^T \frac{\boldsymbol{\Sigma}}{n} \mathbf{t}\right)
+\end{aligned}$$
+
+
+- $M_{\bar{\mathbf{X}}}(\mathbf{t})$ has the form of the MGF of a multivariate normal distribution with mean vector $\boldsymbol{\mu}$ and covariance matrix $\frac{\boldsymbol{\Sigma}}{n}$, i.e,
 $\bar{\mathbf{X}}\sim N(\boldsymbol \mu , \frac{\boldsymbol \Sigma}{n})$
 
 
@@ -327,24 +343,24 @@ then $\mathbf X_1 \perp \mathbf X_2 \Leftrightarrow  \boldsymbol \Sigma_{12}=0$
 
 
 ### The Joint Distribution of Two Linear Functions
-- Let $\mathbf{X}_{p\times 1}\sim N(\boldsymbol \mu, \boldsymbol \Sigma)$.
-- Let $\mathbf Y=A \mathbf X$ and $\mathbf Z=B \mathbf X$. 
+- Let $\mathbf{X}_{p\times 1}\sim N(\boldsymbol \mu, \boldsymbol \Sigma)$. Let $\mathbf Y=A \mathbf X$ and $\mathbf Z=B \mathbf X$. 
 - What is the joint distribution of $Y$ and $Z$?
 - Note that 
 $$\begin{pmatrix}
 \mathbf Y\\ \mathbf Z
-\end{pmatrix}=\begin{pmatrix}A \\ B\end{pmatrix}\mathbf X
-$$
+\end{pmatrix}=\begin{pmatrix}A \\ B\end{pmatrix}\mathbf X$$
+
 - A linear combination of MVN random vector also follows a MVN
 $$\begin{aligned}
 \begin{pmatrix}\mathbf Y\\ \mathbf Z\end{pmatrix} 
 & \sim N(\begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \mu, \begin{pmatrix}A \\ B\end{pmatrix}\boldsymbol \Sigma \begin{pmatrix}A^T & B^T\end{pmatrix})\\
 &\sim N(\begin{pmatrix}A \boldsymbol \mu \\ B\boldsymbol \mu \end{pmatrix}, \begin{pmatrix}A \boldsymbol \Sigma A^T & A \boldsymbol \Sigma B^T\\ B \boldsymbol \Sigma A^T & B \boldsymbol \Sigma B^T \end{pmatrix}\boldsymbol)
-\end{aligned} 
-$$
+\end{aligned}$$
 
 We have 
 $$\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0$$
+
+
 
 
 
@@ -353,8 +369,23 @@ $$\mathbf Y \perp \mathbf Z \Leftrightarrow A\Sigma B^T=0$$
 
 - Suppose we have a random sample from a normal distribution. 
 - How to use a simulation to show that sample mean and sample variance are uncorrelated (in fact they are also independent)?
+
+```{r, out.width="50%", fig.align='center', eval=FALSE}
+X=matrix(rnorm(1000*100, 0, 1), 1000, 100)
+means=rowMeans(X)
+vars=apply(X, 1, var)
+plot(means, vars)
+```
+
+### A Simulation Question
+```{r, out.width="50%", fig.align='center', echo=FALSE}
+X=matrix(rnorm(1000*100, 0, 1), 1000, 100)
+means=rowMeans(X)
+vars=apply(X, 1, var)
+plot(means, vars)
+```
+
 ```{r, eval=FALSE, echo=FALSE}
-# Proof of independence between sample mean and sample variance for univariate case
 #library(mvtnorm)
 
 # Generate random sample from normal distribution
@@ -413,7 +444,7 @@ which indicates that the distribution $s^2$ is determined by the distribution of
 ### Proof (continued)
 
 - Clearly $\bar {\mathbf X}$ and $\mathbb C \mathbf X$ are linear combinations of $\mathbf X$, which follows a multivariate normal with covariance $\boldsymbol\Sigma= \mathbf I$. Thus, 
-$$cov(\bar {\mathbf X}, \mathbb C) = \frac{1}{n}\mathbf 1^T \Sigma \mathbb C= \frac{1}{n}\mathbf 1^T \mathbb C=0$$
+$$cov(\bar {\mathbf X}, \mathbb C \mathbf X) = \frac{1}{n}\mathbf 1^T \Sigma \mathbb C= \frac{1}{n}\mathbf 1^T \mathbb C=0$$
 Please verify that last step. 
 
 By Theorem on "Independence of Normals Under Jointly Normal", we can conclude the $\bar {\mathbf X}$ and $s^2$ are independent. 
