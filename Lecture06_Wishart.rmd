@@ -19,6 +19,11 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyr) #the pipe (%>%) tool is extremely useful
 library(MASS)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  paste0("\n \\", "footnotesize","\n\n", x, "\n\n \\Huge")
+})
 ```
 
 # The Big Picture
@@ -137,12 +142,6 @@ print(v_proj)  # Result should satisfy x + y + z = 0
 sum(v_proj)  # Should be 0 (or very close due to floating-point)
 ```
 
-### Explanation:
-1. **Basis Vectors**: We chose \(\mathbf{a}_1 = [1,-1,0]^T\) and \(\mathbf{a}_2 = [0,1,-1]^T\) because they are linearly independent and satisfy the plane equation.
-2. **Projection**: The matrix \(P\) sends any vector to its closest point on the plane.
-3. **Visual Check**: The red point (projection) lies on the plane, and the blue point (original vector) connects to it via a dashed line (orthogonal to the plane).
-
-**Interactive Tip**: Run this in RStudio and rotate the plot to see orthogonality!
 
 ### A Special Projection Matrix: the Centering Matrix
 - The centering matrix $\mathbb C=\mathbf I - \frac{1}{n} \mathbf 1\mathbf 1^T$ is a very special matrix. 
@@ -153,6 +152,53 @@ sum(v_proj)  # Should be 0 (or very close due to floating-point)
 - By properties of projection matrices, we have 
   - $rank(\mathbb C) = tr(\mathbb C)=n-1$
   - $\mathbb C = \sum_{j=1}^{n-1}\gamma_j\gamma_j^T$
+
+### A Special Projection Matrix: the Centering Matrix
+```{r}
+set.seed(123)
+# Generate a random sample
+X=rnorm(10, mean=5, sd=1)
+# the centering matrix
+C=diag(10)-1/10*matrix(1,10,10)
+# Check if C is symmetric
+isSymmetric(C)
+# Check if C is idempotent
+C2=C%*%C
+all.equal(C, C2) # should be TRUE
+```
+
+
+### A Special Projection Matrix: the Centering Matrix
+```{r, out.height='50%', fig.align='center'}
+# Verify that CX is has mean 0
+mean(C%*%X)
+plot(X, C%*%X, xlab="X", ylab="CX", main="Original vs Centered")
+abline(a=-mean(X), b=1, col="red") # mean line
+```
+
+### A Special Projection Matrix: the Centering Matrix
+```{r}
+# Check the eigenvalues of C
+eigen(C)$values
+# Check the eigenvectors of C
+round(eigen(C)$vectors, 2)
+Gamma=eigen(C)$vectors
+# Check Gamma is orthogonal
+Gamma%*%t(Gamma)
+t(Gamma)%*%Gamma
+```
+
+
+### A Special Projection Matrix: the Centering Matrix
+Note that $$\mathbb C=\sum_{i=j}^{n-1} \gamma_j\gamma_j^T$$
+```{r}
+Total_mat=matrix(0,10,10)
+for(i in 1:9){
+  Total_mat=Total_mat+Gamma[,i]%*%t(Gamma[,i])
+}
+all.equal(Total_mat, C)
+```
+
 
 
 ### A Special Projection Matrix: the Centering Matrix
@@ -206,8 +252,16 @@ $$
 \end{aligned}
 $$
 
-Let $Y_i = \gamma_i^T \mathbf Z$. Note that $Y_i$ is univariate and it is a linear combination of $\mathbf Z$, from which we can show that $Y_i \sim N(0, 1)$. In addition, we can show that $Cov(Y_i, Y_j)=0$ for $i\not=j$. Thus, $Y_1, \cdots, Y_r\overset{iid}\sim N(0,1)$.
+- Let $Y_i = \gamma_i^T \mathbf Z$. 
+- $Y_i$ is univariate and it is a linear combination of $\mathbf Z$, therefore it follows a normal distribution (univariate).
+ 
+$$Y_i \sim N(\gamma_i^T \mathbf 0, \gamma_i^T \mathbf I \gamma_i^T)=N(0,1)$$ 
+- Thus, $Y_i$'s are independent standard normal random variables.
 
+### Construct Chi-squared R.V.s using Normal R.V.s and Projection Matrices
+- $Cov(Y_i, Y_j)=cov(\gamma_i^T Z, \gamma_j^T)= \gamma_i^T\mathbf I \gamma_j^T=\gamma_i^T\mathbf \gamma_j^T=0$ for $i\not=j$. Thus, $Y_1, \cdots, Y_r\overset{iid}\sim N(0,1)$.
+- $Y_i^2$ is the square of a standard normal random variable. Therefore, $Y_i^2$ follows a chi-squared distribution with 1 degree of freedom, denoted by $\chi_1^2$.
+- Consequently, $Y_i^2\overset{iid}\sim \chi_1^2$.
 - Note that $\mathbf Z^T \mathbf P \mathbf Z=\sum_{i=1}^r Y_i^2$. By the definition of chi-squared distribution, we have 
 $\mathbf Z^T \mathbf P \mathbf Z\sim \chi_r^2$
 
