@@ -19,6 +19,11 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyr) #the pipe (%>%) tool is extremely useful
 library(MASS)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  paste0("\n \\", "footnotesize","\n\n", x, "\n\n \\Huge")
+})
 ```
 
 ### Outline of Lecture 08
@@ -113,7 +118,7 @@ X4=data.frame(mvrnorm(n, rep(0,p), Sigma4)); names(X4)=c("x","y")
 ### Eigenvalues of Covariance Matrix: Example 1
 - Simulated data
 \tiny
-```{r,out.width="70%"}
+```{r,out.width="70%", fig.align='center'}
 par(mfrow=c(2,2),pty="s")
 plot(X1);plot(X2);plot(X3);plot(X4)
 ```
@@ -127,6 +132,15 @@ plot(X1);plot(X2);plot(X3);plot(X4)
 ```{r}
 Sigma1
 Sigma2
+```
+\normalsize
+
+
+### Eigenvalues of Covariance Matrix: Example 1
+- The true covariance matrices
+
+\tiny
+```{r}
 Sigma3
 Sigma4
 ```
@@ -182,7 +196,7 @@ X4=data.frame(mvrnorm(n, rep(0,2), Sigma4)); names(X4)=c("x","y")
 - Simulated data
 
 \tiny
-```{r,out.width="70%"}
+```{r,out.width="70%", fig.align='center'}
 par(mfrow=c(2,2),pty="s")
 plot(X1, xlim=c(-5,5), ylim=c(-5,5));plot(X2, xlim=c(-5,5), ylim=c(-5,5));
 plot(X3, xlim=c(-5,5), ylim=c(-5,5));plot(X4, xlim=c(-5,5), ylim=c(-5,5))
@@ -199,6 +213,15 @@ plot(X3, xlim=c(-5,5), ylim=c(-5,5));plot(X4, xlim=c(-5,5), ylim=c(-5,5))
 ```{r}
 Sigma1
 Sigma2
+```
+\normalsize
+
+
+### Eigenvalues of Covariance Matrix: Example 2
+- The true covariance matrices
+
+\tiny
+```{r}
 Sigma3
 Sigma4
 ```
@@ -586,7 +609,7 @@ and $\mathbf Y$ is a random sample of size $g-1$ from $N(\mathbf 0, \boldsymbol 
 ### Example - Iris Data
 
 \footnotesize
-```{r, out.width="60%"}
+```{r, out.width="60%",fig.align='center'}
 mycolors=rainbow(12)[9:1]
 image(t(iris[150:1, 1:4]),col = mycolors, xaxt="n", yaxt="n")
 ```
@@ -605,7 +628,7 @@ iris.type=rep(c("Setosa","Versicolor","Virginica"),each=50)
 ```
 
 ### Iris Data: Univariate One-way ANOVA: Exploratory
-```{r, eval=FALSE}
+```{r, eval=FALSE, fig.align='center', out.height="80%"}
 #visual checking
 par(mfrow=c(2,2))
 #box plot
@@ -624,7 +647,7 @@ qqline(iris3[,1,3])
 
 
 ### Iris Data: Univariate One-way ANOVA: Exploratory
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align='center', out.height="80%"}
 #visual checking
 par(mfrow=c(2,2))
 #box plot
@@ -661,7 +684,7 @@ iris.type=rep(c("Setosa","Versicolor","Virginica"),each=50)
 ```
 
 ### Iris Data: MANOVA: Exploratory
-```{r, eval=FALSE}
+```{r, eval=FALSE, fig.align='center', out.width="80%"}
 #visual investigation
 par(mfrow=c(2,2))
 boxplot(iris3[,1,],main="SepalL")
@@ -671,7 +694,7 @@ boxplot(iris3[,4,],main="PetalW")
 ```
 
 ### Iris Data: MANOVA: Exploratory
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align='center', out.width="80%"}
 #visual investigation
 par(mfrow=c(2,2))
 boxplot(iris3[,1,],main="SepalL")
