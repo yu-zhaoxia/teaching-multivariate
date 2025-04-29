@@ -11,9 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-## Due on \textcolor{red}{Monday, May 15 2023}. R Code should be included as appendices. 
+## Due on \textcolor{red}{Monday, May 12 2025}. R Code should be included as appendices. 
 
-In research we often need to compare different test statistics. Consider three multivariate normal populations. Here I would like you to assess their type I error rate and power of the following four tests for testing $H_0:\mu_A=\mu_B=\mu_C$ vs $H_1: H_0$is not true, where $\mu_A, \mu_B, \mu_C \in \mathbf{R}^p$ are the population mean vectors of the three subpopulations, respectively.  
+In research we often need to compare different methods such as test statistics. Consider three multivariate normal populations. Here I would like you to assess their type I error rate and power of the following four tests for testing $H_0:\mu_A=\mu_B=\mu_C$ vs $H_1: H_0$ is not true, where $\mu_A, \mu_B, \mu_C \in \mathbf{R}^p$ are the population mean vectors of the three subpopulations, respectively.  
 
 1. Wilk's lambda statistic $\Lambda=\frac{|W|}{|B+W|}$
 2. Lawley-Hotelling trace $tr[BW^{-1}]$
@@ -22,7 +22,10 @@ In research we often need to compare different test statistics. Consider three m
 
 \vspace{0.5cm}
 
-We assume that the three underlying populations have the same variance-covariance matrix $\Sigma$. It is helpful to consider different situations. For example, here is a set of four different situations: 
+Please (1) conduct a simulation study to compare the type I error rate and power of the four tests, (2) apply and compare the methods to a real data set, and (3) write a report to summarize your findings. The real data set should not be a one used in class. It should not be those widely used data sets such as iris, mtcars, airquality, etc. You can use data published in research articles, governments, or institutes.
+
+# Part 1: Simulation Study
+\underline{Data generation}. We assume that the three underlying populations have the same variance-covariance matrix $\Sigma$. It is helpful to consider different situations. For example, here is a set of four different situations: 
 
 \begin{enumerate}
 \item Independent and equal variance:
@@ -47,7 +50,18 @@ $$\Sigma=\begin{pmatrix} 1&0&0\\ 0&2&0\\ 0&0&3\end{pmatrix}$$
 \underline{Sample Size}. Assume $n$ observations will be obtained from each population. You need to choose $n$ carefully such that the empirical power is neither too small nor too large. This is because when $n$ is too small (large), all methods would have low (high) power and you cannot distinguish their performance. Ideally, you should choose $n$ such that the power of the best method is between 0.8 and 0.9. 
 \vspace{0.5cm}
 
-\underline{Report}. You are required to write a short report (5 -10 pages, double spaced, including everything except your R code). Your report should cover several sections, such as 
+# Part 2: A Real Data Study
+\underline{Data}. You can use any data set you like. The data set should not be a one used in class. It should not be those widely used data sets such as iris, mtcars, airquality, etc. You can use data published in research articles, governments, or institutes.
+
+\underline{Exploratory data analysis and Data Visualization}. You should first conduct exploratory data analysis to understand the data. For example, you can use boxplots to visualize the distribution of the data. You can also use appropriate plots to visualize the relationship between different variables. 
+
+
+\underline{Analysis}. You can use the same four tests as in the simulation study. You can also use the same four situations as in the simulation study.
+
+
+
+# Part 3: A Report
+You are required to write a short report (5 -10 pages, double spaced, including everything except your R code). Your report should cover several sections, such as 
 \vspace{0.5cm}
 
 \begin{enumerate}
@@ -56,8 +70,9 @@ $$\Sigma=\begin{pmatrix} 1&0&0\\ 0&2&0\\ 0&0&3\end{pmatrix}$$
 \item {\it Introduction}. Introduce the purpose of your study.
 \item {\it Simulation Methods}. Describe how you simulate data.
 \item {\it Simulation Results}. Present your results. Please use figures and / or tables to better summarize the results. Including raw R output is not encouraged. R code and output should be included in an appendix.
+\item {\it Real Data}. Describe the data you use and how you analyze it. You can use the same four tests as in the simulation study.
 \item {\it Discussion}. Re-state your main findings and discuss potential pitfalls / limitations of your work. For example, we only look at a few simplified situations for population means and variance-covariance matrices.
-\item {Appendix}. You can include your R code and \textcolor{red}{major} output into this section. Additional figures and tables that support the main text can also be included.
+\item {Appendices}. You can include your R code and \textcolor{red}{major} output into this section. Additional figures and tables that support the main text can also be included. Data files should be submitted as appendices. 
 \item {References}. Optional for this report. If you have read some references of the four tests and want to discuss them, please feel free to include them. 
 \end{enumerate}
 
