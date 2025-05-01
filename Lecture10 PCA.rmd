@@ -13,6 +13,9 @@ header-includes:
 - \setbeamertemplate{navigation symbols}{}
 - \setbeamertemplate{footline}[page number]
 - \usepackage{amsmath}
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -22,28 +25,50 @@ library(MASS)
 ```
 
 # Intro to PCA
+
 ### Introduction to PCA
-- A component refers to a linear function of features/variables
-- In English, “principal” means first or highest in rank/importance
-- The first principal component refers to the linear function of the highest “rank/importance” 
-- The second principal component refers to the linear function of the second highest “rank/importance”
-- The principal components in PCA are \textbf{red}{uncorrelated} \textbf{blue}{linear} combinations/functions of features 
+
+-   A component refers to a linear function of features/variables
+-   In English, “principal” means first or highest in rank/importance
+-   The first principal component refers to the linear function of the
+    highest “rank/importance”
+-   The second principal component refers to the linear function of the
+    second highest “rank/importance”
+-   The principal components in PCA are \textcolor{red}{uncorrelated}
+    \textcolor{blue}{linear} combinations/functions of features
 
 ### Origins of PCA
-- PCA was first introduced by Karl Pearson in 1901 as a method to study the "lines and planes of closest fit" for high-dimensional data.
-- Pearson developed PCA as a geometrical technique to find the direction that maximizes the variance in multivariate data.
-- In 1933, Harold Hotelling extended PCA, establishing its statistical properties and mathematical foundation.
-- Hotelling showed that PCA is equivalent to finding the eigenvectors and eigenvalues of the covariance matrix, thus connecting PCA to spectral decomposition.
+
+-   PCA was first introduced by Karl Pearson in 1901 as a method to
+    study the "lines and planes of closest fit" for high-dimensional
+    data.
+-   Pearson developed PCA as a geometrical technique to find the
+    direction that maximizes the variance in multivariate data.
+-   In 1933, Harold Hotelling extended PCA, establishing its statistical
+    properties and mathematical foundation.
+-   Hotelling showed that PCA is equivalent to finding the eigenvectors
+    and eigenvalues of the covariance matrix, thus connecting PCA to
+    spectral decomposition.
 
 ### Modern PCA
-- Over time, PCA has become a widely used method in various disciplines, such as statistics, data science, finance, and engineering.
-- PCA has had a significant impact on the field of multivariate analysis and dimensionality reduction.
-- PCA has been extended and generalized, giving rise to many useful non-linear dimension reduction techniques like Kernel PCA, Sparse PCA, and UMAP.
-- Its versatility and interpretability have made PCA a go-to technique for data visualization, noise reduction, and feature extraction.
 
+-   Over time, PCA has become a widely used method in various
+    disciplines, such as statistics, data science, finance, and
+    engineering.
+-   PCA has had a significant impact on the field of multivariate
+    analysis and dimensionality reduction.
+-   PCA has been extended and generalized, giving rise to many useful
+    non-linear dimension reduction techniques like Kernel PCA, Sparse
+    PCA, and UMAP.
+-   Its versatility and interpretability have made PCA a go-to technique
+    for data visualization, noise reduction, and feature extraction.
 
 ### A Visual Illustration of PCA
-Click the [link](https://miro.medium.com/v2/resize:fit:875/1*UpFltkN-kT9aGqfLhOR9xg.gif) to see the animated version!
+
+Click the
+[link](https://miro.medium.com/v2/resize:fit:875/1*UpFltkN-kT9aGqfLhOR9xg.gif)
+to see the animated version!
+
 ```{r, out.width="100%", echo=FALSE}
 knitr::include_graphics("img/pca_major_minor.png")
 ```
@@ -51,6 +76,7 @@ knitr::include_graphics("img/pca_major_minor.png")
 ### Revisit Example 2 in Lecture 08
 
 \tiny
+
 ```{r}
 n=1000
 Sigma1=diag(c(4,1), 2, 2) 
@@ -67,16 +93,20 @@ X2=data.frame(mvrnorm(n, rep(0,2), Sigma2)); names(X2)=c("x","y")
 X3=data.frame(mvrnorm(n, rep(0,2), Sigma3)); names(X3)=c("x","y")
 X4=data.frame(mvrnorm(n, rep(0,2), Sigma4)); names(X4)=c("x","y")
 ```
+
 \normalsize
 
 ### Covariance Matrices
+
 ```{r}
 Sigma1
 Sigma3
 ```
 
 ### Simulated Data
+
 \tiny
+
 ```{r,out.width="70%"}
 par(mfrow=c(1,2),pty="s")
 plot(X1, xlim=c(-5,5), ylim=c(-5,5));
@@ -87,45 +117,61 @@ plot(X3, xlim=c(-5,5), ylim=c(-5,5));
 abline(0,1/2, col=2); abline(0, -2, col=2)
 
 ```
+
 \normalsize
 
-
-
-
-# Theory and Spectral Decomposition 
-### A Linear Combination of a Random Vector
-- Consider a random vector $\mathbf X = \left(\begin{array}{c} X_1\\ X_2\\ \vdots \\X_p\end{array}\right)$
-- Suppose its covariance matrix is $\boldsymbol \Sigma$
-- Let $a\in \mathbb R^p$ be a vector of length $p$. 
-- Consider a linear combination/function of $\mathbf X$, denoted by 
-$$Y=a^T\mathbf X=\sum_{i=1}^p a_iX_i=a_1X_1 + \cdots + a_pX_p,$$
-- The variance of the random variable $Y$ is 
-$$Var(Y)=Var(a^T\mathbf X)=a^T \boldsymbol \Sigma a \ \ (=\sum_{i=1}^p\sum_{j=1}^p a_ia_j \sigma_{ij})$$
+# Theory and Spectral Decomposition
 
 ### A Linear Combination of a Random Vector
-- It is obvious that $Var(Y)$ depends on the scale of $a$, thus, it is not scale free. 
-- Let's put on a constraint: $||a||=1,$
-i.e., the norm of the vector $a$ is fixed at 1. Note, alternatively, we can write 
-$$1=<a,a>=a^Ta=\sum_{i=1}^p a_i^2$$ 
-- Can we maximize $Var(Y)=Var(a^TX)$ subject to $||a||=1$?
-- We can. To do so, we will first introduce the spectral decomposition of a symmetric matrix and then apply this result to $\boldsymbol \Sigma$. 
+
+-   Consider a random vector
+    $\mathbf X = \left(\begin{array}{c} X_1\\ X_2\\ \vdots \\X_p\end{array}\right)$
+-   Suppose its covariance matrix is $\boldsymbol \Sigma$
+-   Let $a\in \mathbb R^p$ be a vector of length $p$.
+-   Consider a linear combination/function of $\mathbf X$, denoted by
+    $$Y=a^T\mathbf X=\sum_{i=1}^p a_iX_i=a_1X_1 + \cdots + a_pX_p,$$
+-   The variance of the random variable $Y$ is
+    $$Var(Y)=Var(a^T\mathbf X)=a^T \boldsymbol \Sigma a \ \ (=\sum_{i=1}^p\sum_{j=1}^p a_ia_j \sigma_{ij})$$
+
+### A Linear Combination of a Random Vector
+
+-   It is obvious that $Var(Y)$ depends on the scale of $a$, thus, it is
+    not scale free.
+-   Let's put on a constraint: $||a||=1,$ i.e., the norm of the vector
+    $a$ is fixed at 1. Note, alternatively, we can write
+    $$1=<a,a>=a^Ta=\sum_{i=1}^p a_i^2$$
+-   Can we maximize $Var(Y)=Var(a^TX)$ subject to $||a||=1$?
+-   We can. To do so, we will first introduce the spectral decomposition
+    of a symmetric matrix and then apply this result to
+    $\boldsymbol \Sigma$.
 
 ## Spectral Decomposition
-### Spectral Decomposition of A Symmetric Matrix $A$
-- Spectral decomposition, also known as eigendecomposition, is a process by which a symmetric matrix is decomposed into a set of orthogonal eigenvectors and their corresponding eigenvalues.
-- A symmetric matrix has real eigenvalues and orthogonal eigenvectors.
-- For a symmetric matrix ${A}_{p\times p}$, the spectral decomposition is given by: ${A} = \Gamma {\Lambda} \Gamma^T$, where
-  - ${\Gamma}$ is an orthogonal matrix 
-  - ${\Lambda}$ is a diagonal matrix 
 
 ### Spectral Decomposition of A Symmetric Matrix $A$
-- $\Gamma$ is an orthogonal matrix, i.e., $\Gamma$ s.t. 
-$$\Gamma  \Gamma^T= \Gamma^T \Gamma=\mathbf I_p$$
 
-- The columns of $\Gamma$ are the eigenvectors of ${A}$. Let $\gamma_i$ denote the $i$th column, then $\Gamma=(\gamma_1, \cdots, \gamma_p)$ and each $\gamma_i$ is a $p\times 1$ vector; in other words, $\gamma_i \in \mathbb R^p$. 
+-   Spectral decomposition, also known as eigendecomposition, is a
+    process by which a symmetric matrix is decomposed into a set of
+    orthogonal eigenvectors and their corresponding eigenvalues.
+-   A symmetric matrix has real eigenvalues and orthogonal eigenvectors.
+-   For a symmetric matrix ${A}_{p\times p}$, the spectral decomposition
+    is given by: ${A} = \Gamma {\Lambda} \Gamma^T$, where
+    -   ${\Gamma}$ is an orthogonal matrix
+    -   ${\Lambda}$ is a diagonal matrix
 
-- $\Gamma$ is an orthogonal matrix. This implies that $\mathbf I = \Gamma\Gamma^T=(\gamma_1, \cdots, \gamma_p)(\gamma_1, \cdots, \gamma_p)^T=\sum_{i=1}^p \gamma_i \gamma_i^T$ and
-  
+### Spectral Decomposition of A Symmetric Matrix $A$
+
+-   $\Gamma$ is an orthogonal matrix, i.e., $\Gamma$ s.t.
+    $$\Gamma  \Gamma^T= \Gamma^T \Gamma=\mathbf I_p$$
+
+-   The columns of $\Gamma$ are the eigenvectors of ${A}$. Let
+    $\gamma_i$ denote the $i$th column, then
+    $\Gamma=(\gamma_1, \cdots, \gamma_p)$ and each $\gamma_i$ is a
+    $p\times 1$ vector; in other words, $\gamma_i \in \mathbb R^p$.
+
+-   $\Gamma$ is an orthogonal matrix. This implies that
+    $\mathbf I = \Gamma\Gamma^T=(\gamma_1, \cdots, \gamma_p)(\gamma_1, \cdots, \gamma_p)^T=\sum_{i=1}^p \gamma_i \gamma_i^T$
+    and
+
 $$\gamma_i^T\gamma_j=\left\{
 \begin{array}{ccc}
 1 & & \mbox{ if } i=j\\
@@ -134,37 +180,40 @@ $$\gamma_i^T\gamma_j=\left\{
 \right.
 $$
 
-
-
-
 ### The Diagonal Matrix $\boldsymbol \Lambda$
-- ${\Lambda}$ is a diagonal matrix containing the eigenvalues of $A$, with ${\Lambda}_{ii} = \lambda_i$:
+
+-   ${\Lambda}$ is a diagonal matrix containing the eigenvalues of $A$,
+    with ${\Lambda}_{ii} = \lambda_i$:
 
 $${\Lambda} = \begin{pmatrix}
 \lambda_1 & 0 & 0 \cdots & 0\\
 0 & \lambda_2 & 0\cdots & 0\\
 \cdots & \cdots & \cdots & \cdots\\
 0 & 0 & 0 & \lambda_p
-\end{pmatrix}$$
-- Without of loss of generality, we often rank the eigenvalues from the largest to the smallest, i.e., 
+\end{pmatrix}$$ - Without of loss of generality, we often rank the
+eigenvalues from the largest to the smallest, i.e.,
 $$\lambda_1\ge \lambda_2 \ge \cdots \ge \lambda_p$$
 
-
 ### The Eigenvectors and Eigenvalues of a Symmetric Matrix $A$
-- $\lambda_i$ is the $i$th eigenvalue and $\gamma_i$ is the corresponding eigenvector, i.e., 
-$$A\gamma_i = \lambda_i \gamma_i$$
-- The spectral decomposition $A = \Gamma \Lambda \Gamma^T$ implies that 
-$$A=\sum_{i=1}^p \lambda_i \gamma_i \gamma_i^T$$
+
+-   $\lambda_i$ is the $i$th eigenvalue and $\gamma_i$ is the
+    corresponding eigenvector, i.e., $$A\gamma_i = \lambda_i \gamma_i$$
+-   The spectral decomposition $A = \Gamma \Lambda \Gamma^T$ implies
+    that $$A=\sum_{i=1}^p \lambda_i \gamma_i \gamma_i^T$$
 
 ### The Spectral Decomposition of A Covariance Matrix
-- Let $\boldsymbol\Sigma_{p\times p}$ be the covariance matrix of $\mathbf X$. 
-- A covariance matrix is positive definite or positive semi-definite, which means
-$$\Sigma = \Gamma \Lambda \Gamma^T$$
-where $\Lambda$ is diagonal matrix with non-negative diagonal elements: 
-$$\lambda_1 \ge \lambda_2 \ge \cdots \lambda_p\ge 0$$
+
+-   Let $\boldsymbol\Sigma_{p\times p}$ be the covariance matrix of
+    $\mathbf X$.
+-   A covariance matrix is positive definite or positive semi-definite,
+    which means $$\Sigma = \Gamma \Lambda \Gamma^T$$ where $\Lambda$ is
+    diagonal matrix with non-negative diagonal elements:
+    $$\lambda_1 \ge \lambda_2 \ge \cdots \lambda_p\ge 0$$
 
 ## Examples of Spectral Decomposition
+
 ### Example 1 of Spectral Decomposition
+
 ```{r}
 Sigma1
 eigen(Sigma1)$value #\lambda's
@@ -174,14 +223,15 @@ eigen(Sigma1)$vectors #\Gamma
 ### Example 1 of Spectral Decomposition
 
 \tiny
+
 ```{r}
 eigen(Sigma1)$vectors %*% t(eigen(Sigma1)$vectors)#\Lambda* \Lambda^T
 t(eigen(Sigma1)$vectors) %*% eigen(Sigma1)$vectors
 #\Gamma \Lambda \Gamma^T
 eigen(Sigma1)$vectors %*% diag(eigen(Sigma1)$values) %*% eigen(Sigma1)$vectors
 ```
-\normalsize
 
+\normalsize
 
 ### Example 2 of Spectral Decomposition
 
@@ -191,85 +241,143 @@ eigen(Sigma3)$value #\lambda's
 eigen(Sigma3)$vectors #\Gamma
 ```
 
-
 ### Example 2 of Spectral Decomposition
 
 \tiny
+
 ```{r}
 eigen(Sigma1)$vectors %*% t(eigen(Sigma1)$vectors) #\Gamma* \Gamma^T
 t(eigen(Sigma1)$vectors) %*% eigen(Sigma1)$vectors #\Lambda^T* \Lambda
 #\Gamma \Lambda \Gamma^T
 eigen(Sigma3)$vectors %*% diag(eigen(Sigma3)$values) %*% t(eigen(Sigma3)$vectors)
 ```
+
 \normalsize
 
+### An Orthogonal Matrix preserves Norm
+
+-   Recall that an orthogonal matrix $\Gamma$ satisfies the following
+    properties:
+    -   $\Gamma^T \Gamma = \mathbf I$, $\Gamma \Gamma^T = \mathbf I$
+-   Compare $||\Gamma x||$ and $||x||$
+    $$||\Gamma x|| = \sqrt{(\Gamma x)^T \Gamma x} = x^T \Gamma^T \Gamma x= x^Tx=||x||$$
+-   Thus, the orthogonal matrix preserves the norm of a vector.
+-   For a point $x=(a, b)^T$, after the orthogonal transformation by
+    $\Gamma=(\gamma_1, \gamma_2)$, the new coordinates are
+    $(\gamma_1^T x, \gamma_2^T x)=\Gamma^T x$.
+-   For an $n\times p$ matrix $X$, the orthogonal transformation is
+    $X\Gamma$.
+
+### An Orthogonal Matrix preserves Norm: Example
+
+![](images/clipboard-3022077566.png){width="300"}
+
+### An Orthogonal Matrix preserves Norm: Example
+
+```{r, eval=FALSE}
+Gamma=eigen(Sigma3)$vectors
+par(mfrow=c(1,2))
+plot(X3, xlim=c(-5,5), ylim=c(-5,5), main="X3");
+points(X3[1,], col=2, pch=17)
+points(X3[10,], col=3, pch=15)
+abline(0,1/2, col=2); abline(0, -2, col=2)
+plot(as.matrix(X3)%*%(Gamma), xlim=c(-5,5), ylim=c(-5,5), main="Gamma*X3");
+points(as.matrix(X3[1,])%*%(Gamma), col=2, pch=17)
+points(as.matrix(X3[10,])%*%(Gamma), col=3, pch=15)
+abline(h=0, v=0, col=2)
+```
+
+### An Orthogonal Matrix preserves Norm: Example
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%"}
+Gamma=eigen(Sigma3)$vectors
+par(mfrow=c(1,2),pty="s")
+plot(X3, xlim=c(-5,5), ylim=c(-5,5), main="X3");
+points(X3[1,], col=2, pch=17)
+points(X3[10,], col=3, pch=15)
+abline(0,1/2, col=2); abline(0, -2, col=2)
+plot(as.matrix(X3)%*%(Gamma), xlim=c(-5,5), ylim=c(-5,5), main="Gamma*X3");
+points(as.matrix(X3[1,])%*%(Gamma), col=2, pch=17)
+points(as.matrix(X3[10,])%*%(Gamma), col=3, pch=15)
+abline(h=0, v=0, col=2)
+```
+
+
 # First PC
-### The Maximum Variance of $a^T\mathbf X$ S.B.T $||a||=1$
-- Let $Y_1=a^T \mathbf X$ denote the first principal component, which is defined as the linear combination reaches the maximum variance subject to 
-$||a||=1$.  Mathematically, we are looking for $a$ s.t.
-$$a=\underset{a^T a=1} {\mbox{arg max }} a^T \boldsymbol \Sigma a$$
-
-- The variance of $Y_1$ in terms of $\Gamma$ and $\Lambda$
-$$
-\begin{aligned}
-Var(Y_1) &= a^T\Sigma a\\
-&= a^T \Gamma \Lambda \Gamma^T a = a^T (\sum_{i=1}^p \lambda_i \gamma_i\gamma_i^T) a \\
-&= \sum_{i=1}^p \lambda_i a^T \gamma_i \gamma_i^T a
-\end{aligned}
-$$
 
 ### The Maximum Variance of $a^T\mathbf X$ S.B.T $||a||=1$
-- Let $z_i=a^T\gamma_i$. Note that 
-$$Var(Y)=\sum_{i=1}^p \lambda_i z_i^2$$
-This is because $z_i$ is a scalar, thus $z_i^2=z_i^Tz_i=z_iz_i^T$
 
-- You can also see that $z_i$ is the inner product between $a$ and $\gamma_i$:
-$$z_i=a^T \gamma_i =<a, \gamma_i>=<\gamma_i, a>=\gamma_i^Ta$$
+-   Let $Y_1=a^T \mathbf X$ denote the first principal component, which
+    is defined as the linear combination reaches the maximum variance
+    subject to $||a||=1$. Mathematically, we are looking for $a$ s.t.
+    $$a=\underset{a^T a=1} {\mbox{arg max }} a^T \boldsymbol \Sigma a$$
 
-### The Maximum Variance of $a^T\mathbf X$ S.B.T $||a||=1$
-- Also, 
-$$\begin{aligned}
-\sum_{i=1}^p z_i^2 &=\sum_{i=1}^p a^T \gamma_i \gamma_i^T a=a^T \left(\sum_{i=1}^p  \gamma_i \gamma_i^T\right) a\\
-&=a^T \Gamma \Gamma^T a\\
-&\overset{1}=a^T\mathbf I a \\
-&= a^Ta\\
-&\overset{2}=1
-\end{aligned}
-$$
-  - step 1: this is because $\Gamma$ is an orthogonal matrix, which means $\Gamma\Gamma^T=\Gamma^T\Gamma=\mathbf I$.
-  - step 2: this is due to the constraint that $a^Ta=1$.
-
+-   The variance of $Y_1$ in terms of $\Gamma$ and $\Lambda$ $$
+    \begin{aligned}
+    Var(Y_1) &= a^T\Sigma a\\
+    &= a^T \Gamma \Lambda \Gamma^T a = a^T (\sum_{i=1}^p \lambda_i \gamma_i\gamma_i^T) a \\
+    &= \sum_{i=1}^p \lambda_i a^T \gamma_i \gamma_i^T a
+    \end{aligned}
+    $$
 
 ### The Maximum Variance of $a^T\mathbf X$ S.B.T $||a||=1$
-- So far we have the following results
-- $Var(a^TX)=\sum_{i=1}^p \lambda_i z_i^2$, where
-$$\lambda_1\ge \cdots \lambda_p\ge0 \ \mbox { and } \sum_{i=1}^p z_i^2=1$$
-- Thus, 
-$$\begin{aligned}
-Var(a^T \mathbf X)&=\sum_{i=1}^p \lambda_i z_i^2 \overset{?}\le \sum_{i=1}^p \lambda_1 z_i^2
-\\
-&=\lambda_1 \sum_{i=1}^p z_i^2\\
-&=\lambda_1
-\end{aligned}
-$$
-Thus, the maximum $Var(a^TX)=\lambda_1$ s.b.t. $||a||=1$. 
 
+-   Let $z_i=a^T\gamma_i$. Note that
+    $$Var(Y)=\sum_{i=1}^p \lambda_i z_i^2$$ This is because $z_i$ is a
+    scalar, thus $z_i^2=z_i^Tz_i=z_iz_i^T$
+
+-   You can also see that $z_i$ is the inner product between $a$ and
+    $\gamma_i$:
+    $$z_i=a^T \gamma_i =<a, \gamma_i>=<\gamma_i, a>=\gamma_i^Ta$$
+
+### The Maximum Variance of $a^T\mathbf X$ S.B.T $||a||=1$
+
+-   Also, $$\begin{aligned}
+    \sum_{i=1}^p z_i^2 &=\sum_{i=1}^p a^T \gamma_i \gamma_i^T a=a^T \left(\sum_{i=1}^p  \gamma_i \gamma_i^T\right) a\\
+    &=a^T \Gamma \Gamma^T a\\
+    &\overset{1}=a^T\mathbf I a \\
+    &= a^Ta\\
+    &\overset{2}=1
+    \end{aligned}
+    $$
+    -   step 1: this is because $\Gamma$ is an orthogonal matrix, which
+        means $\Gamma\Gamma^T=\Gamma^T\Gamma=\mathbf I$.
+    -   step 2: this is due to the constraint that $a^Ta=1$.
+
+### The Maximum Variance of $a^T\mathbf X$ S.B.T $||a||=1$
+
+-   So far we have the following results
+-   $Var(a^TX)=\sum_{i=1}^p \lambda_i z_i^2$, where
+    $$\lambda_1\ge \cdots \lambda_p\ge0 \ \mbox { and } \sum_{i=1}^p z_i^2=1$$
+-   Thus, $$\begin{aligned}
+    Var(a^T \mathbf X)&=\sum_{i=1}^p \lambda_i z_i^2 \overset{?}\le \sum_{i=1}^p \lambda_1 z_i^2
+    \\
+    &=\lambda_1 \sum_{i=1}^p z_i^2\\
+    &=\lambda_1
+    \end{aligned}
+    $$ Thus, the maximum $Var(a^TX)=\lambda_1$ s.b.t. $||a||=1$.
 
 ### The $a$ (s.b.t$||a||=1$) Maximizes $Var(a^TX)$
-- But how to find $a$?
-- Which $z=(z_1, \cdots, z_p)^T$ makes the $=$ hold?
-- This happens when $z_1=1, z_2=0, \cdots z_p=0$
-- Recall that $z_i=a^T \gamma_i$
-- Thus, the following $a$ satisfies all required conditions
-$$a=\gamma_1$$
-- Thus, we can conclude that 
 
-\textcolor{red}{First Principal Component}: Among all the linear combinations of $\mathbf X$, the one with the maximum variance is $\gamma_1 \mathbf X$ and the corresponding variance is $\lambda_1$. 
+-   But how to find $a$?
+-   Which $z=(z_1, \cdots, z_p)^T$ makes the $=$ hold?
+-   This happens when $z_1=1, z_2=0, \cdots z_p=0$
+-   Recall that $z_i=a^T \gamma_i$
+-   Thus, the following $a$ satisfies all required conditions
+    $$a=\gamma_1$$
+-   Thus, we can conclude that
 
-- For notional clarity, let's denote the first PC by $Y_1=\gamma_1^T \mathbf X$
+\textcolor{red}{First Principal Component}: Among all the linear
+combinations of $\mathbf X$, the one with the maximum variance is
+$\gamma_1^T \mathbf X$ and the corresponding variance is $\lambda_1$.
+
+-   For notional clarity, let's denote the first PC by
+    $Y_1=\gamma_1^T \mathbf X$
 
 # Understand 1st PC
+
 ### Example
+
 ```{r}
 Sigma3
 gamma1=eigen(Sigma3)$vectors[,1]
@@ -277,13 +385,14 @@ gamma1
 gamma2=eigen(Sigma3)$vectors[,2]
 gamma2
 ```
-- 1st PC: $(-0.8660254 -0.5)\mathbf X)=-0.8660254 X_1  -0.5 X_2$
-- 2nd PC: $0.5 X_1 - 0.8660254 X_2$
 
-
+-   1st PC: $(-0.8660254 -0.5)\mathbf X)=-0.8660254 X_1  -0.5 X_2$
+-   2nd PC: $0.5 X_1 - 0.8660254 X_2$
 
 ### Simulated Data
+
 \tiny
+
 ```{r,out.width="70%"}
 par(mfrow=c(1,2),pty="s")
 plot(X1, xlim=c(-5,5), ylim=c(-5,5));
@@ -296,19 +405,21 @@ abline(0,1/sqrt(3), col=2); abline(0, -sqrt(3), col=2)
 ```
 
 ### Project One Vector on Another
-- Let $x$ and $y$ be two vectors of the same length. Say both $x$ and $y$ are in $\mathbf R^k$.
-- The direction of $proj_x(y)$ is the same as that of $x$.
-- Let $\theta$ is the angle between $x$ and $y$. 
-$$
-cos(\theta) = \frac{x^Ty}{||x|| ||y||}
-$$
-- The length of the projection is $||y|| cos(\theta)$. 
-- The projection of $y$ on $x$ is 
-$$||y|| cos(\theta) \frac{x}{||x||}=\frac{x^Ty}{||x||^2} x$$
+
+-   Let $x$ and $y$ be two vectors of the same length. Say both $x$ and
+    $y$ are in $\mathbf R^k$.
+-   The direction of $proj_x(y)$ is the same as that of $x$.
+-   Let $\theta$ is the angle between $x$ and $y$. $$
+    cos(\theta) = \frac{x^Ty}{||x|| ||y||}
+    $$
+-   The length of the projection is $||y|| cos(\theta)$.
+-   The projection of $y$ on $x$ is
+    $$||y|| cos(\theta) \frac{x}{||x||}=\frac{x^Ty}{||x||^2} x$$
 
 ### Example: Project One Vector on Another
 
 \tiny
+
 ```{r, eval=FALSE}
 # Define the vectors
 y <- c(3, 3)
@@ -327,10 +438,11 @@ segments(0, 0, x[1], x[2], lty = "dotted")
 segments(y[1], y[2], proj[1], proj[2], lty = "dotted", col = "red")
 segments(0, 0, proj[1], proj[2], lty = "dotted", col = "red")
 ```
+
 \normalsize
 
-
 ### Example: Project One Vector on Another
+
 ```{r, echo=FALSE}
 # Define the vectors
 y <- c(3, 3)
@@ -350,16 +462,19 @@ segments(y[1], y[2], proj[1], proj[2], lty = "dotted", col = "red")
 segments(0, 0, proj[1], proj[2], lty = "dotted", col = "red")
 ```
 
-
 ### Example: Project An Observation (vector) to 1st PC
-- Let $X$ be an observation, which is a vector in $\mathbb R^p$
-- By the definition of projection, the projection of $X$ to $\gamma_1$ is 
-$$\frac{\gamma_1^T X}{||\gamma_1||^2}\gamma_1=(\gamma_1 ^T X) \gamma_1$$
-- Along the direction of $\gamma_1$, what matters is $\gamma_1^T X$, which is the first component. 
+
+-   Let $X$ be an observation, which is a vector in $\mathbb R^p$
+-   By the definition of projection, the projection of $X$ to $\gamma_1$
+    is
+    $$\frac{\gamma_1^T X}{||\gamma_1||^2}\gamma_1=(\gamma_1 ^T X) \gamma_1$$
+-   Along the direction of $\gamma_1$, what matters is $\gamma_1^T X$,
+    which is the first component.
 
 ### Example: Project An Observation to 1st PC
 
 \tiny
+
 ```{r, eval=FALSE}
 par(mfrow=c(1,1),pty="s")
 obs=unlist(X3[1,])
@@ -380,11 +495,10 @@ text(x=obs[1], y=obs[2]+0.2, labels="X", col="blue", cex=1.5)
 text(x=proj[1]+0.5, y=proj[2]-0.5, labels=expression( (gamma[1]^T * X)*gamma[1]), col="orange", cex=1.5)
 ```
 
-
-
 \normalsize
 
 ### Example: Project An Observation to 1st PC
+
 ```{r, echo=FALSE, warning=FALSE}
 par(mfrow=c(1,1),pty="s")
 obs=unlist(X3[1,])
@@ -408,6 +522,7 @@ text(x=proj[1]+0.5, y=proj[2]-0.5, labels=expression( (gamma[1]^T * X)*gamma[1])
 ### Example: Project All Observations to 1st PC
 
 \tiny
+
 ```{r, eval=FALSE}
 par(mfrow=c(1,1),pty="s")
 plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".");
@@ -421,12 +536,13 @@ for(i in 1:1000){
   text(x=proj[1],y=proj[2], labels="|", col="blue", srt=30, cex=0.5)
 }
 ```
-\normalsize
 
+\normalsize
 
 ### Example: Project All Observations to 1st PC
 
 \tiny
+
 ```{r, echo=FALSE}
 par(mfrow=c(1,1),pty="s")
 plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".");
@@ -440,26 +556,32 @@ for(i in 1:1000){
   text(x=proj[1],y=proj[2], labels="|", col="blue", srt=30, cex=0.5)
 }
 ```
+
 \normalsize
 
-
 # 2nd and ith PC
+
 ## 2nd PC
+
 ### Definition of the 2nd PC
-- Let $Y_2=a^T \mathbf X$ denote the second PC. It is defined as a linear combination of $\mathbf X$ such that 
-  1. It is uncorrelated to $Y_1=\gamma_1^T \mathbf X$, i.e., 
-  $$0=cov(a^T \mathbf X, \gamma_1^T \mathbf X)=a^T \boldsymbol \Sigma \gamma_1$$
-  2. The linear coefficients $a$ has norm 1, i.e., 
-  $$1=||a||=||a||^2=a^Ta$$
-  3. It reaches the maximum variance among all the linear combinations satisfying the first two conditions
+
+-   Let $Y_2=a^T \mathbf X$ denote the second PC. It is defined as a
+    linear combination of $\mathbf X$ such that
+    1.  It is uncorrelated to $Y_1=\gamma_1^T \mathbf X$, i.e.,
+        $$0=cov(a^T \mathbf X, \gamma_1^T \mathbf X)=a^T \boldsymbol \Sigma \gamma_1$$
+    2.  The linear coefficients $a$ has norm 1, i.e.,
+        $$1=||a||=||a||^2=a^Ta$$
+    3.  It reaches the maximum variance among all the linear
+        combinations satisfying the first two conditions
 
 Mathematically, we are looking for $a$ s.t.
 $$a=\underset{a^T a=1, a^T\boldsymbol \Sigma\gamma_1=0} {\mbox{arg max }} a^T \boldsymbol \Sigma a$$
 
 ### Identify the 2nd PC
-- We would like to
-$$max(a^T\boldsymbol \Sigma a) \mbox { s.b.t. } a^Ta=1 \mbox{ and } a^T\boldsymbol\Sigma \gamma_1=0$$
-Rewrite $Var(a^T \mathbf X)$:
+
+-   We would like to
+    $$max(a^T\boldsymbol \Sigma a) \mbox { s.b.t. } a^Ta=1 \mbox{ and } a^T\boldsymbol\Sigma \gamma_1=0$$
+    Rewrite $Var(a^T \mathbf X)$:
 
 $$\begin{aligned}
 Var(a^T \mathbf X) &= a^T \boldsymbol \Sigma a=a^T \left(\sum_{i=1}^p \lambda_i \gamma_i \gamma_i^T\right) a\\
@@ -467,45 +589,48 @@ Var(a^T \mathbf X) &= a^T \boldsymbol \Sigma a=a^T \left(\sum_{i=1}^p \lambda_i 
 & \overset{\mbox{Let } z_i=a^T\gamma_i}=\sum_{i=1}^p \lambda_i z_i^2
 \end{aligned}$$
 
+### Identify the 2nd PC
+
+-   The first constraint of $a$ is $$a^T\boldsymbol\Sigma \gamma_1=0$$
+
+-   Recall that $\gamma_1$ is an eigenvector of $\boldsymbol \Sigma$
+    with the corresponding eigenvalue $\lambda_1$, we have
+    $$\boldsymbol \Sigma \gamma_1=\lambda_1\gamma_1$$ Thus the
+    constraint $a^T\boldsymbol\Sigma \gamma_1=0$ implies that
+    $a^T\gamma_1=0$, which further implies that $z_1=0$. As a result, we
+    have
+
+    $$Var(a^T \mathbf X)=\sum_{i=2}^p \lambda_i z_i^2$$
 
 ### Identify the 2nd PC
-- The first constraint of $a$ is
-  $$a^T\boldsymbol\Sigma \gamma_1=0$$
-- Recall that $\gamma_1$ is an eigenvector of $\boldsymbol \Sigma$ with the corresponding eigenvalue $\lambda_1$, we have 
-$$\boldsymbol \Sigma \gamma_1=\lambda_1\gamma_1$$
-Thus the constraint $a^T\boldsymbol\Sigma \gamma_1=0$ implies that $a^T\gamma_1=0$, which further implies that $z_1=0$. As a result, we have
-  
-  $$Var(a^T \mathbf X)=\sum_{i=2}^p \lambda_i z_i^2$$
-  
-### Identify the 2nd PC
-- The second constraint of $a$ is
-  $$a^T a=1$$
-  
-  With this constraint, we have 
-  
-  $$\begin{aligned}
-  1&=a^Ta = a^T\mathbf I a= a^T\Gamma \Gamma^T a\\
-  &= (z_1, \cdots, z_p)(z_1, \cdots, z_p)^T\\
-  &=\sum_{i=1}^p  z_i^2\\
-  &=\sum_{i=2}^p  z_i^2
-  \end{aligned}
-  $$
+
+-   The second constraint of $a$ is $$a^T a=1$$
+
+    With this constraint, we have
+
+    $$\begin{aligned}
+    1&=a^Ta = a^T\mathbf I a= a^T\Gamma \Gamma^T a\\
+    &= (z_1, \cdots, z_p)(z_1, \cdots, z_p)^T\\
+    &=\sum_{i=1}^p  z_i^2\\
+    &=\sum_{i=2}^p  z_i^2
+    \end{aligned}
+    $$
 
 ### Identify the 2nd PC
-- From the previous slide
-$$\begin{aligned}
-Var(a^T \mathbf X) 
-&= \sum_{i=2}^p \lambda_i z_i^2\\
-&\le \sum_{i=2}^p \lambda_2 z_i^2\\
-&= \lambda_2
-\end{aligned}$$
-- It can also be verified that $a=\gamma_2$ leads to this maximum. 
-- Therefore, the second PC is $Y_2 = \gamma_2^T \mathbf X$. 
 
+-   From the previous slide $$\begin{aligned}
+    Var(a^T \mathbf X) 
+    &= \sum_{i=2}^p \lambda_i z_i^2\\
+    &\le \sum_{i=2}^p \lambda_2 z_i^2\\
+    &= \lambda_2
+    \end{aligned}$$
+-   It can also be verified that $a=\gamma_2$ leads to this maximum.
+-   Therefore, the second PC is $Y_2 = \gamma_2^T \mathbf X$.
 
 ### Example: Project All Observations to 2nd PC
 
 \tiny
+
 ```{r, eval=FALSE}
 par(mfrow=c(1,1),pty="s")
 plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".");
@@ -519,12 +644,13 @@ for(i in 1:1000){
   text(x=proj[1],y=proj[2], labels="|", col="blue", srt=120, cex=0.5)
 }
 ```
-\normalsize
 
+\normalsize
 
 ### Example: Project All Observations to 2nd PC
 
 \tiny
+
 ```{r, echo=FALSE}
 par(mfrow=c(1,1),pty="s")
 plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".");
@@ -538,18 +664,18 @@ for(i in 1:1000){
   text(x=proj[1],y=proj[2], labels="|", col="blue", srt=120, cex=0.5)
 }
 ```
+
 \normalsize
 
 ## ith PC
+
 ### Identify the ith PC
-- You probably can guess that the $i$th principal component is 
-$$Y_i = \gamma_i^T \mathbf X$$
-- For the $i$th principal component, we are looking for a linear combination in terms of $a^T \mathbf X$ such as 
-$$a=\underset{a^T a=1, a^T\gamma_1=0, \cdots, a^T \gamma_{i-1}=0} {\mbox{arg max }} a^T \boldsymbol \Sigma a$$
-- Note that $a^T\boldsymbol\Sigma \gamma_i =a^T\gamma_i$ because ...
-- Use the same method, we will see that the $i$th principal component is 
-$$Y_i=\gamma_i^T \mathbf X$$
 
-
-
-
+-   You probably can guess that the $i$th principal component is
+    $$Y_i = \gamma_i^T \mathbf X$$
+-   For the $i$th principal component, we are looking for a linear
+    combination in terms of $a^T \mathbf X$ such as
+    $$a=\underset{a^T a=1, a^T\gamma_1=0, \cdots, a^T \gamma_{i-1}=0} {\mbox{arg max }} a^T \boldsymbol \Sigma a$$
+-   Note that $a^T\boldsymbol\Sigma \gamma_i =a^T\gamma_i$ because ...
+-   Use the same method, we will see that the $i$th principal component
+    is $$Y_i=\gamma_i^T \mathbf X$$
