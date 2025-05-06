@@ -19,6 +19,11 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyr) #the pipe (%>%) tool is extremely useful
 library(MASS)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  paste0("\n \\", "footnotesize","\n\n", x, "\n\n \\Huge")
+})
 ```
 
 
@@ -67,12 +72,10 @@ $$Y_i=\gamma_i^T \mathbf X$$
 ### Example
 \tiny
 ```{r}
-n=1000
-Sigma1=diag(c(4,1), 2, 2) 
-Sigma2=diag(c(1,4), 2, 2) 
+n=1000; set.seed(1)
+Sigma1=diag(c(4,1), 2, 2); Sigma2=diag(c(1,4), 2, 2) 
 theta=pi/6
 R1=matrix(c(cos(theta), sin(theta), -sin(theta), cos(theta)), 2,2)
-theta=pi/4+pi/2
 R2=matrix(c(cos(theta), sin(theta), -sin(theta), cos(theta)), 2,2)
 Sigma3=R1%*%Sigma1%*%t(R1)
 Sigma4=R2%*%Sigma1%*%t(R2)
@@ -108,8 +111,34 @@ gamma2=eigen(Sigma3)$vectors[,2]
 gamma2
 ```
 \normalsize
-- 1st PC: $-0.8660254 X_1  -0.5 X_2$
-- 2nd PC: $0.5 X_1 - 0.8660254 X_2$
+
+- 1st PC: $-0.8660254 x  -0.5 y$, in the direction of $\gamma_1$.
+
+- 2nd PC: $0.5 x - 0.8660254 y$, in the direction of $\gamma_2$.
+
+### Example: Project An Observation to 1st PC
+- Consider $a$, the first observation in $X_3$:
+```{r}
+a=as.matrix(X3[1,],1,2)
+a
+```
+
+- We project it to the direction of $\gamma_1=(-0.8660254,-0.5)^T$. Because $\gamma_1$ is a unit vector, the projection is given by
+$$\mathbf P_{\gamma_1}(a)= (\gamma_1^T a) \gamma_1=<a,\gamma_1>\gamma_1$$
+
+### Example: Project An Observation to 1st PC
+
+```{r}
+a
+gamma1
+
+a%*%gamma1 #inner product
+
+a[1]*gamma1[1]+a[2]*gamma1[2] #inner product
+
+(a%*%gamma1)%*%gamma1 #projection
+
+```
 
 
 ### Example: Project An Observation to 1st PC
@@ -136,21 +165,57 @@ text(x=proj[1]+0.5, y=proj[2]-0.5, labels=expression( (gamma[1]^T * X)*gamma[1])
 
 ### Example: Project All Observations to 1st PC
 
+- The data matrix $X_3$ is a $1000\times 2$ matrix, where each row is an observation.
+
+- The projected values of all observations to the first PC is given by
+
+$$Y_1= \mathbf X_3 \gamma_1,$$ 
+
+where 
+
+  - $X_3$ is 1000-by-2
+  - $\gamma_1$ is 2-by-1, the first eigenvector of the covariance matrix $\boldsymbol \Sigma$.
+
+
+
+### Example: Project All Observations to 1st PC
+
+\tiny
+```{r, eval=FALSE}
+par(mfrow=c(1,1),pty="s")
+plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".");
+abline(0,1/sqrt(3), col="red"); abline(0, -sqrt(3), col="red")
+points(x=0,y=0, col="red")
+proj=as.matrix(X3)%*%gamma1 %*%gamma1
+text(x=proj[,1],y=proj[,2], labels="|", col="blue", srt=30, cex=0.5)
+```
+
+
+### Example: Project All Observations to 1st PC
+
 \tiny
 ```{r, echo=FALSE}
 par(mfrow=c(1,1),pty="s")
 plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".");
-#arrows(x0=0, y0=0,x1=-6*gamma1[1], y1=-6*gamma1[2], col=2, lwd=2, angle=10)
-#arrows(x0=0, y0=0,x1=6*gamma1[1], y1=6*gamma1[2], col=2, lwd=2, angle=10)
 abline(0,1/sqrt(3), col="red"); abline(0, -sqrt(3), col="red")
 points(x=0,y=0, col="red")
-for(i in 1:1000){
-  proj=c(matrix(gamma1,1,2)%*% matrix(unlist(X3[i,]),2,1)) *gamma1
-  #points(x=proj[1],y=proj[2], col=2, pch="|")
-  text(x=proj[1],y=proj[2], labels="|", col="blue", srt=30, cex=0.5)
-}
+proj=as.matrix(X3)%*%gamma1 %*%gamma1
+text(x=proj[,1],y=proj[,2], labels="|", col="blue", srt=30, cex=0.5)
 ```
 \normalsize
+
+
+### Example: Project All Observations to 2nd PC
+
+\tiny
+```{r, eval=FALSE}
+par(mfrow=c(1,1),pty="s")
+plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".");
+abline(0,1/sqrt(3), col="red"); abline(0, -sqrt(3), col="red")
+points(x=0,y=0, col="red")
+proj=as.matrix(X3)%*%gamma2 %*%gamma2
+text(x=proj[,1],y=proj[,2], labels="|", col="blue", srt=30, cex=0.5)
+```
 
 ### Example: Project All Observations to 2nd PC
 
@@ -158,19 +223,89 @@ for(i in 1:1000){
 ```{r, echo=FALSE}
 par(mfrow=c(1,1),pty="s")
 plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".");
-#arrows(x0=0, y0=0,x1=-6*gamma2[1], y1=-6*gamma2[2], col=2, lwd=2, angle=10)
-#arrows(x0=0, y0=0,x1=6*gamma2[1], y1=6*gamma2[2], col=2, lwd=2, angle=10)
 abline(0,1/sqrt(3), col="red"); abline(0, -sqrt(3), col="red")
 points(x=0,y=0, col="red")
-for(i in 1:1000){
-  proj=c(matrix(gamma2,1,2)%*% matrix(unlist(X3[i,]),2,1)) *gamma2
-  #points(x=proj[1],y=proj[2], col=2, pch="|")
-  text(x=proj[1],y=proj[2], labels="|", col="blue", srt=120, cex=0.5)
-}
+proj=as.matrix(X3)%*%gamma2 %*%gamma2
+text(x=proj[,1],y=proj[,2], labels="|", col="blue", srt=30, cex=0.5)
 ```
 \normalsize
 
 
+### Example: The Two PCs
+- The projected values on the first and second PCs are given by
+
+$$PC_1= \mathbf X_3 \gamma_1,$$
+
+$$PC_2= \mathbf X_3 \gamma_2$$
+- Note, the above are values on the two directions, not the projections; in other words, the directional information is not included.
+
+
+### Example: The Two PCs
+\tiny
+```{r, eval=FALSE}
+par(mfrow=c(1,2),pty="s")
+plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".", main="original");
+abline(0,1/sqrt(3), col="red"); abline(0, -sqrt(3), col="red")
+points(x=0,y=0, col="red")
+projected_1=as.matrix(X3)%*%gamma1
+projected_2=as.matrix(X3)%*%gamma2
+
+plot(projected_1, projected_2, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".", main="projected")
+abline(h=0, v=0, col="red")
+```
+
+### Example: The Two PCs
+\tiny
+```{r, echo=FALSE}
+par(mfrow=c(1,2),pty="s")
+plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".", main="original");
+abline(0,1/sqrt(3), col="red"); abline(0, -sqrt(3), col="red")
+points(x=0,y=0, col="red")
+projected_1=as.matrix(X3)%*%gamma1
+projected_2=as.matrix(X3)%*%gamma2
+
+plot(projected_1, projected_2, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".", main="projected")
+abline(h=0, v=0, col="red")
+```
+\normalsize
+
+### Example: Centered Data
+- In the example, the data were generated from mean 0. 
+- In practice, the data may not be centered. Although the center information is not essential for PCA, it is often useful to center the data before applying PCA.
+- Centering the data is equivalent to subtracting the mean from each observation.
+
+### Example: Centered Data
+\tiny
+```{r, eval=FALSE}
+X3_centered=scale(X3, scale=FALSE)
+projected_1.centered=as.matrix(X3_centered)%*%gamma1
+projected_2.centered=as.matrix(X3_centered)%*%gamma2
+
+par(mfrow=c(1,2),pty="s")
+plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".", main="original");
+abline(0,1/sqrt(3), col="red"); abline(0, -sqrt(3), col="red")
+points(x=0,y=0, col="red")
+
+plot(projected_1.centered, projected_2.centered, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".", main="projected, centered")
+abline(h=0, v=0, col="red")
+```
+\normalsize
+
+### Example: Centered Data
+
+```{r, echo=FALSE}
+X3_centered=scale(X3, scale=FALSE)
+projected_1.centered=as.matrix(X3_centered)%*%gamma1
+projected_2.centered=as.matrix(X3_centered)%*%gamma2
+
+par(mfrow=c(1,2),pty="s")
+plot(X3, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".", main="original");
+abline(0,1/sqrt(3), col="red"); abline(0, -sqrt(3), col="red")
+points(x=0,y=0, col="red")
+
+plot(projected_1.centered, projected_2.centered, xlim=c(-5,5), ylim=c(-5,5), col=8, pch=".", main="projected, centered")
+abline(h=0, v=0, col="red")
+```
 
 # Variance Exaplained
 ### Dimensionality Reduction Using PCA
@@ -238,6 +373,8 @@ which is the $n\times p$ matrix with the $i$th column being the $i$th PC.
 - PCA using raw data
 - PCA using centered data
 - PCA using standardized data
+- Scree plot
+- Biplot 
 
 ## PCA Using Raw Data
 ### Estimate $\boldsymbol \Sigma$ 
@@ -343,11 +480,11 @@ names(obj)
 ### The PCs from R vs our PCs
 
 \tiny
-```{r, out.width="80%"}
+```{r, out.width="70%"}
 plot(obj$scores[,1], pc1)
 ```
 \normalsize
-
+- The diffence is due to not centering vs centering
 
 ### R Uses Centered Data to Compute PCA
 
@@ -507,6 +644,31 @@ plot(princomp(Y, cor=TRUE))
 ```
 \normalsize
 
+### Visualizing PCA
+- We have seen scree plots for visualizing the variance explained by each PC
+- Biplots are another way to visualize PCA results
+- A biplot is a visualization tool that combines:
+  - Scores (projected data points) 
+  - Loadings (variable vectors) from Principal Component Analysis (PCA).
+
+- A biplot shows relationships between observations and between variables in reduced dimensions (e.g., PC1 vs. PC2).
+
+### Biplot: loadings
+```{r}
+obj$loadings
+```
+
+### Biplot
+```{r, out.width="80%"}
+biplot(obj, main="Iris Data: Biplot")
+```
+
+### Biplot: the scale parameter
+- The loadings and scores often have very different scales. 
+- The scale parameter harmonizes them for visualization.
+- The default value is 1, which means the loadings are scaled by 1 and the scores are scaled by 1, i.e., cores and loadings are scaled equally.
+- Make scale  < 1 if variable arrows are too small to interpret.
+- Use scale > 1 if data points are too crowded.
 
 # Example: Wine Data
 
