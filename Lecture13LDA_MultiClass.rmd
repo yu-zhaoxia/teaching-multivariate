@@ -459,6 +459,8 @@ $$\begin{aligned}
 - The result indicates that the three lines meet at the same point
 
 
+
+
 ### Example Iris: SepalL SepalW: Performance
 
 \tiny
@@ -473,6 +475,8 @@ con.mat
 ```
 \normalsize
 
+
+
 ### Example Iris: Visualization
 \tiny
 ```{r, out.width="70%"}
@@ -482,7 +486,7 @@ partimat(Species ~ Sepal.Length + Sepal.Width, data = iris, method = "lda")
 \normalsize
 
 
-### Example Iris: All Features
+### Example Iris: Pairwise Features
 \tiny
 ```{r, out.width="80%"}
 partimat(Species ~ ., data = iris, method = "lda", plot.matrix=TRUE)
@@ -490,7 +494,7 @@ partimat(Species ~ ., data = iris, method = "lda", plot.matrix=TRUE)
 \normalsize
 
 
-### Iris All Features: Performance
+### Iris All Features (2 LDs): Performance
 
 \tiny
 ```{r}
@@ -504,6 +508,45 @@ con.mat
 ```
 \normalsize
 
+### Iris All Features (1st LD): Performance
+
+\tiny
+```{r}
+lda.iris = lda(Species ~ ., data = iris)
+con.mat=table(Pred = predict(lda.iris, iris, dimen=1)$class, 
+              True = iris$Species)
+#Confusion Matrix
+con.mat
+#Training Error
+1-sum(diag(con.mat))/sum(con.mat)
+```
+\normalsize
+
+### Visualize the LDA
+\tiny
+```{r, out.width="80%"}
+lda.iris = lda(Species ~ ., data = iris)
+plot(lda.iris, col=c(2,3,4), xlab="LDA1", ylab="LDA2")
+```
+\normalsize
+
+
+### Visualize the LDA: LD1
+\tiny
+```{r, out.width="80%"}
+lda.iris.scores=predict(lda.iris)
+ldahist(lda.iris.scores$x[,1], g=iris$Species, xlab="LDA1")
+```
+\normalsize
+
+
+### Visualize the LDA: LD2
+\tiny
+```{r, out.width="80%"}
+lda.iris.scores=predict(lda.iris)
+ldahist(lda.iris.scores$x[,2], g=iris$Species, xlab="LDA1")
+```
+\normalsize
 
 ## Iris Data: PCA vs LDA
 
@@ -584,7 +627,82 @@ $$\operatorname*{argmin}_i D^2(X_0, i)$$
 - A scree plot of the eigenvalues of $\mathbf W^{-1}\mathbf B$ can be used to find an elbow point, if there is one
 
 
-# Example Crude Oil
+
+
+
+
+# Example: Glasses
+### Example: Glasses 
+```{r, eval=FALSE}
+#install.packages("mlbench")
+data(Glass, package = "mlbench")
+table(Glass$Type)
+
+glass_subset <- Glass[Glass$Type %in% c(1,2,6,7), ]
+glass_subset$Type <- factor(glass_subset$Type)
+# Fit LDA model
+lda_model <- lda(Type ~ ., data = glass_subset)
+
+# Print LDA results
+lda_model
+
+# Plot LDA results
+plot(lda_model)
+
+# Predict classes using LDA
+predictions <- predict(lda_model, glass_subset)
+
+# Confusion matrix (actual vs. predicted)
+conf_matrix <- table(Actual = glass_subset$Type, Predicted = predictions$class)
+print(conf_matrix)
+
+# Calculate accuracy
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+cat("Accuracy:", round(accuracy * 100, 2), "%\n")
+
+
+# Extract LD scores
+ldahist(predictions$x[,1], g=glass_subset$Type)
+
+
+# Vary number of LDs
+predictions <- predict(lda_model, glass_subset, dimen=1)
+conf_matrix <- table(Actual = glass_subset$Type, Predicted = predictions$class)
+accuracy1 <- sum(diag(conf_matrix)) / sum(conf_matrix)
+
+predictions <- predict(lda_model, glass_subset, dimen=2)
+conf_matrix <- table(Actual = glass_subset$Type, Predicted = predictions$class)
+accuracy2 <- sum(diag(conf_matrix)) / sum(conf_matrix)
+
+predictions <- predict(lda_model, glass_subset, dimen=3)
+conf_matrix <- table(Actual = glass_subset$Type, Predicted = predictions$class)
+accuracy3 <- sum(diag(conf_matrix)) / sum(conf_matrix)
+
+predictions <- predict(lda_model, glass_subset, dimen=4)
+conf_matrix <- table(Actual = glass_subset$Type, Predicted = predictions$class)
+accuracy4 <- sum(diag(conf_matrix)) / sum(conf_matrix)
+
+
+cat("Accuracy with 1 LD:", round(accuracy1 * 100, 2), "%\n")
+cat("Accuracy with 2 LDs:", round(accuracy2 * 100, 2), "%\n")
+cat("Accuracy with 3 LDs:", round(accuracy3 * 100, 2), "%\n")
+cat("Accuracy with 4 LDs:", round(accuracy4 * 100, 2), "%\n")
+
+```
+
+# Further Reading/Topics
+### Further Reading/Topics
+- Cross validation in LDA
+  - the lda function in R has an option to do leave one out cross validation
+- Better visualization of classification results
+  - R package: WeDiBaDis
+  - https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/discriminant-analysis/
+
+- LDA with unequal covariance matrices
+- Quadratic Discriminant Analysis (QDA)
+
+
+# Additional Example: Crude Oil
 
 \tiny
 ```{r}
@@ -675,3 +793,5 @@ points(ld1[19:56], ld2[19:56], pch="u", col=3)
 plot(lambda, type="b", ylab="", main="eigenvalues of BW^{-1}")
 ```
 \normalsize
+
+
