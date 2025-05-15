@@ -5,14 +5,16 @@ author: Zhaoxia Yu
 date: "`r Sys.Date()`"
 format: 
   revealjs:
+    scrollable: true
     theme: "sky"
     slideNumber: true
     transition: "fade"
     progress: true
     controls: true
-
-execute:
-  echo: true
+    code-fold: true
+    echo: true
+    R.options:
+      fig-align: center
 ---
 
 # Introduction

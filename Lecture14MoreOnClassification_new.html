@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.4.555">
 
   <meta name="author" content="Zhaoxia Yu | Professor, Department of Statistics">
-  <meta name="dcterms.date" content="2025-05-13">
+  <meta name="dcterms.date" content="2025-05-14">
   <title>Multivariate Analysis Lecture 14: More on Classification</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -310,6 +310,7 @@
     }
     .reveal .slide:not(.center) {
       height: 100%;
+      overflow-y: auto;
     }
     .reveal .slide.scrollable {
       overflow-y: auto;
@@ -402,7 +403,7 @@ Zhaoxia Yu | Professor, Department of Statistics
 </div>
 </div>
 
-  <p class="date">2025-05-13</p>
+  <p class="date">2025-05-14</p>
 </section>
 <section id="introduction" class="title-slide slide level1 center">
 <h1>Introduction</h1>
@@ -520,7 +521,7 @@ F(a) &amp;= \frac{MSB}{MSW}=\frac{SSB/(g-1)}{SSW/(n-g)}\\
 <h1>Quadratic DA (QDA)</h1>
 
 </section>
-<section id="qda-for-two-class-problems" class="slide level2">
+<section id="qda-for-two-class-problems" class="slide level2 scrollable">
 <h2>QDA for Two-Class Problems</h2>
 <ul>
 <li>The LDA can be derived using likelihood functions under the assumptions
@@ -593,6 +594,8 @@ L_2(\boldsymbol \mu_2, \boldsymbol \Sigma_2) \propto |\boldsymbol\Sigma_2|^{-1/2
 <section id="example-of-qda" class="slide level2">
 <h2>Example of QDA</h2>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>obj.lda<span class="ot">=</span><span class="fu">lda</span>(Species<span class="sc">~</span>., <span class="at">data =</span> iris)</span>
 <span id="cb2-2"><a href=""></a>obj.qda<span class="ot">=</span><span class="fu">qda</span>(Species<span class="sc">~</span>., <span class="at">data =</span> iris)</span>
 <span id="cb2-3"><a href=""></a></span>
@@ -600,6 +603,7 @@ L_2(\boldsymbol \mu_2, \boldsymbol \Sigma_2) \propto |\boldsymbol\Sigma_2|^{-1/2
 <span id="cb2-5"><a href=""></a><span class="at">True=</span>iris<span class="sc">$</span>Species)</span>
 <span id="cb2-6"><a href=""></a><span class="fu">table</span>(<span class="at">Pred=</span><span class="fu">predict</span>(obj.qda, iris)<span class="sc">$</span>class,</span>
 <span id="cb2-7"><a href=""></a><span class="at">True=</span>iris<span class="sc">$</span>Species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="example-of-qda-1" class="slide level2">
@@ -627,14 +631,20 @@ Pred         setosa versicolor virginica
 <section id="visualize-qda-results" class="slide level2">
 <h2>Visualize QDA Results</h2>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">partimat</span>(Species <span class="sc">~</span> ., <span class="at">data =</span> iris, <span class="at">method =</span> <span class="st">"qda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 
 </div>
 <img data-src="Lecture14MoreOnClassification_new_files/figure-revealjs/unnamed-chunk-4-1.png" style="width:80.0%" class="r-stretch"></section>
 <section id="visualize-lda-results" class="slide level2">
 <h2>Visualize LDA Results</h2>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="fu">partimat</span>(Species <span class="sc">~</span> ., <span class="at">data =</span> iris, <span class="at">method =</span> <span class="st">"lda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 
 </div>
 <img data-src="Lecture14MoreOnClassification_new_files/figure-revealjs/unnamed-chunk-5-1.png" style="width:80.0%" class="r-stretch"></section></section>
@@ -904,6 +914,8 @@ exp\{\frac{1}{2\sigma^2} (2x-1) \} =(1-\pi)/\pi &amp;\Leftrightarrow \frac{1}{2\
 <section id="example-3-univariate-unequal-variance-3" class="slide level2">
 <h2>Example 3: Univariate, Unequal Variance</h2>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>mean1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb7-2"><a href=""></a>var1 <span class="ot">&lt;-</span> <span class="fl">0.25</span></span>
 <span id="cb7-3"><a href=""></a>mean0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
@@ -918,6 +930,7 @@ exp\{\frac{1}{2\sigma^2} (2x-1) \} =(1-\pi)/\pi &amp;\Leftrightarrow \frac{1}{2\
 <span id="cb7-12"><a href=""></a><span class="fu">lines</span>(x[fx<span class="sc">&gt;</span><span class="dv">0</span>], fx[fx<span class="sc">&gt;</span><span class="dv">0</span>], <span class="at">col=</span><span class="st">"blue"</span>)</span>
 <span id="cb7-13"><a href=""></a><span class="fu">lines</span>(x[fx<span class="sc">&lt;</span><span class="dv">0</span>], fx[fx<span class="sc">&lt;</span><span class="dv">0</span>], <span class="at">col=</span><span class="st">"green"</span>)</span>
 <span id="cb7-14"><a href=""></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="example-3-univariate-unequal-variance-4" class="slide level2">
