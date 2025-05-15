@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="Lecture14MoreOnClassification_new_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Lecture14MoreOnClassification_new_files/libs/quarto-html/tabby.min.js"></script>
+<script src="Lecture14MoreOnClassification_new_files/libs/quarto-html/popper.min.js"></script>
+<script src="Lecture14MoreOnClassification_new_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="Lecture14MoreOnClassification_new_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Lecture14MoreOnClassification_new_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="Lecture14MoreOnClassification_new_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="Lecture14MoreOnClassification_new_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.4.555">
+
+  <meta name="author" content="Zhaoxia Yu | Professor, Department of Statistics">
+  <meta name="dcterms.date" content="2025-05-13">
+  <title>Multivariate Analysis Lecture 14: More on Classification</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="Lecture14MoreOnClassification_new_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="Lecture14MoreOnClassification_new_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="Lecture14MoreOnClassification_new_files/libs/revealjs/dist/theme/quarto.css">
+  <link href="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;  
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple { 
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-titled) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-titled .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-titled .callout-title  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+    
+  .callout.callout-titled.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-titled.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-title {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-title {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-title {
+    display: flex
+  }
+    
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .callout.callout-titled .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-titled) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-title {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-title {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-title {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-title {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-title {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Multivariate Analysis Lecture 14: More on Classification</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Zhaoxia Yu | Professor, Department of Statistics 
+</div>
+</div>
+</div>
+
+  <p class="date">2025-05-13</p>
+</section>
+<section id="introduction" class="title-slide slide level1 center">
+<h1>Introduction</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href=""></a><span class="fu">library</span>(tidyr) <span class="co">#the pipe (%&gt;%) tool is extremely useful</span></span>
+<span id="cb1-3"><a href=""></a><span class="fu">library</span>(MASS)</span>
+<span id="cb1-4"><a href=""></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href=""></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-6"><a href=""></a><span class="fu">library</span>(<span class="st">"gridExtra"</span>)</span>
+<span id="cb1-7"><a href=""></a><span class="fu">library</span>(klaR) <span class="co">#visualize lda and qda</span></span>
+<span id="cb1-8"><a href=""></a><span class="fu">library</span>(knitr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+
+<section id="outline" class="title-slide slide level1 center">
+<h1>Outline</h1>
+<ul>
+<li>Review of LDA</li>
+<li>QDA</li>
+<li>Decision theory
+<ul>
+<li>Equal costs</li>
+<li>Unequal costs</li>
+</ul></li>
+</ul>
+</section>
+
+<section>
+<section id="review-of-lda" class="title-slide slide level1 center">
+<h1>Review of LDA</h1>
+
+</section>
+<section id="linear-discrminant-analysis" class="slide level2">
+<h2>Linear Discrminant Analysis</h2>
+<div style="text-align: center;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="img/FLDA.png" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="flda-maximum-separability-for-two-class-problems" class="slide level2">
+<h2>FLDA: Maximum Separability for Two-Class Problems</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>The maximization problem is <span class="math display">\[\operatorname*{argmax}_a \frac{a^T(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)^Ta}{a^T \boldsymbol \Sigma a}\]</span></p></li>
+<li><p>Use an argument similar to PCA, such <span class="math inline">\(a\)</span> is the first eigenvector of <span class="math inline">\(\boldsymbol \Sigma ^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)^T\)</span>.</p></li>
+<li><p>We can show that <span class="math inline">\(a=\mathbf S_p^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)\)</span>.</p></li>
+<li><p>The linear function <span class="math display">\[f(x)=a^T x \mbox{ where } a=\mathbf  S_p^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)\]</span> is called <span style="color:red;">Fisher’s linear discriminant function</span>.</p></li>
+</ul>
+</div>
+</section>
+<section id="allocate-new-observations" class="slide level2">
+<h2>Allocate New Observations</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>Consider an observation <span class="math inline">\(X_0\)</span>. We compute <span class="math display">\[f(X_0)=a^T X_0\]</span> where <span class="math inline">\(a=\mathbf S_p^{-1}(\bar {\mathbf X}_1 - \bar {\mathbf X}_2)\)</span></p></li>
+<li><p>Let <span class="math display">\[m=a^T \frac{\bar {\mathbf X}_1 + \bar {\mathbf X}_2}{2}=\boldsymbol (\bar {\mathbf X}_1 - \bar {\mathbf X}_2)^T \mathbf  S_p^{-1}\frac{\bar {\mathbf X}_1 + \bar {\mathbf X}_2}{2}\]</span></p></li>
+<li><p>Allocate <span class="math inline">\(X_0\)</span> to</p>
+<ul>
+<li>class 1 if <span class="math inline">\(f(X_0)&gt;m\)</span></li>
+<li>class 2 if <span class="math inline">\(f(x_0)&lt;m\)</span></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="g-class-problems" class="slide level2">
+<h2>g-Class Problems</h2>
+<div style="font-size: 80%;">
+<ul>
+<li>Measure separation using F statistic <span class="math display">\[\begin{aligned}
+F(a) &amp;= \frac{MSB}{MSW}=\frac{SSB/(g-1)}{SSW/(n-g)}\\
+&amp;= \frac{\sum_{i=1}^g n_i (\bar Y_{i.}^{(1)} -\bar Y_{..}^{(1)})^2/(g-1)}{\sum_{i=1}^g (n_i-1)S_{Y_i^{(1)}}^2/(n-g)}\\
+&amp;=\frac{a^T \sum n_i (\bar X_{i.} -\bar X_{..})(\bar X_{i.}-\bar X_{..})^T a}{a^T \sum_{i=1}^g\sum_{j=1}^{n_i} (X_{ij} -\bar X_{i.})(X_{ij}-\bar X_{i.})^T a}\frac{n-g}{g-1}\\
+&amp;= \frac{a^T \mathbf B a}{a^T \mathbf W a}\frac{n-g}{g-1}
+\end{aligned}\]</span> where <span class="math inline">\(n=\sum_{i=1}^g n_i\)</span>, <span class="math inline">\(\mathbf B\)</span> is the between-group sample covariance matrix, and <span class="math inline">\(\mathbf W\)</span> is the within-group sample covariance matrix.</li>
+</ul>
+</div>
+</section>
+<section id="linear-discriminants" class="slide level2">
+<h2>Linear Discriminants</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>The first linear discriminant is the linear function that maximizes <span class="math inline">\(F(a)\)</span>. It can also be shown that the first linear discriminant is given by the first eigenvector of <span class="math inline">\(\mathbf W ^{-1} \mathbf B\)</span>, i.e., <span class="math display">\[Y_{ij}^{(1)}=\gamma_1^T X_{ij}\]</span> where <span class="math inline">\(\gamma_1\)</span> is the first eigenvector of <span class="math inline">\(\mathbf W ^{-1} \mathbf B\)</span>.</p></li>
+<li><p>Similarly, for <span class="math inline">\(k=1, \cdots, rank(\mathbf B)\)</span>, the <span class="math inline">\(k\)</span>th linear discriminant is given by the <span class="math inline">\(k\)</span>th eigenvector of <span class="math inline">\(\mathbf W ^{-1} \mathbf B\)</span></p></li>
+<li><p><span class="math display">\[Y_{ij}^{(k)}=\gamma_k^T X_{ij}\]</span></p></li>
+</ul>
+</div>
+</section>
+<section id="use-the-linear-discriminants" class="slide level2">
+<h2>Use the Linear Discriminants</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>Let <span class="math inline">\(X_0\)</span> be a new observation. We allocate it to the group with the minimum distance defined by the Euclidean distance in space spanned by the linear discriminants.</p></li>
+<li><p>Calculate <span class="math inline">\(Y_0^{(k)}=\gamma_k^T X_0\)</span>, the projection of <span class="math inline">\(X_0\)</span> to the <span class="math inline">\(k\)</span>th linear discriminant for <span class="math inline">\(k=1, \cdots, rank(B)\)</span>.</p></li>
+<li><p>Calculate the distance between <span class="math inline">\((Y_0^{(1)}, \cdots, Y_0^{(rank(B))})\)</span> and <span class="math inline">\((\bar Y_{i.}^{(1)}, \cdots, \bar Y_{i.}^{(rank(B))})\)</span></p></li>
+</ul>
+<p><span class="math display">\[D^2(X_0, i) = \sum_{k=1}^{rank(B)} [Y_0^{(k)} - \bar Y_{i.}^{(k)}]^2\]</span></p>
+<ul>
+<li>Allocate <span class="math inline">\(X_0\)</span> to <span class="math inline">\(\operatorname*{argmin}_i D^2(X_0, i)\)</span>.</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="quadratic-da-qda" class="title-slide slide level1 center">
+<h1>Quadratic DA (QDA)</h1>
+
+</section>
+<section id="qda-for-two-class-problems" class="slide level2">
+<h2>QDA for Two-Class Problems</h2>
+<ul>
+<li>The LDA can be derived using likelihood functions under the assumptions
+<ol type="1">
+<li>Multivariate normal</li>
+<li>Equal covariance matrix</li>
+</ol></li>
+<li>The assumption of equal covariance matrix is not always a good approximation to the true covariance matrices</li>
+<li>If we relax this assumption, we will have QDA</li>
+</ul>
+</section>
+<section id="qda-for-two-class-problems-1" class="slide level2">
+<h2>QDA for Two-Class Problems</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>Let’s consider a two-class classification problem with <span class="math inline">\(n_1\)</span> and <span class="math inline">\(n_2\)</span> observations in classes 1 and 2, respectively.</p></li>
+<li><p>Suppose we have two independent random samples</p>
+<ul>
+<li>Sample 1: <span class="math inline">\(X_{1j}\overset{iid}\sim N(\mathbf \mu_1, \boldsymbol \Sigma_1)\)</span>, where <span class="math inline">\(j=1, \cdots, n_1\)</span></li>
+<li>Sample 2: <span class="math inline">\(X_{2j}\overset{iid}\sim N(\mathbf \mu_2, \boldsymbol \Sigma_2)\)</span>, where <span class="math inline">\(j=1, \cdots, n_2\)</span></li>
+</ul></li>
+<li><p>Sample mean vectors: <span class="math display">\[\bar {\mathbf X}_1=\frac{1}{n_1}\sum_{j=1}^{n_1}X_{1j},
+\bar {\mathbf X}_2=\frac{1}{n_2}\sum_{j=1}^{n_2}X_{2j}\]</span></p></li>
+<li><p>Remark: the sample mean vectors are the MLE of the corresponding mean vectors</p></li>
+</ul>
+</div>
+</section>
+<section id="qda-for-two-class-problems-2" class="slide level2">
+<h2>QDA for Two-Class Problems</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>MLE of covariance matrices <span class="math display">\[\hat {\boldsymbol\Sigma}_1  = \frac{n_1-1}{n_1}S_1, \hat {\boldsymbol\Sigma}_2  = \frac{n_2-1}{n_2}S_2\]</span> where <span class="math inline">\(S_i\)</span> is the sample covariance matrix for sample <span class="math inline">\(i\)</span>.</p></li>
+<li><p>Likelihood functions <span class="math display">\[\begin{aligned}
+L_1(\boldsymbol \mu_1, \boldsymbol \Sigma_1) \propto |\boldsymbol\Sigma_1|^{-1/2} exp\{-\frac{1}{2} (x-\boldsymbol \mu_1)^T \boldsymbol \Sigma_1^{-1} (x-\boldsymbol \mu_1)\}\\
+L_2(\boldsymbol \mu_2, \boldsymbol \Sigma_2) \propto |\boldsymbol\Sigma_2|^{-1/2} exp\{-\frac{1}{2} (x-\boldsymbol \mu_2)^T \boldsymbol \Sigma_2^{-1} (x-\boldsymbol \mu_2)\}
+\end{aligned}\]</span></p></li>
+</ul>
+</div>
+</section>
+<section id="qda-for-two-class-problems-3" class="slide level2">
+<h2>QDA for Two-Class Problems</h2>
+<div style="font-size: 80%;">
+<ul>
+<li>We can either check whether the ratio is greater than one or check whether the difference of log-likelihood is positive.</li>
+</ul>
+<p><span class="math display">\[l_1 - l_2=-\frac{1}{2}log(\frac{|\boldsymbol\Sigma_1|}{|\boldsymbol\Sigma_2|}) - \frac{1}{2} [(x-\boldsymbol \mu_1)^T \boldsymbol \Sigma_1^{-1} (x-\boldsymbol \mu_1) - (x-\boldsymbol \mu_2)^T \boldsymbol \Sigma_2^{-1} (x-\boldsymbol \mu_2)]\]</span></p>
+<ul>
+<li>The classification boundary is given by <span class="math inline">\(l_1-l_2=0\)</span>, i.e.,</li>
+</ul>
+<p><span class="math display">\[(x-\boldsymbol \mu_1)^T \boldsymbol \Sigma_1^{-1} (x-\boldsymbol \mu_1) - (x-\boldsymbol \mu_2)^T \boldsymbol \Sigma_2^{-1} (x-\boldsymbol \mu_2) = log(\frac{|\boldsymbol\Sigma_2|}{|\boldsymbol\Sigma_1|})\]</span></p>
+<ul>
+<li>It is quadratic!</li>
+</ul>
+</div>
+</section>
+<section id="qda-for-two-class-problems-4" class="slide level2">
+<h2>QDA for Two-Class Problems</h2>
+<ul>
+<li>Replace unknown parameters with estimate, we have the classification rule: allocate <span class="math inline">\(x\)</span> to class 1 if <span class="math display">\[(x-\bar {\mathbf X}_1)^T \mathbf S _1^{-1} (x-\bar {\mathbf X}_1) - (x-\bar {\mathbf X}_2)^T \mathbf S_2^{-1} (x-\bar {\mathbf X}_2) &lt; log(\frac{|\mathbf S_2|}{|\mathbf S_1|})\]</span></li>
+</ul>
+</section>
+<section id="qda-for-g-class-problems" class="slide level2">
+<h2>QDA for g-Class Problems</h2>
+<ul>
+<li><p>For the <span class="math inline">\(i\)</span>th group, we compute a quadratic score, which is defined as<br>
+<span class="math display">\[Q_i(x)=(x-\bar {\mathbf X}_i)^T \mathbf S _i^{-1} (x-\bar {\mathbf X}_i)+ log(|\mathbf S_i|)\]</span></p></li>
+<li><p>Allocate <span class="math inline">\(x\)</span> to the class with the minimum quadratic score</p></li>
+</ul>
+</section>
+<section id="example-of-qda" class="slide level2">
+<h2>Example of QDA</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>obj.lda<span class="ot">=</span><span class="fu">lda</span>(Species<span class="sc">~</span>., <span class="at">data =</span> iris)</span>
+<span id="cb2-2"><a href=""></a>obj.qda<span class="ot">=</span><span class="fu">qda</span>(Species<span class="sc">~</span>., <span class="at">data =</span> iris)</span>
+<span id="cb2-3"><a href=""></a></span>
+<span id="cb2-4"><a href=""></a><span class="fu">table</span>(<span class="at">Pred=</span><span class="fu">predict</span>(obj.lda, iris)<span class="sc">$</span>class,</span>
+<span id="cb2-5"><a href=""></a><span class="at">True=</span>iris<span class="sc">$</span>Species)</span>
+<span id="cb2-6"><a href=""></a><span class="fu">table</span>(<span class="at">Pred=</span><span class="fu">predict</span>(obj.qda, iris)<span class="sc">$</span>class,</span>
+<span id="cb2-7"><a href=""></a><span class="at">True=</span>iris<span class="sc">$</span>Species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="example-of-qda-1" class="slide level2">
+<h2>Example of QDA</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>            True
+Pred         setosa versicolor virginica
+  setosa         50          0         0
+  versicolor      0         48         1
+  virginica       0          2        49</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            True
+Pred         setosa versicolor virginica
+  setosa         50          0         0
+  versicolor      0         48         1
+  virginica       0          2        49</code></pre>
+</div>
+</div>
+<ul>
+<li>The same result for this particular example</li>
+</ul>
+</section>
+<section id="visualize-qda-results" class="slide level2">
+<h2>Visualize QDA Results</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">partimat</span>(Species <span class="sc">~</span> ., <span class="at">data =</span> iris, <span class="at">method =</span> <span class="st">"qda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="Lecture14MoreOnClassification_new_files/figure-revealjs/unnamed-chunk-4-1.png" style="width:80.0%" class="r-stretch"></section>
+<section id="visualize-lda-results" class="slide level2">
+<h2>Visualize LDA Results</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="fu">partimat</span>(Species <span class="sc">~</span> ., <span class="at">data =</span> iris, <span class="at">method =</span> <span class="st">"lda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="Lecture14MoreOnClassification_new_files/figure-revealjs/unnamed-chunk-5-1.png" style="width:80.0%" class="r-stretch"></section></section>
+<section>
+<section id="decision-theory" class="title-slide slide level1 center">
+<h1>Decision Theory</h1>
+
+</section>
+<section id="cost-and-prior-probabilities" class="slide level2">
+<h2>Cost and Prior Probabilities</h2>
+<ul>
+<li>In practice, different types of errors have different costs</li>
+<li>Prior probabilities are often known but we haven’t discussed how to use them</li>
+<li>Goals:
+<ul>
+<li>When different errors have the same cost, we look for a classification rule that minimizes the probability of misclassification<br>
+</li>
+<li>When different errors cost differently, we want to find a classification rule that minimizes the total cost</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="equal-costs" class="title-slide slide level1 center">
+<h1>Equal Costs</h1>
+
+</section>
+<section id="minimize-probability-of-misclassification" class="slide level2">
+<h2>Minimize Probability of Misclassification</h2>
+<ul>
+<li>Notations:</li>
+<li><span class="math inline">\(X\)</span>: data</li>
+<li><span class="math inline">\(Z\)</span>: true class. It is binary, i.e., <span class="math inline">\(Z=1\)</span> or <span class="math inline">\(Z=0\)</span></li>
+<li><span class="math inline">\(P(Z=1)=\pi\)</span>: prior probability, known</li>
+<li><span class="math inline">\(\delta(x)\)</span>: decision function / classifier
+<ul>
+<li><span class="math inline">\(\delta(x)=1\)</span>: allocate <span class="math inline">\(x\)</span> to group 1</li>
+<li><span class="math inline">\(\delta(x)=0\)</span>: allocate <span class="math inline">\(x\)</span> to group 0</li>
+</ul></li>
+</ul>
+</section>
+<section id="risk-and-posterior-risk" class="slide level2">
+<h2>Risk and Posterior Risk</h2>
+<ul>
+<li><p>Risk of a classifier <span class="math inline">\(\delta\)</span> <span class="math display">\[\begin{aligned}
+R(\delta, z)&amp;=\Pr [\delta(X)\not= Z|Z=z]=\mathbb E_{X|z} [\mathbb I_{\delta(X)\not= Z}|Z=z]\\
+&amp;=\left\{
+\begin{array}{cc}
+\Pr[\delta(X)=0|z=1] &amp; \mbox{ if } z=1\\
+\Pr[\delta(X)=1|z=0] &amp; \mbox{ if } z=0
+\end{array}\right.
+\end{aligned}\]</span></p></li>
+<li><p>The posterior risk of <span class="math inline">\(\delta\)</span> <span class="math display">\[\begin{aligned}
+PR(\delta(x)) &amp;= \Pr[\delta(x)\not= Z|x]=\mathbb E_{Z|x} [\mathbb I_{\delta(X)\not= Z}|X=x]\\
+&amp;=\left\{
+\begin{array}{cc}
+\Pr[Z=0|x] &amp; \mbox{ if } \delta(x)=1\\
+\Pr[Z=1|x] &amp; \mbox{ if } \delta(x)=0
+\end{array}\right.
+\end{aligned}\]</span></p></li>
+</ul>
+</section>
+<section id="bayes-risk" class="slide level2">
+<h2>Bayes Risk</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>Bayes risk <span class="math inline">\(B(\delta)=\Pr [\delta(X)\not= Z]\)</span>.</p></li>
+<li><p>Note that <span class="math display">\[B(\delta)=\Pr [\delta(X)\not= Z]=\mathbb E_{XZ} [\mathbb I_{\delta(X)\not= Z}]=E_X[PR(\delta, X)]=E_Z[R(\delta, Z)]\]</span></p></li>
+<li><p>Rewrite the Bayes risk <span class="math display">\[\begin{aligned}
+B(\delta) &amp;=\Pr [\delta(X)\not= Z]\\
+&amp;=\Pr [\delta(X)=1, Z=0] + \Pr [\delta(X)=0, Z=1]\\
+&amp;=\Pr [\delta(X)=1| Z=0]\Pr[Z=0] + \Pr [\delta(X)=0| Z=1] \Pr[Z=1]\\
+&amp;=\pi \Pr [\delta(X)=0| Z=1]+ (1-\pi)\Pr [\delta(X)=1| Z=0]
+\end{aligned}\]</span></p></li>
+<li><p>The above expression is baesd on the fact <span class="math display">\[B(\delta)=\mathbb E_{XZ} [\mathbb I_{\delta(X)\not= Z}]\]</span></p></li>
+</ul>
+</div>
+</section>
+<section id="bayes-classification-rule" class="slide level2">
+<h2>Bayes Classification Rule</h2>
+<div style="font-size: 80%;">
+<ul>
+<li>Want to find <span class="math inline">\(\delta^*\)</span> that minimizes <span class="math inline">\(B(\delta)\)</span></li>
+<li>Claim 1: the <span class="math inline">\(\delta^*\)</span> that minimizes <span class="math inline">\(PR(\delta(x))\)</span> also minimizes <span class="math inline">\(B(\delta)\)</span>
+<ul>
+<li>This is because <span class="math inline">\(B(\delta)=\mathbb E[PR(\delta(X)]\ge \mathbb E[PR(\delta^*(X)]=B(\delta^*)\)</span>]</li>
+</ul></li>
+<li>Need to find <span class="math inline">\(\delta^*\)</span> that minimizes <span class="math inline">\(PR(\delta(x))\)</span>. It can be shown that</li>
+</ul>
+<p><span class="math display">\[\delta^*(x)=\left\{
+\begin{array}{cc}
+1 &amp; \mbox{ if } \frac{\Pr(Z=1|x)}{\Pr(Z=0|x)}&gt;1\\
+0 &amp; \mbox{ if } \frac{\Pr(Z=1|x)}{\Pr(Z=0|x)}&lt;1
+\end{array}\right.\]</span></p>
+<ul>
+<li>Skip next slide if you are not interested in the proof</li>
+</ul>
+</div>
+</section>
+<section id="the-classifier-that-minimizes-posterior-risk" class="slide level2">
+<h2>The Classifier that Minimizes Posterior Risk</h2>
+<div style="font-size: 80%;">
+<ul>
+<li>Recall that <span class="math display">\[PR(\delta(x)=0)=\Pr(Z=1|x), PR(\delta(x)=1)=\Pr(Z=0|x)\]</span></li>
+<li>Therefore, we <span class="math inline">\(\delta^*(x)\)</span> should be 1 if <span class="math display">\[\begin{aligned}
+PR(\delta(x)=0)&gt;PR(\delta(x)=1) &amp;\Leftrightarrow \Pr(Z=1|x)&gt; \Pr(Z=0|x)\\
+&amp;\Leftrightarrow \frac{\Pr(Z=1|x)}{\Pr(Z=0|x)}&gt;1
+\end{aligned}\]</span></li>
+</ul>
+</div>
+</section>
+<section id="the-bayes-classificatin-rule" class="slide level2">
+<h2>The Bayes Classificatin Rule</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>We say <span class="math inline">\(\delta^*(x)\)</span> is the Bayes classification rule <span class="math display">\[\delta^*(x)=\left\{
+\begin{array}{cc}
+1 &amp; \mbox{ if } \frac{\Pr(Z=1|x)}{\Pr(Z=0|x)}&gt;1\\
+0 &amp; \mbox{ if } \frac{\Pr(Z=1|x)}{\Pr(Z=0|x)}&lt;1
+\end{array}\right.\]</span></p></li>
+<li><p>Computation <span class="math display">\[\begin{aligned}
+\frac{\Pr(Z=1|x)}{\Pr(Z=0|x)} &amp;
+\overset{\mbox{Bayes' theorem}} = \frac{\frac{f(x|z=1)\Pr(Z=1)}{f(x)}}{\frac{f(x|z=0)\Pr(Z=0)}{f(x)}}\\
+&amp; = \frac{f(x|z=1)}{f(x|z=0)}\frac{\pi}{1-\pi}
+\end{aligned}\]</span></p></li>
+<li><p>A short review of Bayes’ theorem is on next slide. Feel free to skip if you are very familiar with it already</p></li>
+</ul>
+</div>
+</section>
+<section id="bayes-theorem" class="slide level2">
+<h2>Bayes’ Theorem</h2>
+<ul>
+<li>Read this slide if you would like to review Bayes’ theorem</li>
+<li>Let <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> be two events.</li>
+<li>Bayes’ theorem says <span class="math display">\[\Pr(B|A) = \dfrac{\Pr(A,  B)}{\Pr(A)}=\dfrac{\Pr(A|B)\Pr(B)}{\Pr(A)}\]</span> where <span class="math inline">\(\Pr(A,B)\)</span> means the joint probability that both <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> occur. We can use alternative expressions such as <span class="math inline">\(\Pr(A \text{ and } B)\)</span> and <span class="math inline">\(\Pr(A \cap B)\)</span>.</li>
+</ul>
+</section>
+<section id="example-1-univariate" class="slide level2">
+<h2>Example 1: Univariate</h2>
+<div style="font-size: 80%;">
+<ul>
+<li>Let’s consider a univariate example. Suppose that the population consists for two underlying populations
+<ul>
+<li>Population 1 with <span class="math inline">\(\pi\)</span> probability and <span class="math inline">\(N(\mu_1=1, \sigma^2=0.25)\)</span></li>
+<li>population 0 with <span class="math inline">\(1-\pi\)</span> probability and <span class="math inline">\(N(\mu_0=0, \sigma^2=0.25)\)</span></li>
+</ul></li>
+<li>Would like to allocate <span class="math inline">\(x=0.8\)</span></li>
+<li>According to Bayes classification rule, we need to compute</li>
+</ul>
+<p><span class="math display">\[\begin{aligned}
+\frac{f(x|z=1)\pi}{f(x|z=0)(1-\pi)} &amp;=\frac{f(x|\mu_1=1,\sigma^2)\pi}{f(x|\mu_0=0, \sigma^2)(1-\pi)}\\
+&amp;=\frac{\frac{1}{\sigma\sqrt{2\pi}}exp\{-\frac{1}{2\sigma^2}(x-1)^2\}}
+{\frac{1}{\sigma\sqrt{2\pi}}exp\{-\frac{1}{2\sigma^2}(x-0)^2\}}\frac{\pi}{1-\pi}\\
+&amp;= exp\{\frac{1}{2\sigma^2} (2x-1) \}\frac{\pi}{1-\pi}
+\end{aligned}\]</span></p>
+</div>
+</section>
+<section id="example-1-univariate-1" class="slide level2">
+<h2>Example 1: Univariate</h2>
+<div style="font-size: 70%;">
+<ul>
+<li><p>The classification boundary is <span class="math display">\[\begin{aligned}
+exp\{\frac{1}{2\sigma^2} (2x-1) \} =(1-\pi)/\pi &amp;\Leftrightarrow \frac{1}{2\sigma^2} (2x-1)=log((1-\pi)/\pi)\\
+&amp;\Leftrightarrow x=\sigma^2 log((1-\pi)/\pi)+0.5
+\end{aligned}\]</span></p></li>
+<li><p>The boundary is linear!</p>
+<ul>
+<li>If <span class="math inline">\(\pi=0.5\)</span>, the boundary is <span class="math inline">\(x=0.5\)</span>, we classify <span class="math inline">\(x=0.8\)</span> to class 1.</li>
+<li>If <span class="math inline">\(\pi=0.7\)</span>, the boundary is <span class="math inline">\(x=0.288\)</span>, we classify <span class="math inline">\(x=0.8\)</span> to class 1.</li>
+<li>If <span class="math inline">\(\pi=0.2\)</span>, the bondary is <span class="math inline">\(x=0.846\)</span>, we classify <span class="math inline">\(x=0.8\)</span> to class 0.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="example-1-density-and-classification-boundary" class="slide level2">
+<h2>Example 1: Density and Classification Boundary</h2>
+
+<img data-src="Lecture14MoreOnClassification_new_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:80.0%"></section>
+<section id="example-2-multivariate" class="slide level2">
+<h2>Example 2: Multivariate</h2>
+<ul>
+<li>For a two-class problem, the classification boundary by Bayes’ classification rule is <span class="math display">\[\frac{f(x|z=1)\pi}{f(x|z=0)(1-\pi)}=1\\
+\Leftrightarrow log(\frac{f(x|z=1)}{f(x|z=0)})=log(\frac{1-\pi}{\pi})\]</span></li>
+</ul>
+</section>
+<section id="bayes-classification-under-equal-covariance" class="slide level2">
+<h2>Bayes’ Classification under Equal Covariance</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>Suppose the two underlying distributions are <span class="math inline">\(N(\boldsymbol\mu_1, \boldsymbol \Sigma)\)</span> and <span class="math inline">\(N(\boldsymbol\mu_2, \boldsymbol \Sigma)\)</span>.</p></li>
+<li><p>The boundary is <span class="math display">\[-\frac{1}{2}(x-\boldsymbol\mu_1)^T \boldsymbol\Sigma^{-1}(x-\boldsymbol\mu_1) + \frac{1}{2}(x-\boldsymbol\mu_1)^T \boldsymbol\Sigma^{-1}(x-\boldsymbol\mu_1)\\
+=log(\frac{1-\pi}{\pi})\]</span> which is equivalent to</p></li>
+</ul>
+<p><span class="math display">\[(\boldsymbol\mu_1 -\boldsymbol\mu_2)^T \boldsymbol\Sigma^{-1}x = (\boldsymbol\mu_1 -\boldsymbol\mu_2)^T\boldsymbol\Sigma^{-1}\frac{\boldsymbol\mu_1 + \boldsymbol\mu_2}{2} + log(\frac{1-\pi}{\pi})\]</span></p>
+</div>
+</section>
+<section id="bayes-classification-under-equal-covariance-1" class="slide level2">
+<h2>Bayes’ Classification under Equal Covariance</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>In practice, we substitute the unknown parameters by their estimates <span class="math display">\[(\bar {\mathbf X}_{1.} -\bar {\mathbf X}_{2.})^T\boldsymbol\Sigma^{-1}x = (\bar {\mathbf X}_{1.} -\bar {\mathbf X}_{2.})^T \boldsymbol\Sigma^{-1}\frac{\bar {\mathbf X}_{1.} + \bar {\mathbf X}_{2.}}{2} + log(\frac{1-\pi}{\pi})\]</span></p></li>
+<li><p>Recall that in LDA the linear boundary is <span class="math display">\[a^Tx=a^T\frac{\bar {\mathbf X}_{1.} + \bar {\mathbf X}_{2.}}{2}\]</span> Therefore, Bayes’ classification is the same as the LDA when <span class="math inline">\(\pi=1/2\)</span>.</p></li>
+<li><p>Similarly, in a g-class problem, LDA is the same as Bayes classification under the assumptions (1) multivariate normality, (2) equal covariance, and (3) uniform prior probabilities.</p></li>
+</ul>
+</div>
+</section>
+<section id="connection-with-logistic-regression" class="slide level2">
+<h2>Connection with Logistic Regression</h2>
+<ul>
+<li>The ratio of posterior risk is <span class="math display">\[\frac{\Pr(Z=1|x)}{{\Pr(Z=0|x)}}\]</span></li>
+<li>It is also called the odds ratio. A logistic regression models the log-odds as a linear function of the covariates.<br>
+</li>
+<li>The LDA under the Bayes rule computes the ratio of the posterior risk.</li>
+</ul>
+</section>
+<section id="connection-with-logistic-regression-1" class="slide level2">
+<h2>Connection with Logistic Regression</h2>
+<div style="font-size: 80%;">
+<ul>
+<li>In both approaches, the decision function is a linear function of the covariates.</li>
+<li>They also give similar results.</li>
+<li>The two approaches were derived from different models with different assumptions.
+<ul>
+<li>Logistic regression models the behavior of a binary response variable given covariates.</li>
+<li>LDA models the multivariate behavior of covariates given the class labels.</li>
+</ul></li>
+<li>If MVN is not satisfied, LDA is not a good approximation to the posterior risk. In this situation, logistic regression is a better choice.</li>
+</ul>
+</div>
+</section>
+<section id="example-3-univariate-unequal-variance" class="slide level2">
+<h2>Example 3: Univariate, Unequal Variance</h2>
+<ul>
+<li>Again, consider a univariate example. This time we relax the assumption of equal variance</li>
+<li>Suppose that the population consists for two underlying populations
+<ul>
+<li>Population 1 with <span class="math inline">\(\pi\)</span> probability and <span class="math inline">\(N(\mu_1=1, \sigma_1^2=0.25)\)</span></li>
+<li>population 0 with <span class="math inline">\(1-\pi\)</span> probability and <span class="math inline">\(N(\mu_0=0, \sigma_2^2=1)\)</span></li>
+</ul></li>
+<li>Would like to allocate <span class="math inline">\(x=0.8\)</span></li>
+</ul>
+</section>
+<section id="example-3-univariate-unequal-variance-1" class="slide level2">
+<h2>Example 3: Univariate, Unequal Variance</h2>
+<div style="font-size: 80%;">
+<ul>
+<li>According to Bayes classification rule, we need to compute <span class="math display">\[\begin{aligned}
+\frac{f(x|z=1)\pi}{f(x|z=0)(1-\pi)} &amp;=\frac{f(x|\mu_1=1,\sigma_1^2)\pi}{f(x|\mu_0=0, \sigma_0^2)(1-\pi)}\\
+&amp;=\frac{\frac{1}{\sigma_1\sqrt{2\pi}}exp\{-\frac{1}{2\sigma_1^2}(x-1)^2\}}
+{\frac{1}{\sigma_0\sqrt{2\pi}}exp\{-\frac{1}{2\sigma_0^2}(x-0)^2\}}\frac{\pi}{1-\pi}\\
+&amp;= exp\{(\frac{1}{2\sigma_0^2}-\frac{1}{2\sigma_1^2})x^2 + \frac{x}{\sigma_1^2}-\frac{1}{2\sigma_1^2}\}
+\frac{\pi}{1-\pi}\frac{\sigma_0}{\sigma_1}
+\end{aligned}\]</span></li>
+</ul>
+</div>
+</section>
+<section id="example-3-univariate-unequal-variance-2" class="slide level2">
+<h2>Example 3: Univariate, Unequal Variance</h2>
+<div style="font-size: 80%;">
+<ul>
+<li><p>The classification boundary is <span class="math display">\[(\frac{1}{2\sigma_0^2}-\frac{1}{2\sigma_1^2})x^2 + \frac{x}{\sigma_1^2}-\frac{1}{2\sigma_1^2}=log[
+\frac{1-\pi}{\pi}\frac{\sigma_1}{\sigma_0}]
+\]</span></p></li>
+<li><p>It is quadratic!</p></li>
+</ul>
+</div>
+</section>
+<section id="example-3-univariate-unequal-variance-3" class="slide level2">
+<h2>Example 3: Univariate, Unequal Variance</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>mean1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-2"><a href=""></a>var1 <span class="ot">&lt;-</span> <span class="fl">0.25</span></span>
+<span id="cb7-3"><a href=""></a>mean0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-4"><a href=""></a>var0 <span class="ot">&lt;-</span> <span class="fl">0.64</span></span>
+<span id="cb7-5"><a href=""></a>weight1 <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb7-6"><a href=""></a>weight0 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> weight1</span>
+<span id="cb7-7"><a href=""></a></span>
+<span id="cb7-8"><a href=""></a><span class="co"># doesn't seem to be correct</span></span>
+<span id="cb7-9"><a href=""></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">3</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb7-10"><a href=""></a>fx<span class="ot">=</span>(<span class="dv">1</span><span class="sc">/</span>var0 <span class="sc">-</span> <span class="dv">1</span><span class="sc">/</span>var1)<span class="sc">/</span><span class="dv">2</span><span class="sc">*</span>x<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x<span class="sc">/</span>var1 <span class="sc">-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span><span class="sc">/</span>var1 <span class="sc">-</span> <span class="fu">log</span>(weight0<span class="sc">*</span><span class="fu">sqrt</span>(var1)<span class="sc">/</span>weight1<span class="sc">/</span><span class="fu">sqrt</span>(var0))</span>
+<span id="cb7-11"><a href=""></a><span class="fu">plot</span>(x, fx, <span class="at">type=</span><span class="st">"n"</span>)</span>
+<span id="cb7-12"><a href=""></a><span class="fu">lines</span>(x[fx<span class="sc">&gt;</span><span class="dv">0</span>], fx[fx<span class="sc">&gt;</span><span class="dv">0</span>], <span class="at">col=</span><span class="st">"blue"</span>)</span>
+<span id="cb7-13"><a href=""></a><span class="fu">lines</span>(x[fx<span class="sc">&lt;</span><span class="dv">0</span>], fx[fx<span class="sc">&lt;</span><span class="dv">0</span>], <span class="at">col=</span><span class="st">"green"</span>)</span>
+<span id="cb7-14"><a href=""></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="example-3-univariate-unequal-variance-4" class="slide level2">
+<h2>Example 3: Univariate, Unequal Variance</h2>
+
+<img data-src="Lecture14MoreOnClassification_new_files/figure-revealjs/unnamed-chunk-8-1.png" style="width:80.0%" class="r-stretch"></section></section>
+<section>
+<section id="unequal-costs" class="title-slide slide level1 center">
+<h1>Unequal Costs</h1>
+
+</section>
+<section id="risk-and-cost" class="slide level2">
+<h2>Risk and Cost</h2>
+<ul>
+<li>Different types of misclassifications might cost differently</li>
+<li>Let <span class="math inline">\(L(\delta(x), z)\)</span> denote the cost function</li>
+<li>Let <span class="math inline">\(C(1|0)=L(1, 0)\)</span>, the cost of misclassifying 0 to 1</li>
+<li>Let <span class="math inline">\(C(0|1)=L(0, 1)\)</span>, the cost of misclassifying 1 to 0</li>
+<li>The Risk and Bayes risk need to be revised accordingly</li>
+</ul>
+</section>
+<section id="risk-and-posterior-risk-1" class="slide level2">
+<h2>Risk and Posterior Risk</h2>
+<ul>
+<li><p>Risk of a classifier <span class="math inline">\(\delta\)</span> <span class="math display">\[R(\delta, z)=\mathbb E_{X|Z=z} [L(\delta(X), z)]=\left\{
+\begin{array}{cc}
+C(0|1)\Pr[\delta(X)=0|z=1] &amp; \mbox{ if } z=1\\
+C(1|0)\Pr[\delta(X)=1|z=0] &amp; \mbox{ if } z=0
+\end{array}\right.\]</span></p></li>
+<li><p>The posterior risk of <span class="math inline">\(\delta\)</span> <span class="math display">\[\begin{aligned}
+PR(\delta(x)) &amp;= \mathbb E_{Z|x}[L(\delta(x), Z)]\\
+&amp;=\left\{
+\begin{array}{cc}
+C(1|0)\Pr[Z=0|x] &amp; \mbox{ if } \delta(x)=1\\
+C(0|1)\Pr[Z=1|x] &amp; \mbox{ if } \delta(x)=0
+\end{array}\right.
+\end{aligned}\]</span></p></li>
+</ul>
+</section>
+<section id="bayes-risk-1" class="slide level2">
+<h2>Bayes Risk</h2>
+<ul>
+<li>Bayes risk <span class="math display">\[B(\delta)=\mathbb E_{XZ} [L(\delta(X), Z)]\]</span></li>
+<li>Rewrite the Bayes risk</li>
+</ul>
+<div style="font-size: 60%;">
+<p><span class="math display">\[\begin{aligned}
+B(\delta) &amp;=\mathbb E_{XZ} [L(\delta(X), Z)]\\
+&amp;=L(\delta(X)=1, Z=0)\Pr[\delta(X)=1, Z=0] + L(\delta(X)=0, Z=1)[\delta(X)=0, Z=1]\\
+&amp;=C(1|0)\Pr [\delta(X)=1, Z=0] + C(0|1)\Pr [\delta(X)=0, Z=1]\\
+&amp;=C(1|0)\Pr [\delta(X)=1| Z=0]\Pr[Z=0] + C(0|1)\Pr [\delta(X)=0| Z=1] \Pr[Z=1]\\
+&amp;=C(0|1)\pi \Pr [\delta(X)=0| Z=1]+ (1-\pi)C(1|0)\Pr [\delta(X)=1| Z=0]
+\end{aligned}\]</span></p>
+</div>
+</section>
+<section id="bayes-classification-rule-with-unequal-costs" class="slide level2">
+<h2>Bayes Classification Rule with Unequal Costs</h2>
+<ul>
+<li>Use a derivation similar to the equal cost situation, we can show that the Bayes classification rule is</li>
+</ul>
+<p><span class="math display">\[\begin{aligned}
+&amp;PR(\delta(x)=0)&gt;PR(\delta(x)=1) \\
+&amp;\Leftrightarrow C(0|1)\Pr(Z=1|x)&gt; C(1|0)\Pr(Z=0|x)\\
+&amp;\Leftrightarrow \frac{\Pr(Z=1|x)}{\Pr(Z=0|x)}&gt;\frac{C(1|0)}{C(0|1)}\\
+&amp;\Leftrightarrow \frac{f(x|z=1)}{f(x|z=0)}&gt;\frac{C(1|0)}{C(0|1)}\frac{1-\pi}{\pi}
+\end{aligned}\]</span></p>
+</section>
+<section id="other-related-topics" class="slide level2">
+<h2>Other Related Topics</h2>
+<ul>
+<li>There are numerous issues/methods / models</li>
+<li>Training error vs testing error</li>
+<li>Model / variable selection / shrinkage</li>
+<li>Classification tree. Random forest</li>
+<li>Support vector machine</li>
+<li>Neural network and deep neural network</li>
+</ul>
+<div class="quarto-auto-generated-content">
+<div class="footer footer-default">
+
+</div>
+</div>
+</section></section>
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="Lecture14MoreOnClassification_new_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button', {
+        text: function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+      });
+      clipboard.on('success', function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      });
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>
