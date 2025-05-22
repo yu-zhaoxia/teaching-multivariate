@@ -1,7 +1,6 @@
 ---
-title: "Multivariate Analysis Lecture 1617: Cluster Analysis"
-author: | 
-  | Zhaoxia Yu
+title: "Multivariate Analysis Lecture 16: Model Based Cluster Analysis"
+author: Zhaoxia Yu
   | Professor, Department of Statistics
 date: "`r Sys.Date()`"
 format: 
