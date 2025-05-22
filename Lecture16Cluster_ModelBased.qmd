@@ -1,0 +1,657 @@
+---
+title: "Multivariate Analysis Lecture 1617: Cluster Analysis"
+author: | 
+  | Zhaoxia Yu
+  | Professor, Department of Statistics
+date: "`r Sys.Date()`"
+format: 
+  revealjs:
+    scrollable: true
+    theme: "sky"
+    slideNumber: true
+    transition: "fade"
+    progress: true
+    controls: true
+    code-fold: true
+    echo: true
+    R.options:
+      fig-align: center
+---
+
+## Required packages
+```{r setup}
+#| code-fold: true
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr) #the pipe (%>%) tool is extremely useful
+library(MASS)
+library(ggplot2)
+library(kableExtra)
+library("gridExtra")
+library(knitr)
+library(magick) #install.packages("magick") #dynamic image
+```
+
+# Outline
+
+-   Gaussian mixture model
+-   Choose the number of clusters
+
+# Review of Model-Free Cluster Analysis
+## Review of Lecture 15
+- Model-free cluster analysis
+  -   K-means clustering
+  -   Hierarchical clustering
+
+## Hierarchical Clustering
+- distance measures between two observations
+- linkage methods between two clusters
+- Example:  Agglomerative clustering is a bottom-up approach to hierarchical clustering. The algorithm works as follows:
+    1.  Start with each object in its own cluster
+    2.  Merge the closest pair of clusters
+    3.  Repeat steps 2 until only one cluster remains
+
+## K-Means: Algorithm
+-   Step 0: standardize data if appropriate
+-   Step 1: Partition the observations into K initial clusters.
+    Alternatively, we can initialize K centroids
+-   Step 2: Assign each observation to its nearest cluster.
+-   Step 3: recalculate the centroids.
+-   Step 4: repeat 2-3 until no more changes in assignments
+
+
+## K-Means: Example
+```{r, fig.align='center'}
+data <- c(1.0, 1.5, 3.0, 5.0)
+names(data) <- c("1.0", "1.5", "3.0", "5.0")
+# Compute clustering
+hc <- hclust(dist(data), method = "single")
+
+# Enhanced dendrogram plot
+plot(hc, 
+     main = "Single Linkage Clustering (Points: 1.0, 1.5, 3.0, 5.0)",
+     xlab = "Data Values", 
+     ylab = "Merge Height",
+     sub = "",
+     hang = -1)  # Aligns all leaves at bottom
+
+# Add merge height labels
+text(x = c(1.5, 2.3, 2.5), 
+     y = hc$height + 0.1,
+     labels = paste0("h=", hc$height),
+     col = "red", cex = 0.8)
+
+# Add horizontal lines at merge heights
+abline(h = hc$height, lty = 2, col = "gray")
+```
+
+
+## K-Means: Iris
+- Use Sepal Length and Sepal Width to show how k-means works
+```{r, out.width="100%", fig.align='center'}
+#function to assign clusters for given centroids
+assign_clusters <- function(data, centroids) {
+  distances <- as.matrix(dist(rbind(as.matrix(data), centroids)))
+  cluster_assignments <- apply(distances[1:nrow(data), (nrow(data) + 1):(nrow(data) + k)], 1, which.min)
+  return(cluster_assignments)
+}
+
+#function to calculate centroids for given cluster assignments
+calculate_centroids <- function(data, clusters, k) {
+  centroids <- matrix(NA, nrow = k, ncol = ncol(data))
+  for (i in 1:k) {
+    centroids[i, ] <- colMeans(data[clusters == i, ])
+  }
+  return(centroids)
+}
+
+# Load the iris dataset
+data(iris)
+# Set the number of clusters
+k <- 3
+# we will perform the first three iteractions of k-means
+set.seed(123) # Set seed for reproducibility
+par(mfrow = c(2, 2))
+#plot data
+plot(iris[, 1:2], col = "black", pch = 19, main = "Initial Data")
+
+
+# step by step
+#Iteration 0: 
+# Step a: Randomly select initial centroids
+centroids <- iris[sample(1:nrow(iris), k), 1:2]
+# Step b: Assign each observation to the nearest centroid
+clusters <- assign_clusters(iris[, 1:2], centroids)
+#initial assignments
+plot(iris[, 1:2], col = clusters, pch = 19, main = "Initial Assignments")
+points(centroids, col = 1:k, pch = 8, cex = 2)
+
+
+# Iteration 1: 
+# Step a: Assign clusters based on initial centroids
+centroids <- calculate_centroids(iris[, 1:2], clusters, k)
+# Step b: Calculate centroids
+clusters <- assign_clusters(iris[, 1:2], centroids)
+plot(iris[, 1:2], col = clusters, pch = 19, main = "Iteration 1 Assignments")
+points(centroids, col = 1:k, pch = 8, cex = 2)
+
+
+# Iteration 2
+# Step a: calculate centroids
+centroids <- calculate_centroids(iris[, 1:2], clusters, k)
+# Step b: Assign clusters based on new centroids
+clusters <- assign_clusters(iris[, 1:2], centroids)
+plot(iris[, 1:2], col = clusters, pch = 19, main = "Iteration 2 Assignments")
+points(centroids, col = 1:k, pch = 8, cex = 2)
+
+```
+
+# Model-based
+
+## Mixture Model
+-   We say $X$ follows a ***mixture*** of $K$ distributions if its pdf/pmf ($f(x|\boldsymbol \theta)$) can
+    be written as a weighted sum of $K$ pdf/pmf's:
+    $$f(x|\boldsymbol \theta)=\sum_{k=1}^K p_k f_k(x|\boldsymbol \theta)$$
+-   ***Mixture*** means weighted: the weights $p_k, k=1, \cdots, K$ are ***nonnegative*** numbers and they add up to 1, i.e., $\sum_k p_k=1$.
+
+## Gaussian Mixture Models
+- A GMM is a generative model.
+- An early work in generative AI. Back to 1950-1960s
+- Formalized by Dempster, Laird, and Rubin (1977).
+- The likelihood function $L(\boldsymbol \theta)=f(x|
+\boldsymbol \theta)$ is often complicated. 
+- Typically no closed-form maximum likelihood solution
+
+
+## Gaussian Mixture Models
+- The mixture model is a ***latent variable model***.  
+- Latent variable $Z$ is unobserved. E.g., cluster membership in cluster analysis.
+  - $Z\sim Bernoulli(p)$ for binary.
+  - $Z\sim Multinomial(p_1, \cdots, p_K)$ for multinomial.
+- The conditional distribution is often well defined.
+$X|Z=k\sim f_k(x|\boldsymbol \theta)$ for $k=1, \cdots, K$.
+
+
+## Gaussian Mixture Models
+- Suppose $X$ is a $p$-dimensional random vector. 
+- It is distribution depends on $\boldsymbol \theta$, where 
+$$\boldsymbol \theta = (p_1, \cdots, p_K, \boldsymbol \mu_1, \cdots, \boldsymbol \mu_K, \boldsymbol \Sigma_1, \cdots, \boldsymbol \Sigma_K).$$
+- $f(x|\boldsymbol \theta)$ is a ***mixture*** of $K$ multivariate normal pdfs. 
+- ***Mixture*** means weighted sum and the weights are $p_1, \cdots, p_K$. 
+- The $k$th distribution is $N(\boldsymbol \mu_k, \boldsymbol\Sigma_k)$.
+
+
+## Gaussian Mixture Models
+::: {style="font-size: 80%;"}
+-   We say $X$ follow a Gassian mixture model if
+$$\begin{aligned}
+&f(x|\boldsymbol \mu_1, \boldsymbol \Sigma_1, \cdots, \boldsymbol \mu_K, \boldsymbol \Sigma_K, p_1, \cdots, p_K)\\
+=&\sum_{k=1}^K p_k f_k(x|\boldsymbol \theta)=\sum_{k=1}^Kp_k f(x|\boldsymbol \mu_k, \boldsymbol \Sigma_k)\\
+=&\sum_{k=1}^Kp_k \frac{1}{(\pi)^{p/2}|\boldsymbol\Sigma_k|^{1/2}}exp\left(-\frac{1}{2} (x-\boldsymbol\mu_k)^T \boldsymbol\Sigma_k^{-1} (x-\boldsymbol \mu_k)\right)
+\end{aligned}$$
+:::
+
+
+## Example: Mixtures of Two Univariate Normal
+
+```{r, out.width="80%", warning=FALSE, fig.align='center'}
+#| code-fold: true
+
+# Load required library
+# Set the parameters
+mean1 <- 1
+mean0 <- 0
+var1 <- 0.25
+var0 <- 0.25
+
+
+# Generate data points
+x <- seq(-2, 3, length.out = 1000)
+y1 <- dnorm(x, mean = mean1, sd = sqrt(var1))
+y0 <- dnorm(x, mean = mean0, sd = sqrt(var0))
+ymix_70 <- 0.7 * y1 + 0.3 * y0
+ymix_eq <- 0.5 * y1 + 0.5 * y0
+ymix_20  <- 0.2 * y1 + 0.8 * y0
+
+# Create a data frame for plotting
+df <- data.frame(x = x, y1 = y1, y0 = y0, ymix_70 = ymix_70,
+                 ymix_eq = ymix_eq, ymix_20 = ymix_20)
+
+# Create the plot
+plot1 <- ggplot(df, aes(x)) +
+  geom_line(aes(y = y1, color = "Distribution 1"), size = 1) +
+  geom_line(aes(y = y0, color = "Distribution 0"), size = 1) +
+  geom_line(aes(y = ymix_eq, color = "Mixture"), size = 1) +
+  scale_color_manual(values = c("Distribution 1" = "blue", "Distribution 0" = "green", "Mixture" = "red")) +
+  labs(x = "x", y = "Density", title = "Mixture of Two Normal 0.5 and 0.5") +
+  theme_minimal()
+plot2 <- ggplot(df, aes(x)) +
+  geom_line(aes(y = y1, color = "Distribution 1"), size = 1) +
+  geom_line(aes(y = y0, color = "Distribution 0"), size = 1) +
+  geom_line(aes(y = ymix_70, color = "Mixture"), size = 1) +
+  scale_color_manual(values = c("Distribution 1" = "blue", "Distribution 0" = "green", "Mixture" = "red")) +
+  labs(x = "x", y = "Density", title = "Mixture of Two Normal 0.7 and 0.3") +
+  theme_minimal()
+
+plot3 <- ggplot(df, aes(x)) +
+  geom_line(aes(y = y1, color = "Distribution 1"), size = 1) +
+  geom_line(aes(y = y0, color = "Distribution 0"), size = 1) +
+  geom_line(aes(y = ymix_20, color = "Mixture"), size = 1) +
+  scale_color_manual(values = c("Distribution 1" = "blue", "Distribution 0" = "green", "Mixture" = "red")) +
+  labs(x = "x", y = "Density", title = "Mixture of Two Normal 0.2 and 0.8") +
+  theme_minimal()
+# Display the plot
+grid.arrange(plot1, plot2, plot3, ncol = 1, nrow = 3)
+```
+
+## Gaussian Mixture Model
+
+-   The likelihood function based on $n$ observations is
+    $$L(\boldsymbol \theta)=\prod_{i=1}^n f(x_i|\boldsymbol\theta)$$
+    where $\boldsymbol\theta$ represents all the parameters.
+
+-   There is no analytic solution to obtain the Maximum likelihood estimation (MLE)
+
+-   The expectation-maximization (EM) algorithm can be used to estimate parameters
+
+## The Expectation Maximization (EM) Algorithm
+
+-   Formally outlined by Dempster, Laird, and Rubin (1977) in "Maximum likelihood from incomplete data via the EM algorithm"
+-   ***Observed*** data: $y^O$
+-   ***Unobserved*** data: $y^U$
+-   ***Complete*** data: $y^C=(y^O, y^U)$
+-   Parameter $\boldsymbol\theta$
+
+
+## The EM Algorithm: Intizialization
+::: {style="font-size: 90%;"}
+-   Initialize parameters: set
+    $\boldsymbol\theta=\boldsymbol\theta^{(0)}$
+
+- Initialization is often required in many optimization algorithms
+- There are different ways to do initialization
+    -   Random initialization
+    -   Use a computationally simply method
+    -   Use prior information to estimate initial values
+- Good initialization leads to faster convergence
+-  Many models/algorithms are sensitive to initial values: choose multiple sets of initial values and check which one achieves the best result
+:::
+
+    
+## The EM Algorithm
+
+-   For $t=1$ until convergence:
+
+    -   E-step: Compute
+
+    $$Q(\boldsymbol\theta| \boldsymbol\theta^{(t)}) = E[f(y^C|\boldsymbol\theta)|y^O, \boldsymbol\theta^{(t)}]$$
+
+    This step is often equivalent to compute conditional expectations.
+
+    -   M-step: Update parameters
+
+    $$\boldsymbol\theta^{(t+1)}=argmax_{\boldsymbol\theta}Q(\boldsymbol\theta| \boldsymbol\theta^{(t)})$$
+
+
+## The EM Algorithm
+
+-   Ascent property
+    -   The M step ensures the algorithm improves
+        $Q(\boldsymbol\theta| \boldsymbol\theta^{(t)})$
+    -   It can be shown that improving
+        $Q(\boldsymbol\theta| \boldsymbol\theta^{(t)})$ implies
+        improving $L(\boldsymbol\theta)=f(y^O|\boldsymbol\theta)$ (the
+        observed-data likelihood)
+-   Convergence to local maxim
+    -   Choose multiple sets of inital values
+
+## EM for Cluster Analysis
+- In cluster analysis, the unobserved data is the cluster membership.
+
+
+## Example 
+
+-   Observed data
+    -   x=(0.37 1.18 0.16 2.60 1.33 0.18 1.49 1.74 3.58 2.69 4.51 3.39
+        2.38 0.79 4.12 2.96 2.98 3.94 3.82 3.59)
+-   Assume $K=2$
+-   Parameters: $\mu_1, \mu_0, \sigma_1, \sigma_0, p$
+-   Unobserved data: $z=(\cdots)$, the class membership, a vector of binary variables
+
+## Visualize Data
+```{r, fig.align='center'}
+set.seed(1);
+x=c(rnorm(8,1), rnorm(12,3))
+plot(x, y=rep(0,20), col=rep(c(4,2), c(8,12)), pch=19, cex=2, xlab="x", ylab="y", main="Gaussian Mixture Model")
+
+```
+
+## E-Step: Derivation
+
+```{r, out.width="80%", fig.align='center'}
+knitr::include_graphics("img/EM1.png")
+```
+
+## E-Step: Derivation
+
+```{r, out.width="80%", fig.align='center'}
+knitr::include_graphics("img/EM2.png")
+```
+
+## E-Step
+::: {style="font-size: 80%;"}
+- In summary, the E step is to compute $E[z|x]$
+- More specifically, the E-step is to compute the posterior probabilities of the latent variables given the observed data and the current parameter estimates.
+- For a two-cluster problem, $E[Z|x, \boldsymbol \theta^{(t)}]=P(Z=1|x, \boldsymbol \theta^{(t)})=\frac{\pi_1^{(t)} f_1(x|\boldsymbol \theta^{(t)})}{\pi_1^{(t)} f_1(x|\boldsymbol \theta^{(t)})+\pi_0^{(t)} f_0(x|\boldsymbol \theta^{(t)})}$
+- For $K$ clusters, $E[Z|x, \boldsymbol \theta^{(t)}]=P(Z=k|x, \boldsymbol \theta^{(t)})=\frac{\pi_k^{(t)} f_k(x|\boldsymbol \theta^{(t)})}{\sum_{k=1}^K \pi_k^{(t)} f_k(x|\boldsymbol \theta^{(t)})}$
+- Here $\pi_k^{(t)}, i=1, \cdots, K$ are the proportions of the $K$ clusters.
+:::
+
+## M-Step: Derivation
+```{r, out.width="80%", fig.align='center'}
+knitr::include_graphics("img/EM3.png")
+```
+
+## M-step
+
+::: {style="font-size: 80%;"}
+
+\begin{align*}
+\pi_k^{(t+1)}&=\frac{1}{n} \sum_{i=1}^n P[Z_i=k|x_i, \boldsymbol \theta^{(t)}] \\
+\mu_k^{(t+1)}&= \frac{\sum_{i=1}^n P[Z_i=k|x_i, \boldsymbol \theta^{(t)}] \boldsymbol{x}_i}{\sum_{i=1}^nP[Z_i=k|x_i, \boldsymbol \theta^{(t)}]} \\
+\Sigma_k^{(t+1)}&=\frac {\sum_{i=1}^n P[Z_i=k|x_i, \boldsymbol \theta^{(t)}]\left(\boldsymbol{x}_i-\boldsymbol{\mu}_k^{(t)}\right)\left(\boldsymbol{x}_i-\boldsymbol{\mu}_k^{(t)}\right)^T}{\sum_{i=1}^nP[Z_i=k|x_i, \boldsymbol \theta^{(t)}]}
+\end{align*}
+
+:::
+
+## EM: Step by Step
+
+```{r}
+##### gif animation for simulated data. Gaussian Mixture model, EM algorithm
+dir_out="C:/Users/yu790/Desktop/Desktop/teaching-multivariate/img/EM"
+dir.create(dir_out, recursive = TRUE, showWarnings = FALSE)
+set.seed(1);
+x=c(rnorm(8,1), rnorm(12,3))
+n=length(x)
+
+#initialization
+z=rbinom(n,1,0.5)
+k0=c(1:n)[!z]
+k1=setdiff(1:n, k0)
+p.old=mean(z)
+u.old=c(mean(x[k0]), mean(x[k1]) )
+sd.old=c(sd(x[k0]), sd(x[k1]) )
+p.new=p.old
+u.new=u.old
+sd.new=sd.old
+
+i=0
+while(i==0 || max(abs(u.new-u.old))>0.0001) 
+{
+p.old=p.new
+u.old=u.new
+sd.old=sd.new
+
+##### E-Step
+#prob being in the 2nd group
+ez1=p.old*dnorm(x, u.old[2], sd.old[2]) / 
+	((1-p.new)*dnorm(x, u.old[1], sd.old[1]) + p.old*dnorm(x, u.old[2], sd.old[2]))
+#prob being in the 1st group
+ez0=1-ez1
+
+##### M-step
+p.new=mean(ez1)
+u.new=c( weighted.mean(x, ez0), weighted.mean(x, ez1))
+sd.new=c( sqrt(weighted.mean((x-u.new[1])^2, ez0)) , 
+	sqrt(weighted.mean((x-u.new[2])^2, ez1)))
+
+i=i+1
+if(i==1) cat("\t", "p \t", "u0 \t", "u1 \n")
+cat("iteration", i, "\n")
+print(c(p.new, u.new))
+
+ if (i < 10) {name = paste('000',i,'plot.png',sep='')}
+ if (i < 100 && i >= 10) {name = paste('00',i,'plot.png', sep='')}
+ if (i >= 100) {name = paste('0', i,'plot.png', sep='')}
+png(filename=paste(dir_out,"/", name, sep=""))
+ tmp=rbind(ez1,1-ez1)
+ colnames(tmp)=1:n
+ if(u.new[2]>u.new[1])
+ barplot(tmp, ylim=c(0,1),col=c(2,4),main=paste("Estimated Prob from EM: iteration=", i),ylab="prob")
+ else 
+ barplot(1-tmp, ylim=c(0,1),col=c(2,4),main=paste("Estimated Prob from EM: iteration=", i),ylab="prob")
+ dev.off()
+}
+```
+
+## The results
+```{r, fig.align='center'}
+if(u.new[1] > u.new[2]) {
+  ez1=1-ez1
+}
+plot(rep(0:1, c(8,12)), ez1, xlab="true", ylab="estimated prob", main="Estimated Prob from EM")
+```
+
+## The results
+```{r, fig.align='center'}
+par(mfrow=c(1,2))
+barplot(rbind(rep(0:1, c(8,12)), 1-rep(0:1, c(8,12))), 
+        ylim=c(0,1),col=c(2,4),main="True", ylab="prob")
+ if(u.new[2]>u.new[1])
+ barplot(tmp, ylim=c(0,1),col=c(2,4),main=paste("Estimated Prob from EM: iteration=", i),ylab="prob")
+ if(u.new[2]<u.new[1])
+ barplot(1-tmp, ylim=c(0,1),col=c(2,4),main=paste("Estimated Prob from EM: iteration=", i),ylab="prob")
+
+```
+
+## Create GIF Animation
+```{r}
+## list file names and read in
+imgs <- list.files(dir_out, full.names = TRUE)
+img_list <- lapply(imgs, image_read)
+
+## join the images together for iterations 1-0
+img_joined <- image_join(img_list[1:10])
+
+## animate at 2 frames per second
+img_animated <- image_animate(img_joined, delay=50)
+
+## save to disk
+image_write(image = img_animated,
+            path = "img/EM.gif")
+
+```
+
+## view animated image
+```{r, fig.align='center'}
+img_animated
+```
+
+## Gaussian Mixture For Iris Data
+
+```{r}
+#| code-fold: true
+
+##### gif animation for iris data. Gaussian Mixture model, EM algorithm
+### two species: Setosa, Versicolor. One variable: petal length
+library(MASS)
+dir_out="C:/Users/yu790/Desktop/Desktop/teaching-multivariate/img/Iris_GMixture"
+dir.create(dir_out, recursive = TRUE, showWarnings = FALSE)
+set.seed(1);
+x=c(iris3[,3,1],iris3[,3,2])
+n=length(x)
+z=rbinom(n,1,0.5)
+k0=c(1:n)[!z]
+k1=setdiff(1:n, k0)
+p.old=mean(z)
+u.old=c(mean(x[k0]), mean(x[k1]) )
+sd.old=c(sd(x[k0]), sd(x[k1]) )
+p.new=p.old
+u.new=u.old
+sd.new=sd.old
+
+i=0
+while(i==0 || max(abs(u.new-u.old))>0.0001) 
+{
+p.old=p.new
+u.old=u.new
+sd.old=sd.new
+
+#e-step
+ez1=p.old*dnorm(x, u.old[2], sd.old[2]) / 
+	((1-p.new)*dnorm(x, u.old[1], sd.old[1]) + p.old*dnorm(x, u.old[2], sd.old[2]))
+ez0=1-ez1
+
+#m-step
+p.new=mean(ez1)
+u.new=c( weighted.mean(x, ez0), weighted.mean(x, ez1))
+sd.new=c( sqrt(weighted.mean((x-u.new[1])^2, ez0)) , 
+	sqrt(weighted.mean((x-u.new[2])^2, ez1)))
+
+i=i+1
+if(i==1) cat("\t", "p \t", "u0 \t", "u1 \n")
+cat("iteration", i, "\n")
+print(c(p.new, u.new))
+
+ if (i < 10) {name = paste('000',i,'plot.png',sep='')}
+ if (i < 100 && i >= 10) {name = paste('00',i,'plot.png', sep='')}
+ if (i >= 100) {name = paste('0', i,'plot.png', sep='')}
+png(filename=paste(dir_out,"/", name, sep=""))
+ tmp=rbind(ez1,1-ez1)
+ colnames(tmp)=1:n
+ barplot(tmp, ylim=c(0,1),col=c(2,4),main=paste("Estimated Prob (Iris Data): iteration=", i),ylab="prob")
+ dev.off()
+}
+
+## list file names and read in
+imgs <- list.files(dir_out, full.names = TRUE)
+img_list <- lapply(imgs, image_read)
+
+## join the images together
+img_joined <- image_join(img_list)
+
+## animate at 2 frames per second
+img_animated <- image_animate(img_joined, fps = 2)
+## save to disk
+image_write(image = img_animated,
+            path = "img/iris_GMixture.gif")
+```
+
+
+
+## view animated image
+```{r, fig.align='center'}
+img_animated
+```
+
+
+
+## Choose the Number of Clusters
+- Model-based method: introduce a penalty term for $K$
+  -   AIC: maximize
+
+$$AIC=2\ln L_{max}-2n\left(K\frac{1}{2}(p+1)(p+2)-1 \right)$$
+
+  -   BIC: maximize
+    $$BIC=2\ln L_{max}-2\ln n\left(K\frac{1}{2}(p+1)(p+2)-1 \right)$$
+- Model-free: 
+  - Elbow method
+  - Silhouette analysis (Peter J. Rousseuw (1987). "Silhouettes: a Graphical Aid to the Interpretation and Validation of Cluster Analysis". Computational and Applied Mathematics. 20: 53–65. Available in "cluster" package)
+  - Gap statistic method (Tibshirani, R., Walther, G. and Hastie, T., 2001. Estimating the number of clusters in a data set via the gap statistic. JRSSB, 63: 411-423. Also available in package "cluster")
+  
+
+## Choose number of clusters
+- Elbow method
+- Silhouette method
+- Gap statistic
+- CH index
+
+## Elbow Methods
+- Plots the within-cluster sum of squares (WCSS) against the number of clusters.
+```{r, fig.align='center'}
+library(factoextra)
+
+data <- iris[, -5]
+# Compute WCSS for k=1 to k=10
+wcss <- sapply(1:10, function(k) {
+  kmeans(data, centers=k, nstart=10)$tot.withinss
+})
+
+# Plot the elbow curve
+fviz_nbclust(data, kmeans, method = "wss", nstart=10) +
+  geom_vline(xintercept = 3, linetype = 2) +  # Suggested K=3
+  labs(title = "Elbow Method (Iris Dataset)")
+```
+## Silhouette Method
+- Silhouette Method measures how cohesive points are within their own cluster vs. other clusters. The silhouette score ranges from -1 (poor) to 1 (best). Choose K with the highest average score.
+
+```{r, fig.align='center'}
+library(cluster)
+library(factoextra)
+
+# Compute silhouette scores for k=2 to k=10
+sil_scores <- sapply(2:10, function(k) {
+  km <- kmeans(data, centers=k, nstart=10)
+  ss <- silhouette(km$cluster, dist(data))
+  mean(ss[, 3])  # Average silhouette width
+})
+
+# Plot
+fviz_nbclust(data, kmeans, method = "silhouette", nstart=10) +
+  labs(title = "Silhouette Method (Optimal K=2 for Iris)")
+```
+
+
+## Gap Statistic
+- It compares WCSS of the observed data to WCSS of reference null distributions (e.g., uniform random data). The optimal K is where the gap (difference) is largest.
+
+```{r, fig.align='center'}
+library(cluster)
+
+# Compute gap statistic
+gap_stat <- clusGap(data, FUN = kmeans, nstart=10, K.max=10, B=50)
+
+# Plot
+fviz_gap_stat(gap_stat) +
+  labs(title = "Gap Statistic (Optimal K=3 for Iris)")
+```
+
+
+
+## Calinski-Harabasz (CH) Index
+- It is the ratio of between-cluster dispersion to within-cluster dispersion. Higher values indicate better-defined clusters.
+- It is equivalent to the F-statistic. 
+```{r, fig.align='center'}
+library(fpc)
+
+# Compute CH index for k=2 to k=10
+ch_scores <- sapply(2:10, function(k) {
+  km <- kmeans(data, centers=k, nstart=10)
+  calinhara(data, km$cluster)  # CH index
+})
+
+# Optimal K: Maximize CH score
+optimal_k <- which.max(ch_scores) + 1  # +1 since k starts at 2
+print(paste("Optimal K (CH Index):", optimal_k))
+
+# Plot (manual)
+plot(2:10, ch_scores, type="b", xlab="Number of clusters", ylab="CH Score")
+abline(v=optimal_k, col="red", lty=2)
+```
+
+
+
+## Take Home Messages
+- Various methods have been proposed
+  - Elbow: Quick but subjective.
+  - Silhouette: Balances cohesion/separation.
+  - Gap Statistic: Robust but slow.
+  - CH Index: Fast but biased toward larger K
+- Visualization is often useful
+- Domain knowledge matters
+  
+  
+# Bayesian Gaussian Mixture Model  
+[A nice example](https://cran.r-project.org/web/packages/telescope/vignettes/Bayesian_univ_Gaussian_mixtures.html)
+ 
+  
+
