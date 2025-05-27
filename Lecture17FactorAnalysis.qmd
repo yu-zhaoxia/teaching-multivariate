@@ -1,0 +1,700 @@
+---
+title: "Multivariate Analysis Lecture 17: Factor Analysis"
+author: Zhaoxia Yu
+  | Professor, Department of Statistics
+date: "`r Sys.Date()`"
+format: 
+  revealjs:
+    scrollable: true
+    theme: "sky"
+    slideNumber: true
+    transition: "fade"
+    progress: true
+    controls: true
+    code-fold: true
+    echo: true
+    R.options:
+      fig-align: center
+---
+
+## Required packages
+```{r setup}
+#| code-fold: true
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(tidyr) #the pipe (%>%) tool is extremely useful
+library(MASS)
+library(ggplot2)
+library(kableExtra)
+
+library(corrplot)#for visualizing the corr matrix of the iris data
+
+library(png)
+library(grid)
+library(gridExtra)
+
+#install.packages("psych")
+#install.packages("semPlot")
+#install.packages("lavaan")
+#install.packages("lavaanPlot")
+library(psych)
+library(semPlot)  
+library(lavaan)
+library(lavaanPlot)
+```
+
+# Outline
+- Review of PCA
+
+# Motivating Example
+## A Motivating Example:  Exam Scores
+- Simulated data
+- 60 students
+- six subjects: Latin, English, History, Arithmetic, Algebra, Geometry
+\tiny
+```{r}
+set.seed(6)
+mu=rnorm(60, sd=1)
+mu1=mu+rnorm(60)
+mu2=mu+rnorm(60)
+exam=cbind(mu1+rnorm(60, sd=0.5), mu1+rnorm(60, sd=0.5), mu1+rnorm(60, sd=0.5), 
+          mu2+rnorm(60, sd=0.5), mu2+rnorm(60, sd=0.5), mu2+rnorm(60, sd=0.5))
+colnames(exam)=c("Latin","English","History",
+                 "Arithmetic","Algebra","Geometry")
+exam=data.frame(exam)
+```
+\normalsize
+
+## Pairwise Correlation
+
+\tiny
+```{r, out.width="100%", fig.align='center'}
+corrplot(cor(exam), method="number")
+```
+\normalsize
+
+
+
+## PCA: Visualize Eigenvalues 
+
+\tiny
+```{r, out.width="90%", fig.align='center'}
+obj=princomp(exam, cor=TRUE)
+cumsum(obj$sdev^2)/sum(obj$sdev^2)
+plot(obj, type="lines", main="Scree Plot")
+```
+\normalsize
+
+## PCA Loadings
+```{r}
+obj$loadings
+```
+\tiny
+- 1st PC is about average
+- 2nd PC is about difference between Latin/English/History and Arithmetic/Algebra/Geometry
+\normalsize
+
+## PCA
+- 1st PC = 0.39Latin+0.43English+0.42History
+  +0.41Arithmetic+0.40Algebra+0.40Geometry
+
+- 2nd PC = 0.46Latin+0.36English+0.39History
+  -0.37Arithmetic-0.44Algebra-0.43Geometry
+
+```{r}
+obj$scores[,1:2] #first two PCs
+```
+
+
+
+
+## Visualize PCs (biplot)
+
+```{r, out.width="100%", fig.align='center'}
+biplot(obj, main="Biplot")
+```
+
+# Introduction to Factor Analysis
+- Factor analysis (FA) is a statistical model used to identify underlying relationships between variables.
+- It tries to understand/identify what (latent factors) leads to the observed correlations among a set of variables.
+
+
+## PCA vs FA
+```{r, out.width="80%", fig.align='center'}
+knitr::include_graphics("img/PCA_FA.png")
+```
+
+\footnotesize
+https://livebook.manning.com/book/r-in-action-second-edition/chapter-14/6
+\normalsize
+
+ 
+
+## PCA vs FA
+- Both reduce dimensionality
+- Different goals:
+  - PCA: aims to reduce the number of variables while preserving as much variance as possible
+  - FA: aims to identify latent factors that explain the correlations among observed variables
+- PCA: finds PCs (eg, PC1, PC2). Focuses on total variance.
+- FA: find latent factors (eg, F1, F2). Focuses on correlations. 
+
+
+# FA Model
+## Factor Model 
+- Consider a random vector $\mathbf X \in \mathbb R^p$
+- Let $\boldsymbol \mu \in \mathbb R^p$ denote the population mean 
+- Let $F\in \mathbb R^m$ denote $m$ factors
+
+$$\mathbf{X} = \left(\begin{array}{c}X_1\\X_2\\\vdots\\X_p\end{array}\right), \boldsymbol{\mu} = \left(\begin{array}{c}\mu_1\\\mu_2\\\vdots\\\mu_p\end{array}\right), \mathbf{F} = \left(\begin{array}{c}f_1\\f_2\\\vdots\\f_m\end{array}\right)$$
+
+ 
+## Factor model
+- $X_j$, which is observable, is assumed to be a linear function of the unobservable \textcolor{red} {common factors} $f_1, \cdots, f_m$ plus specific errors.
+$$\begin{aligned} X_1 & = \mu_1 + l_{11}f_1 + l_{12}f_2 + \dots + l_{1m}f_m + \epsilon_1\\ X_2 & = \mu_2 + l_{21}f_1 + l_{22}f_2 + \dots + l_{2m}f_m + \epsilon_2 \\ & \vdots \\ X_p & = \mu_p + l_{p1}f_1 + l_{p2}f_2 + \dots + l_{pm}f_m + \epsilon_p \end{aligned}$$
+where $\epsilon_j$ is called the specific factor for feature $j$. 
+- The means $\mu_1, \cdots, \mu_p$ are parameters
+- The coefficients in the factor loading matrix are also parameters
+
+
+
+
+## Factor model
+- Let $\mathbf L$ denote the $p\times m$ matrix of factor loadings
+$$\mathbf{L} = \left(\begin{array}{cccc}l_{11}& l_{12}& \dots & l_{1m}\\l_{21} & l_{22} & \dots & l_{2m}\\ \vdots & \vdots & & \vdots \\l_{p1} & l_{p2} & \dots & l_{pm}\end{array}\right) $$
+- A compact expression of the factor model is
+$$\mathbf X_{p\times 1} = \boldsymbol \mu_{p\times 1} + \mathbf L_{p\times m} \mathbf F_{m\times 1} + \boldsymbol \epsilon_{p\times 1}$$
+
+## Example: Loading
+```{r, fig.align='center'}
+obj=factanal(exam, factors=2, scores="regression")
+obj$loadings
+```
+- How to interpret the loadings and the two factors?
+
+## Example: Scores
+```{r, fig.align='center'}
+obj.heatmap=heatmap(obj$scores, main="Factor Scores", col=heat.colors(256, rev=TRUE), scale="none")
+```
+- How to interpret the scores
+
+## Example: Original Scores (sorted)
+```{r, fig.align='center'}
+tmp=as.matrix(exam)[obj.heatmap$rowInd,]
+row.names(tmp)=obj.heatmap$rowInd
+heatmap(tmp, main="Exam Scores",  col=heat.colors(256, rev=TRUE), Rowv=NA)
+```
+
+## Mathematical Details: Assumptions
+- $\mathbf F$ and $\boldsymbol \epsilon$ are uncorrelated
+- The $m$ common factors are uncorrelated
+$$\mathbb E(\mathbf F)=0, Cov(\mathbf F)=\mathbf I_m$$
+
+- The specific factors are uncorrelated
+$$\mathbb E(\boldsymbol\epsilon)=0, Cov(\boldsymbol\epsilon)=\Psi$$
+where $\Psi$ is a diagonal matrix with non-negative values, i.e., 
+
+$$\boldsymbol{\Psi} = \left(\begin{array}{cccc}\psi_1 & 0 & \dots & 0 \\ 0 & \psi_2 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots\\ 0 & 0 & \dots & \psi_p \end{array}\right)$$
+
+
+## The Covariance
+- By the factor model and its assumptions, we have
+
+$$\begin{aligned}
+\Sigma&=cov(\mathbf X)\\
+&= cov(\mathbf L\mathbf F + \boldsymbol \epsilon)\\
+&=\mathbf L Cov(\mathbf F) \mathbf L^T + \Psi\\
+&=\mathbf L  \mathbf L^T + \Psi
+\end{aligned}
+$$
+The last step is due to our assumption that $cov(\mathbf F)=\mathbf I$
+
+## The Covariance 
+- For $i\not=j$, the covariance between $X_i$ (feature $i$) and $X_j$ (feature $j$) is
+$$\sigma_{ij}=cov(X_i, X_j)=\sum_{k=1}^m l_{ik}l_{jk}$$
+- The variance of $X_i$ is
+$$\sigma_{ii} = \sum_{k=1}^m l_{ik}^2 + \psi_i$$
+
+
+# Communality
+
+## Communality and Specific Variance
+
+- From last slide
+$$\sigma_{ii} = \sum_{k=1}^m l_{ik}^2 + \psi_i$$
+
+- We say that the variance of $X_i$ is partitioned into communality and specific variance where
+  - communality is defined as $h_i^2=\sum_{k=1}^m l_{ik}^2$, which is the proportion of variance contributed by common factors 
+  - specific variance $\psi_i$, which is the specific variance of $X_i$
+
+
+## Example of Communality
+
+\tiny
+```{r}
+obj=factanal(exam, factors=2)
+L=obj$loadings[,1:2] 
+Psi=diag(obj$uniquenesses)
+#uniquenesses
+obj$uniquenesses
+#communality
+1-obj$uniquenesses
+```
+\normalsize
+- For Geometry, the communality is ____ and the uniqueness (specific variance) is ____. 
+
+\normalsize
+
+```{r, echo=FALSE, eval=FALSE}
+S=diag(sqrt(diag(cov(exam))))
+round(cov(exam),2) 
+#FA models correlation, L%*%t(L)+ Psi is estimated corr 
+round(  S%*% (L%*%t(L))%*% S + S%*%Psi%*%S, 2)
+S%*% (L%*%t(L))%*% S
+S%*%Psi%*%S
+```
+
+
+
+# Non-uniqueness 
+## Non-uniqueness of Factor Loadings
+- The factor loading coefficient is NOT unique. 
+- Suppose $\textbf{X} = \boldsymbol{\mu} + \textbf{LF}+ \boldsymbol{\epsilon}$
+- Consider any $m\times m$ orthogonal matrix $\Gamma$, which satisfies $\Gamma \Gamma^T=\Gamma^T \Gamma=\mathbf I$. 
+- Let $\tilde {\mathbf L}=\mathbf L \Gamma$
+The model $\textbf{X} = \boldsymbol{\mu} + \tilde {\textbf L} \mathbf F+ \boldsymbol{\epsilon}$
+
+give the same $\Sigma$ because 
+$$cov(\tilde {\textbf L} \mathbf F)= \tilde {\textbf L} cov (\mathbf F)\tilde {\textbf L}^T=\tilde {\textbf L} \tilde {\textbf L}^T=\mathbf L  \Gamma \Gamma^T \mathbf L^T=\mathbf L \mathbf L^T=cov(\mathbf {LF})$$
+
+
+## Non-uniqueness of Factor Loadings
+
+\tiny
+```{r}
+#Estimated Sigma
+L%*%t(L) + Psi
+```
+\normalsize
+
+## Non-uniqueness of Factor Loadings
+- Consider a rotation matrix $R$ and define $\tilde {\mathbf L}=L R$
+
+\tiny
+```{r}
+theta=pi/6
+R=matrix(c(cos(theta), sin(theta), -sin(theta), cos(theta)), 2,2)
+L.tilde=L%*%R
+
+L.tilde %*% t(L.tilde) + Psi
+```
+\normalsize
+
+
+# Factor Rotation
+## Rotation for Better Interpretation
+- Interpretation of final results are easier for some choices of $\mathbf L$ than others. 
+- We often rotate the factors to gain insights or for better interpretation
+- This is one advantage of factor analysis
+- In practice,
+  - Step 1: fit a factor model by imposing conditions that lead to a unique solution
+  - Step 2: the loading matrix L is rotated (multiplied by an orthogonal matrix) in a way that gives a good interpretation of the data. Trial and error
+- Well know criteria of rotation exist
+
+
+
+## Two Major Types of Rotation
+- An orthogonal rotation
+  - maintains the perpendicularity between factors after rotation.
+  - assumes that factors are unrelated or independent of each other.
+  - Varimax is the most commonly used method of orthogonal rotation.
+
+## Two Major Types of Rotation
+- An oblique rotation
+  - allows factors to be correlated and does not maintain a 90 degrees angle.
+  - assumes that factors are related or dependent on each other.
+  - One popular method is Promax 
+- Orthogonal rotations are mathematically appealing/convenient
+- There is no reason that factors have to be uncorrelated
+
+
+## 
+
+\tiny
+```{r, echo=FALSE}
+img1 <-  rasterGrob(as.raster(readPNG("img/rotation_orthogonal.png")), interpolate = FALSE)
+img2 <-  rasterGrob(as.raster(readPNG("img/rotation_oblique.png")), interpolate = FALSE)
+grid.arrange(img1, img2, ncol = 2)
+```
+\normalsize
+
+
+
+## Varimax and Promax
+::: {style="font-size: 80%;"}
+- https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1745-3984.2006.00003.x
+- Consider a rotation matrix with angle $\psi$
+
+$$\begin{pmatrix}
+cos \psi & -sin \psi\\
+sin \psi & cos \psi
+\end{pmatrix}$$
+
+- The Varimax method looks for $\psi$ that maximizes the Varimax criterion
+$$\frac{1}{p}\sum_{i} \left[\sum_j l_{ij}^4/h_i - (\sum_j (l_{ij}/h_i)^2)^2/p \right] $$
+- The Promax is based on Varimax. It basically shrinks small loadings by using a powerful function
+:::
+
+## No Rotation
+
+\tiny
+```{r, out.width="70%", fig.align='center'}
+principal(exam,nfactors=2, rotate="none")
+```
+\normalsize
+
+## No Rotation
+
+```{r, out.width="70%", fig.align='center'}
+par(pty="s")
+plot(principal(exam,nfactors=2, rotate="none"), main="No Rotation")
+```
+
+
+
+## Factor Rotation: varimax (an orthogonal rotation)
+\tiny
+```{r, out.width="70%", fig.align='center'}
+principal(exam,nfactors=2)
+```
+\normalsize
+
+
+## Factor Rotation: varimax (an orthogonal rotation)
+\tiny
+```{r, out.width="70%", fig.align='center'}
+par(pty="s")
+plot(principal(exam, nfactors=2),xlim=c(-0.2,1),ylim=c(-0.2,1), main="varimax (default)")
+abline(h=0, v=0)
+```
+\normalsize
+
+
+## Factor Rotation: an oblique (non-orthogonal) rotation
+
+\tiny
+```{r, out.width="70%", fig.align='center'}
+principal(exam,nfactors=2, rotate="promax")
+```
+\normalsize
+
+
+## Factor Rotation: an oblique (non-orthogonal) rotation
+
+\tiny
+```{r, out.width="70%", fig.align='center'}
+par(pty="s")
+plot(principal(exam,nfactors=2, rotate="promax"), main="promax (oblique)")
+```
+\normalsize
+
+
+## Factor Rotation
+- The following articles provide nice descriptions of the two major types of rotations:
+
+https://scholarworks.umass.edu/cgi/viewcontent.cgi?article=1251&context=pare
+
+https://www.theanalysisfactor.com/rotations-factor-analysis/
+
+
+# Computation
+## Method 1: Use PCA
+- By the spectral decomposition of $\Sigma$ we have
+$$\Sigma=\Gamma \Lambda \Gamma^T$$
+where $\Gamma=(\gamma_1, \cdots, \gamma_p)$ is an orthogonal matrix and $\Lambda=diag (\lambda_1, \cdots, \lambda_p)$ be the diagonal matrix of eigenvalues. 
+
+- The spectral decomposition can be rewritten to 
+$$\boldsymbol \Sigma=\sum_{i=1}^p \lambda_i \gamma_i\gamma_i^T=\sum_{i=1}^p (\sqrt{\lambda_i}\gamma_i)(\sqrt{\lambda_i}\gamma_i)^T$$
+
+## Method 1: Use PCA
+
+- Suppose that $\lambda_m, \lambda_{m+1}, \cdots, 
+\lambda_p$ are small. Then 
+
+$$\boldsymbol \Sigma\approx \sum_{i=1}^m (\sqrt{\lambda_i}\gamma_i)(\sqrt{\lambda_i}\gamma_i)^T$$
+
+
+- Let $\mathbf L=\left(\sqrt{\lambda_1}\gamma_1, \cdots, \sqrt{\lambda_m}\gamma_m\right)$
+
+- Let $\boldsymbol \Psi=\boldsymbol \Sigma-\mathbf L \mathbf L^T$
+
+## R code
+```{r}
+principal(exam, nfactors=2, rotate = "none")
+principal(exam, nfactors=2)
+```
+
+## Method 2: MLE
+
+::: {style="font-size: 80%;"}
+- We impose multivariate normality on the common and specific factors
+
+$$\mathbf F\sim N(\mathbf 0, \mathbf I), \epsilon\sim N(\mathbf 0, \Psi)$$
+
+- The log-likelihood is
+$$\begin{aligned}
+l(\mu,\mathbf L, \Psi) &= - \dfrac{np}{2}\log{2\pi}- \dfrac{n}{2}\log{|\mathbf{LL}^T + \Psi|} -\\ &\dfrac{1}{2}\sum_{i=1}^{n}(\mathbf X_i-\mu)^T(\mathbf L \mathbf L^T+\Psi)^{-1}(\mathbf X_i-\mu)
+\end{aligned}$$
+
+where $\mathbf {X}_i\in \mathbb R^p$ denotes the $i$ observation (not the $i$th feature). 
+:::
+
+
+## The Number of Common Factors
+- The $p\times p$ covariance matrix $\Sigma$ is symmetric. As a result, there are $\frac{p(p+1)}{2}$ parameters. 
+- A factor mode imposes a structure on $\Sigma$
+- For a FA model with $m$ common factors
+- A FA model a small number common factors, i.e., when $m$ is small, the model uses fewer parameters
+  - the model is more parsimonious
+  - the model might not be adequate is $m$ is too small
+- One can test whether an $m$ is large enough
+
+
+## Choose $m$ of Factors Computed using PCA
+- Cumulatative variance explained is should be reasonably large, such as >$80\%$
+
+- Look for elbow from the scree plot
+
+
+
+## A Goodness of Fit Test for the Adequacy of the Number of Common Factors
+::: {style="font-size: 60%;"}
+\begin{align*}
+H_0: \quad 
+\boldsymbol{\Sigma}_{(p \times p)} &= 
+\mathbf{L}_{(p \times m)} \, \mathbf{L}'_{(m \times p)} + 
+\boldsymbol{\Psi}_{(p \times p)} \\
+\\
+-2 \ln \Lambda &= -2 \ln \left[
+\frac{\text{maximized likelihood under } H_0}
+     {\text{maximized likelihood}}
+\right] \\
+\\
+&= -2 \ln \left( 
+\frac{|\hat{\boldsymbol{\Sigma}}|}{|\mathbf{S}_n|} 
+\right)^{-n/2} 
++ n \left[ \operatorname{tr}(\hat{\boldsymbol{\Sigma}}^{-1} \mathbf{S}_n) - p \right] \\
+\\
+& \text{It can be shown that } 
+\operatorname{tr}(\hat{\boldsymbol{\Sigma}}^{-1} \mathbf{S}_n) - p = 0 \\
+\\
+&= n \ln \left( 
+\frac{|\hat{\boldsymbol{\Sigma}}|}{|\mathbf{S}_n|} 
+\right)
+\end{align*}
+:::
+
+## Test for the Adequacy of the Number of Common Factors
+- The number of parameters for covariance in the full model is 
+$$\frac{p(p+1)}{2}$$
+- The number of parameters for covariance in the reduced model is
+$$mp + p - \frac{m(m-1)}{2}$$
+
+Note: $- \frac{m(m-1)}{2}$ is due to the nonuniqueness of $\mathbf L$. 
+
+## Degrees of freedom
+- The difference in numbers of parameters between the two models is 
+
+$$\begin{aligned}
+df&=\frac{p(p+1)}{2}-[mp+p-\frac{m(m-1)}{2}]\\
+&= \frac{1}{2}[(p-m)^2 -p-m]
+\end{aligned}$$
+
+- Under the null hypothesis (adequate), the test statistics follows a chi-squared distribution when the sample size is large enough.
+
+## Test for the Adequacy of the Number of Common Factors
+- The result indicates that 1 factor is not adequate as the p-value is small. 
+- The p-value is about whether the correlation structure specified in the proposed model is significantly different from that of the full model 
+
+\tiny
+```{r}
+print("p-value for 1 factor")
+factanal(exam, factors=1)$PVAL
+```
+\normalsize
+
+
+
+## Test for the Adequacy of the Number of Common Factors
+- The result indicates that 2 factors is adequate because the fit is not substantially from the full model. 
+
+\tiny
+```{r}
+print("p-value for 2 factors")
+factanal(exam, factors=2)$PVAL
+```
+\normalsize
+
+
+
+# CFA vs EFA
+
+## Exploratory Factor Analysis
+- The FA approach we have discussed is exploratory in nature. 
+- In fact, we can perform EFA and identify latent factors by using only correlations, not the data
+- The purpose of EFA is to explore the possible underlying structure that can explain the observed pattern of correlations
+- EFA is used when researchers do not have a specific idea about the underlying structure of data
+- EFA tries to identify the factor configuration (model)
+- EFA is hypothesis-generating
+  
+  
+## Exploratory or Confirmatory Factor Analysis
+- Confirmatory Factory Analysis (CFA) is used when a researcher has specific hypotheses or theories about the factor structure of their data.
+- It is a "theory-driven" approach.
+- In CFA, the researcher specifies the number of factors and which variables load onto which factors.
+- CFA is typically used in later stages of research to test or confirm the factor structure suggested by EFA  
+- CFA is hypothesis testing. A pre-specified model is required
+
+
+## Exploratory or Confirmatory Factor Analysis
+  
+- Use EFA when:
+  - You are unsure about the underlying structure.
+  - You aim to uncover complex patterns.
+  - You need to form hypotheses and develop theory.
+- Use CFA when:
+  - You have a predetermined theory or model.
+  - You aim to test the hypothesis about the factor structure.
+  - You need to confirm or disconfirm theories.
+
+# CFA: Example
+## R Packages for CFA
+- Conduct CFA in R
+- R packages: 
+  - sem
+  - OpenMx
+  - lavaan
+
+## An Example using "lavaan"
+- CFA can be performed using the latent variable analysis ("lavaan") package in r
+
+\tiny
+```{r}
+
+model1 <- '
+verbal =~ Latin + English + History
+math =~ Arithmetic + Algebra + Geometry'
+
+obj=cfa(model1, data=data.frame(exam))
+summary(obj)
+```
+\normalsize
+
+
+## The User model
+```{r, fig.align='center', out.width="100%"}
+semPaths(obj, what="std", layout="tree", edge.label.cex=1.2)
+```
+
+
+## The User model
+- The model fits well. This suggests that the model does not significantly deviate from the observed data.
+
+```{}
+Model Test User Model:
+                                                      
+  Test statistic                                 8.586
+  Degrees of freedom                                 8
+  P-value (Chi-square)                           0.378
+```
+
+
+
+## Understand the Baseline model
+
+\tiny
+```{r, fig.align='center', out.width="80%"}
+model0 <- '
+Latin ~~ Latin
+English ~~ English
+History ~~ History
+Arithmetic ~~ Arithmetic
+Algebra ~~ Algebra
+Geometry ~~ Geometry
+'
+obj0=cfa(model0, data=data.frame(exam))
+semPaths(obj0, what="est")
+```
+\normalsize
+
+## Understand the Baseline model
+
+- The null model assumes no relationships between the variables. The output indicates that the baseline model is a poor fit, which is expected since it does not account for any relationships.
+
+```{r}
+summary(obj0)
+```
+
+## Model Fit Statistics
+- We often need to compare a FA (reduced) model to the full model
+$$H_0: \boldsymbol \Sigma(\mathbf L, \Psi)=\boldsymbol \Sigma$$
+- Chi-square test. Derived from the likelihood ratio test. Depends on sample sizes.
+
+- RMSEA: root mean square error of approximation compares the sample correlation matrix and the model correlation matrix.  <0.06 is good.
+$$RMSEA = \sqrt{\frac{\delta}{df(N-1)}}$$
+where $\delta=\chi^2 - df$. 
+
+
+## Model Fit Statistics
+
+- CFI: comparative fit index that measures the relative difference between two models; is not affected by sample size too much; between 0 and 1; the larger the better. >0.9 is good
+
+$$CFI= \frac{\delta(\mbox{Baseline}) - \delta(\mbox{User})}{\delta(\mbox{Baseline})}$$
+
+- More can be found in wikipedia and 
+
+  - https://doi.org/10.1016/B978-0-444-53737-9.50010-4
+  - Bentler PM. Comparative fit indexes in structural models. Psychological bulletin. 1990 Mar;107(2):238.
+  - http://www.davidakenny.net/cm/fit.htm
+
+## SEM Results: CFI and TLI
+```{}
+CFI: 0.999
+TLI: 0.998
+```
+- The Comparative Fit Index (CFI) and Tucker-Lewis Index (TLI) are both close to 1, indicating a good fit of the model to the data. For the two-factor model: 
+  - acceptable: >0.9
+  - excellent: >0.95
+
+## CFI and TLI for user model and baseline model
+
+\tiny
+```{r}
+fitMeasures(obj0, c("chisq", "cfi", "rmsea"))
+fitMeasures(obj, c("chisq", "cfi", "rmsea"))
+```
+\normalsize
+
+
+
+## Compute Factor scores
+
+\tiny
+```{r, out.width="80%", fig.align='center'}
+objscores <- lavPredict(obj)
+plot(objscores)
+```
+\normalsize
+
+
+## Helpful Resources
+- https://quantdev.ssri.psu.edu/tutorials/intro-basic-confirmatory-factor-analysis
+- https://lavaan.ugent.be/tutorial/tutorial.pdf
+- https://stats.oarc.ucla.edu/r/seminars/rcfa/
+
+## 
+```{r}
+#knitr::knit_exit()
+```
+
+
+
