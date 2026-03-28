@@ -1,59 +1,210 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Teaching Multivariate</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Teaching Materials</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        .section {
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <h1>Course Information</h1>
-    <h2>Lectures</h2>
-    <table>
-        <tr>
-            <th>Lecture</th>
-            <th>Resources</th>
-        </tr>
-        <tr>
-            <td>Lecture 01</td>
-            <td>PDF / RMarkdown</td>
-        </tr>
-    </table>
+    <h1>Welcome to STAT240P Multivariate Analysis</h1>
+    
+    <div class="section">
+        <h2>Lectures</h2>
+        <table>
+            <tr>
+                <th>Lecture</th>
+                <th>PDF</th>
+                <th>RMarkdown</th>
+                <th>HTML</th>
+            </tr>
+            <tr>
+                <td>Lecture 01: Introduction</td>
+                <td><a href="Introduction.pdf" target="_blank">PDF</a></td>
+                <td><a href="Introduction.rmd" target="_blank">RMarkdown</a></td>
+                <td><a href="Introduction.html" target="_blank">HTML</a></td>
+            </tr>
+            <tr>
+                <td>Lecture 02: Matrix Operations</td>
+                <td><a href="Lecture02_MatrixOperations.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture02_MatrixOperations.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 03: Random Vectors</td>
+                <td><a href="Lecture03_RandomV.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture03_RandomV.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 04: Random Samples</td>
+                <td><a href="Lecture04_ARandomSampleFromMultivariate.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture04_ARandomSampleFromMultivariate.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 05: Multivariate Normal</td>
+                <td><a href="Lecture05_NormalAndMVN.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture05_NormalAndMVN.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 06: Chi-squared and Wishart</td>
+                <td><a href="Lecture06_Wishart.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture06_Wishart.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 07: Hotelling's T2</td>
+                <td><a href="Lecture07.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture07.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 08: MANOVA</td>
+                <td><a href="Lecture08.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture08.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 09: MANOVA</td>
+                <td><a href="Lecture09_new.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture09_new.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 10: PCA</td>
+                <td><a href="Lecture10-PCA.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture10 PCA.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 11: Applications of PCA</td>
+                <td><a href="Lecture11-PCA--Applications.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture11-PCA--Applications.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 12: LDA</td>
+                <td><a href="Lecture12LDA.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture12LDA.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 13: LDA</td>
+                <td><a href="Lecture13LDA_MultiClass.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture13LDA_MultiClass.rmd" target="_blank">RMarkdown</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lecture 14: LDA</td>
+                <td></td>
+                <td><a href="Lecture14MoreOnClassification_new.qmd" target="_blank">RMarkdown</a></td>
+                <td><a href="Lecture14MoreOnClassification_new.html" target="_blank">HTML</a></td>
+            </tr>
+            <tr>
+                <td>Lecture 15: Clustering - Model Free</td>
+                <td></td>
+                <td><a href="Lecture15Cluster_ModelFree.qmd" target="_blank">RMarkdown</a></td>
+                <td><a href="Lecture15Cluster_ModelFree.html" target="_blank">HTML</a></td>
+            </tr>
+            <tr>
+                <td>Lecture 16: Clustering - Model Based</td>
+                <td></td>
+                <td><a href="Lecture16Cluster_ModelBased.qmd" target="_blank">RMarkdown</a></td>
+                <td><a href="Lecture16Cluster_ModelBased.html" target="_blank">HTML</a></td>
+            </tr>
+            <tr>
+                <td>Lecture 17: Factor Analysis</td>
+                <td><a href="Lecture17FactorAnalysis.pdf" target="_blank">PDF</a></td>
+                <td><a href="Lecture17FactorAnalysis.qmd" target="_blank">RMarkdown</a></td>
+                <td><a href="Lecture17FactorAnalysis.html" target="_blank">HTML</a></td>
+            </tr>
+            <!-- Add more lectures as needed -->
+        </table>
+    </div>
 
-    <h2>Assignments</h2>
-    <table>
-        <tr>
-            <th>Assignment</th>
-            <th>Due Date</th>
-        </tr>
-        <tr>
-            <td>Assignment 1</td>
-            <td>PDF</td>
-        </tr>
-        <tr>
-            <td>Assignment 2</td>
-            <td></td>
-        </tr>
-    </table>
+    <div class="section">
+        <h2>Assignments</h2>
+        <table>
+            <tr>
+                <th>Assignment</th>
+                <th>PDF</th>
+                <th>Due Date</th>
+            </tr>
+            <tr>
+                <td>Assignment 1</td>
+                <td><a href="Assignment1.pdf" target="_blank">PDF</a></td>
+                <td>by 11:59pm Monday, April 14</td>
+            </tr>
+            <tr>
+                <td>Assignment 2</td>
+                <td><a href="Assignment2.pdf" target="_blank">PDF</a></td>
+                <td>by 11:59pm Monday, April 28</td>
+            </tr>
+            <tr>
+                <td>Assignment 3</td>
+                <td><a href="Assignment3.pdf" target="_blank">PDF</a></td>
+                <td>by 11:59pm Monday, May 26</td>
+            </tr>
+            <!-- Add assignments here -->
+        </table>
+    </div>
 
-    <h2>Midterm Project</h2>
-    <table>
-        <tr>
-            <th>Project</th>
-            <th>Submission</th>
-        </tr>
-        <tr>
-            <td>Midterm Project 1</td>
-            <td>PDF</td>
-        </tr>
-    </table>
+    <div class="section">
+        <h2>Midterm Project</h2>
+        <table>
+            <tr>
+                <th>Project</th>
+                <th>PDF</th>
+                <th>RMarkdown</th>
+            </tr>
+            </tr>
+                <td>Midterm Project </td>
+                <td><a href="MidtermProject.pdf" target="_blank">PDF</a></td>
+                <td><a href="MidtermProject.Rmd" target="_blank">RMarkdown</a></td>
+            </tr>
+            <!-- Add midterm project details here -->
+        </table>
+    </div>
 
-    <h2>Final Project</h2>
-    <table>
-        <tr>
-            <th>Project</th>
-            <th>Submission</th>
-        </tr>
-        <tr>
-            <td>Final Project 1</td>
-            <td></td>
-        </tr>
-    </table>
+    <div class="section">
+        <h2>Final Project</h2>
+        <table>
+            <tr>
+                <th>Project</th>
+                <th>PDF</th>
+                <th>RMarkdown</th>
+            </tr>
+            </tr>
+                <td>Final Project </td>
+                <td><a href="FinalProjectSTAT240P.pdf" target="_blank">PDF</a></td>
+                <td></td>
+            </tr>
+            <!-- Add final project details here -->
+        </table>
+    </div>
 </body>
 </html>
